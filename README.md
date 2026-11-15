@@ -6,12 +6,12 @@ Cơ sở dữ liệu quản lý tour, lịch khởi hành, đơn đặt tour c�
 
 ## Thành viên
 
-| Thành viên | Phụ trách                                                              |
-| ---------- | ---------------------------------------------------------------------- |
-| Đạt        | ERD, ánh xạ lược đồ, form đặt tour (F1)                                |
-| Thịnh      | Thực thể, ràng buộc, chuẩn hóa, form đánh giá (F3), biên tập báo cáo   |
-| Tuân       | Yêu cầu dữ liệu, nghiệp vụ, form quản lý đơn (F2), phiếu xác nhận (R1) |
-| Khánh      | Cài đặt database, Data Diagram, tìm kiếm (S1), báo cáo doanh thu (R2)  |
+| Họ và tên         | Mã sinh viên | Phụ trách                                                                  |
+| ----------------- | ------------ | -------------------------------------------------------------------------- |
+| Nguyễn Tất Đạt    | `B24DCCN117` | ERD, ánh xạ lược đồ, form đặt tour (F1)                                    |
+| Nguyễn Tiến Thịnh | `B24DCCN546` | Thực thể, ràng buộc, chuẩn hóa 3NF, form đánh giá (F3), biên tập báo cáo   |
+| Bùi Đức Tuân      | `B24DCCN590` | Yêu cầu dữ liệu, nghiệp vụ, form quản lý đơn (F2), phiếu xác nhận (R1)     |
+| Nguyễn Quốc Khánh | `B24DCCN311` | Cài đặt database, Data Diagram, tìm kiếm (S1), báo cáo doanh thu (R2)      |
 
 ## Chức năng chính
 

@@ -1,6 +1,6 @@
 # Hướng dẫn Cầm tay Chỉ việc Chi tiết cho ĐẠT (Từ A đến Z)
 
-- **Thành viên:** Đạt
+- **Họ và tên thành viên:** Nguyễn Tất Đạt (`B24DCCN117`)
 - **Vai trò trong nhóm:** Phụ trách Sơ đồ Thực thể Liên kết (`ERD.drawio`, `ERD.png`), Ánh xạ mô hình ERD sang 12 lược đồ quan hệ, Lập trình màn hình Form đặt tour (`F1` - `tour_app/pages/1_Dat_tour.py`), Kiểm thử trên máy sạch và Phụ trách báo cáo các mục 2.3, 3.1, 3.2, 6.2.
 - **Mục tiêu của tài liệu này:** Bạn chỉ cần đọc duy nhất tài liệu này và làm lần lượt từng bước là hoàn thành 100% công việc của mình mà không cần tra cứu lại bất kỳ tài liệu nào khác. Mọi mã định dạng `draw.io`, tọa độ vẽ hình, câu lệnh SQL, code Python, kịch bản kiểm thử và lệnh Git đều được hướng dẫn tận tay tại đây.
 

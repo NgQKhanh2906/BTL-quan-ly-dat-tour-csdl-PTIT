@@ -2,13 +2,17 @@
 
 - **Đề tài:** Hệ thống quản lý đặt tour du lịch các tỉnh thành tại miền Bắc
 - **Học phần:** Cơ sở dữ liệu — Học viện Công nghệ Bưu chính Viễn thông (PTIT)
-- **Thành viên nhóm:** Đạt, Thịnh, Tuân, Nguyễn Quốc Khánh (`B24DCCN311`)
+- **Thành viên nhóm:**
+  1. Nguyễn Tất Đạt (`B24DCCN117`) — Phụ trách ERD, ánh xạ lược đồ quan hệ, màn hình `F1`
+  2. Nguyễn Tiến Thịnh (`B24DCCN546`) — Phụ trách thực thể, ràng buộc toàn vẹn, chuẩn hóa 3NF, màn hình `F3`, biên tập báo cáo Word
+  3. Bùi Đức Tuân (`B24DCCN590`) — Phụ trách yêu cầu dữ liệu, quy tắc nghiệp vụ, màn hình `F2`, phiếu xác nhận `R1`, Slide & nộp bài
+  4. Nguyễn Quốc Khánh (`B24DCCN311`) — Phụ trách CSDL MySQL, Data Diagram, màn hình tìm kiếm `S1`, báo cáo doanh thu `R2`, quản lý GitHub
 - **Hệ thống tài liệu hướng dẫn của dự án (Đã hợp nhất toàn bộ từ Bản 4 và Bản 5, không cần giữ file cũ):**
   1. `docs/Ke_hoach_Tong_hop_BTL_CSDL.md` (Tài liệu tổng quan này: lộ trình 6 cụm từ 05/11 đến 22/11/2026, ma trận phân công, quy trình Git và kịch bản bảo vệ 15 phút).
   2. `docs/Huong_dan_chi_tiet_Khanh.md` (Sổ tay cầm tay chỉ việc dành riêng cho **Khánh**: toàn bộ 4 file SQL 12 bảng, `db.py`, `app.py`, `S1`, `R2`, `DataDiagram`, chụp ảnh, đóng gói và điều phối Demo).
   3. `docs/Huong_dan_chi_tiet_Dat.md` (Sổ tay cầm tay chỉ việc dành riêng cho **Đạt**: hướng dẫn vẽ `ERD.drawio` 11 thực thể 12 mối kết hợp từng bước, code đầy đủ `F1`, kiểm thử máy sạch và câu hỏi vấn đáp ERD).
   4. `docs/Huong_dan_chi_tiet_Tuan.md` (Sổ tay cầm tay chỉ việc dành riêng cho **Tuân**: công thức nghiệp vụ, code đầy đủ `F2` & `R1`, thiết kế 8 trang Slide và quy trình nộp Google Drive).
-  5. `docs/Huong_dan_chi_tiet_Thinh.md` (Sổ tay cầm tay chỉ việc dành riêng cho **Thịnh**: từ điển dữ liệu 12 bảng, 32 quy tắc toàn vẹn, chứng minh chuẩn hóa 3NF/BCNF, code đầy đủ `F3` và quy trình biên tập báo cáo Word/PDF).
+  5. `docs/Huong_dan_chi_tiet_Thinh.md` (Sổ tay cầm tay chỉ việc dành riêng cho **Thịnh**: từ điển dữ liệu 12 bảng, 32 quy tắc toàn vẹn, chứng minh chuẩn hóa 3NF, code đầy đủ `F3` và quy trình biên tập báo cáo Word/PDF).
 
 ---
 
@@ -18,7 +22,7 @@
 
 | Hạng mục | Bản 4 (Tài liệu tổng hợp 5 Quyển - 22/10) | Bản 5 (Kế hoạch hoàn thiện - 05/11) | Quy tắc áp dụng chính thức cho nhóm |
 | :--- | :--- | :--- | :--- |
-| **Thiết kế CSDL (Quyết định D6)** | Đề xuất Phương án A: tách bảng `TheThanhToan(SoID, LoaiThe)` khỏi `KhachHang` | Chốt chính thức Phương án A | **11 thực thể ERD, 12 mối liên kết** -> **12 bảng BCNF, 13 khóa ngoại, 56 ràng buộc** (`12 PK`, `13 FK`, `27 CHECK`, `4 UNIQUE`), **2 view**, **104 dòng mẫu** |
+| **Thiết kế CSDL (Quyết định D6)** | Đề xuất Phương án A: tách bảng `TheThanhToan(SoID, LoaiThe)` khỏi `KhachHang` | Chốt chính thức Phương án A | **11 thực thể ERD, 12 mối liên kết** -> **12 bảng đạt chuẩn 3NF, 13 khóa ngoại, 56 ràng buộc** (`12 PK`, `13 FK`, `27 CHECK`, `4 UNIQUE`), **2 view**, **104 dòng mẫu** |
 | **Công nghệ & Thời gian Demo** | MySQL 8.0.16+, Python 3.11-3.13, `streamlit 1.66.0`, `mysql-connector-python 26.7.0`, `pandas 3.0.6`; `@HienTai = '2026-10-23 08:00:00'` | Giữ nguyên hoàn toàn | Giữ nguyên; trong `db.py` đặt `CHE_DO_DEMO = True` cố định mốc `23/10/2026 08:00:00` |
 | **Mật khẩu MySQL trong `db.py`** | Ghi trực tiếp `"password": "matkhau_cua_ban"` trong `CAU_HINH` | Đọc qua biến môi trường `MYSQL_PASSWORD` | Không ghi mật khẩu vào code; đọc từ biến môi trường `MYSQL_PASSWORD` để đẩy lên GitHub an toàn |
 | **Báo cáo R1 và R2** | Chỉ hiển thị dữ liệu đơn hàng / doanh thu và xuất HTML/PDF | Bổ sung ô nhập **Người lập**, dòng **Nơi nhận** và **Khối chữ ký** | Áp dụng Bản 5 để ăn trọn 1,0 điểm Tiêu chí 7 ("nêu rõ ai tạo, gửi ai"); bỏ trống tên người lập thì ẩn nút tải file |
@@ -34,7 +38,7 @@
 ### I. Goal và Phạm vi
 - **Goal:** Hoàn thành toàn bộ cơ sở dữ liệu (12 bảng), ứng dụng Streamlit (6 màn hình: `F1`, `F2`, `F3`, `S1`, `R1`, `R2`) và báo cáo Word/PDF (<= 50 trang, đủ 13 hình, không còn ô tô vàng Highlight) để nộp lên Google Drive của giảng viên trước **21:00 Chủ nhật ngày 22/11/2026** (sớm hơn 2 giờ so với hạn chót 23:00 ngày 22/11/2026), đạt đủ 8 tiêu chí chấm điểm (10/10 điểm) và bảo vệ trôi chảy trong 15 phút.
 - **Phạm vi thực hiện (Must & Should):**
-  - Cơ sở dữ liệu MySQL 8.0 gồm 4 tệp SQL chuẩn hóa BCNF.
+  - Cơ sở dữ liệu MySQL 8.0 gồm 4 tệp SQL chuẩn hóa 3NF.
   - Sơ đồ khái niệm `ERD.drawio` / `ERD.png` và sơ đồ vật lý `DataDiagram.mwb` / `DataDiagram.png`.
   - Ứng dụng `tour_app` gồm 3 Form nhập (`F1`, `F2`, `F3`), 1 Màn hình tìm kiếm (`S1`), 2 Báo cáo xuất PDF (`R1` khổ A4 dọc, `R2` khổ A4 ngang).
   - Báo cáo 9 chương + 1 phụ lục, Slide thuyết trình 8 trang, Video demo dự phòng 6 phút.
@@ -518,7 +522,7 @@ Mỗi khi bắt đầu làm một task code hoặc cập nhật hình ảnh/góp
      - **`screenshots/Hinh11_R1_PDF.png`:** Mở file `PhieuXacNhan_DH008.pdf` (đơn đã hủy, có phần tiền phạt và chữ ký nhân viên lập phiếu) trên Edge ở chế độ `"Fit to page"`, chụp trọn trang PDF A4 dọc.
      - Rà soát mục 6.3 và 8.1 trong báo cáo Word xem bảng trường và các câu SQL đã khớp 100% với code `2_Quan_ly_don.py` và `5_Phieu_xac_nhan.py` chưa; bổ sung vào `docs/GopY_Tuan.md`.
   2. **Task `TU7` — Chốt thông tin thành viên và % đóng góp (13/11):**
-     - Thu thập đầy đủ Họ và tên, Mã số sinh viên (MSSV) của Đạt, Thịnh, Tuân (Khánh là `Nguyễn Quốc Khánh - B24DCCN311`) cùng mức đóng góp (%) của 4 người (tổng 100%), ghi vào `docs/GopY_Tuan.md` và nhắn cho Thịnh điền vào Trang bìa + Bảng 2 (trang 4).
+     - Đối chiếu danh sách 4 thành viên (`Nguyễn Tất Đạt - B24DCCN117`, `Nguyễn Tiến Thịnh - B24DCCN546`, `Bùi Đức Tuân - B24DCCN590`, `Nguyễn Quốc Khánh - B24DCCN311`) cùng mức đóng góp (`25%` mỗi người, tổng `100%`) đã điền vào Trang bìa + Bảng 2 (trang 4).
 - **Lệnh Git thực hiện:**
   ```powershell
   git checkout main
@@ -537,7 +541,7 @@ Mỗi khi bắt đầu làm một task code hoặc cập nhật hình ảnh/góp
   - Trang 4 (Đạt nói): Sơ đồ ERD (`Hinh01_ERD.png` tràn trang).
   - Trang 5 (Đạt nói): 4 điểm đặc biệt trên ERD (thực thể yếu, đa trị, dẫn xuất, phức hợp).
   - Trang 6 (Thịnh nói): 12 bảng, 56 ràng buộc và Sơ đồ Data Diagram (`Hinh02_DataDiagram.png`).
-  - Trang 7 (Thịnh nói): Chuẩn hóa 3NF — `KhachHang` vi phạm 3NF (`SoID -> LoaiThe`), cách tách `TheThanhToan`, đạt BCNF.
+  - Trang 7 (Thịnh nói): Chuẩn hóa 3NF — `KhachHang` vi phạm 3NF (`SoID -> LoaiThe`), cách tách `TheThanhToan` để cả 12 bảng đạt chuẩn 3NF.
   - Trang 8 (Khánh nói): Lộ trình 8 bước demo trực tiếp trên ứng dụng và MySQL Workbench.
 - **Task `TU10` (17/11 - 18/11):** Đọc soát toàn bộ báo cáo bản `v0.9` do Thịnh xuất (kiểm tra lỗi chính tả, số trang mục lục, chú thích bảng/hình, đối chiếu 8 tiêu chí chấm điểm).
 - **Task `TU11` (Trước 21:00 CN 22/11 - Nộp bài lên Google Drive của giảng viên):**
@@ -550,7 +554,7 @@ Mỗi khi bắt đầu làm một task code hoặc cập nhật hình ảnh/góp
 
 ### IV. NHIỆM VỤ CHI TIẾT CỦA THỊNH (`TH1` -> `TH10`)
 
-- **Vai trò:** Phụ trách Phân tích Thực thể (mục 2.1), Mô tả bảng & Ràng buộc toàn vẹn (mục 3.3, 3.4), Chuẩn hóa 3NF/BCNF (Chương 4), Màn hình Đánh giá sau chuyến đi (`F3` - `tour_app/pages/3_Danh_gia.py`, mục 6.4) và là **Người duy nhất biên tập trực tiếp file Báo cáo Word** (`docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx`).
+- **Vai trò:** Phụ trách Phân tích Thực thể (mục 2.1), Mô tả bảng & Ràng buộc toàn vẹn (mục 3.3, 3.4), Chuẩn hóa 3NF (Chương 4), Màn hình Đánh giá sau chuyến đi (`F3` - `tour_app/pages/3_Danh_gia.py`, mục 6.4) và là **Người duy nhất biên tập trực tiếp file Báo cáo Word** (`docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx`).
 
 #### 1. Đợt 1 — Cụm 1 (05/11 - 07/11): Tasks `TH1`, `TH2`
 - **Nền tảng làm việc:** Microsoft Word, MySQL Workbench 8.0, VS Code.
@@ -682,7 +686,7 @@ Nhom<so_nhom>_QuanLyDatTour/
 #### 1. Phân bổ thời gian 15 phút
 - **Phút `0:00 - 1:30` (Tuân trình bày — Slide 1, 2, 3):** Giới thiệu nhóm, bài toán thực tế (4 vấn đề khi quản lý thủ công), phạm vi 15 tỉnh miền Bắc, các nhóm người dùng và quy tắc nghiệp vụ cốt lõi.
 - **Phút `1:30 - 4:30` (Đạt trình bày — Slide 4, 5):** Trình bày sơ đồ ERD (11 thực thể, 12 mối liên kết) và giải thích 4 điểm thiết kế đặc biệt: thực thể yếu `ChuyenTrungChuyen`, thuộc tính đa trị `SDT`, thuộc tính dẫn xuất (`SoDem`, `TongTien`, `TienPhat`, `TienHoan`) và thuộc tính phức hợp (`DanhGiaTour`, `DanhGiaNhaNghi`).
-- **Phút `4:30 - 7:00` (Thịnh trình bày — Slide 6, 7):** Trình bày ánh xạ sang 12 bảng quan hệ, 56 ràng buộc toàn vẹn, sơ đồ `DataDiagram` (12 bảng, 13 khóa ngoại) và quá trình phát hiện `KhachHang` vi phạm 3NF (`MaKH -> SoID -> LoaiThe`), cách tách bảng `TheThanhToan` để cả 12 bảng đạt BCNF.
+- **Phút `4:30 - 7:00` (Thịnh trình bày — Slide 6, 7):** Trình bày ánh xạ sang 12 bảng quan hệ, 56 ràng buộc toàn vẹn, sơ đồ `DataDiagram` (12 bảng, 13 khóa ngoại) và quá trình phát hiện `KhachHang` vi phạm 3NF (`MaKH -> SoID -> LoaiThe`), cách tách bảng `TheThanhToan` để cả 12 bảng đạt chuẩn 3NF.
 - **Phút `7:00 - 13:00` (Khánh điều khiển máy — Chủ màn hình thuyết minh theo 8 bước bên dưới):** Demo trực tiếp trên ứng dụng Streamlit và MySQL Workbench.
 - **Phút `13:00 - 15:00` (Cả nhóm):** Trả lời câu hỏi vấn đáp của giảng viên (dựa trên bộ câu hỏi vấn đáp chuyên sâu tại mục cuối của từng file `docs/Huong_dan_chi_tiet_<Ten>.md`).
 

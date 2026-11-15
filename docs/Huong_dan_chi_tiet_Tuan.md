@@ -1,6 +1,6 @@
 # HƯỚNG DẪN CÔNG VIỆC CHI TIẾT DÀNH RIÊNG CHO TUÂN (UI/FRONTEND, SLIDE & SUBMISSION)
 
-- **Họ và tên thành viên:** Tuân
+- **Họ và tên thành viên:** Bùi Đức Tuân (`B24DCCN590`)
 - **Vai trò trong nhóm:** UI/Frontend Developer, Slide Designer & Submission Coordinator (Phụ trách màn hình `F2 - Quản lý đơn & hủy tour`, màn hình `R1 - Phiếu xác nhận đặt tour` in PDF A4 1 trang, thiết kế slide thuyết trình 8 trang, liên hệ giảng viên và nộp bài lên Google Drive)
 - **Phạm vi file được phép chỉnh sửa trực tiếp:**
   1. `tour_app/pages/2_Quan_ly_don.py`
@@ -188,9 +188,9 @@ Kiểm tra Mục 2.2 trong file Word xem đã có đủ **12 mối kết hợp**
 
 #### C. Kiểm tra Chương 9 (Kết luận)
 
-Kiểm tra các con số tổng kết trong Chương 9 phải khớp với kiến trúc đã chuẩn hóa 3NF/BCNF:
+Kiểm tra các con số tổng kết trong Chương 9 phải khớp với kiến trúc đã chuẩn hóa 3NF:
 - Tổng số thực thể trên ERD: **11 thực thể** (10 thực thể mạnh + 1 thực thể yếu `ChuyenTrungChuyen`) và **12 mối kết hợp**.
-- Tổng số bảng quan hệ trong MySQL: **12 bảng** (tất cả đạt chuẩn **3NF** và **BCNF**), **13 khóa ngoại (`FOREIGN KEY`)**, **56 ràng buộc toàn vẹn khai báo (`12 PK + 13 FK + 27 CHECK + 4 UNIQUE`)**, **2 khung nhìn (`VIEW`)**, **104 dòng dữ liệu mẫu**.
+- Tổng số bảng quan hệ trong MySQL: **12 bảng** (tất cả đạt chuẩn **3NF**), **13 khóa ngoại (`FOREIGN KEY`)**, **56 ràng buộc toàn vẹn khai báo (`12 PK + 13 FK + 27 CHECK + 4 UNIQUE`)**, **2 khung nhìn (`VIEW`)**, **104 dòng dữ liệu mẫu**.
 
 #### D. Tạo file `docs/GopY_Tuan.md` và đẩy lên Git
 
@@ -637,7 +637,7 @@ Trên trình duyệt, bấm vào mục **2_Quan_ly_don** ở thanh bên trái v�
      - **Người lập:** Nhân viên kinh doanh / điều hành tour (nhập họ tên trên giao diện, bắt buộc khác rỗng).
      - **Người nhận:** Khách hàng đặt tour (hiển thị họ tên, mã khách hàng, địa chỉ, email và toàn bộ số điện thoại trên phiếu).
 2. **Tại sao phải dùng `GROUP_CONCAT` ở câu lệnh `R1.2`?**
-   - Trong thiết kế CSDL đạt chuẩn 3NF/BCNF, một khách hàng có thể có nhiều số điện thoại lưu ở bảng `SDT_KhachHang` (ví dụ `KH001` có 2 số `0901234567` và `0987654321`). Dùng `GROUP_CONCAT(sdt.SoDienThoai ORDER BY sdt.SoDienThoai SEPARATOR ', ')` giúp gom tất cả số điện thoại của khách thành một chuỗi gọn gàng `"0901234567, 0987654321"` để hiển thị trên 1 dòng của phiếu xác nhận.
+   - Trong thiết kế CSDL đạt chuẩn 3NF, một khách hàng có thể có nhiều số điện thoại lưu ở bảng `SDT_KhachHang` (ví dụ `KH001` có 2 số `0901234567` và `0987654321`). Dùng `GROUP_CONCAT(sdt.SoDienThoai ORDER BY sdt.SoDienThoai SEPARATOR ', ')` giúp gom tất cả số điện thoại của khách thành một chuỗi gọn gàng `"0901234567, 0987654321"` để hiển thị trên 1 dòng của phiếu xác nhận.
 3. **Tại sao phải dùng hàm `html.escape()` khi đưa dữ liệu vào template HTML?**
    - Để chống lỗi hiển thị HTML và lỗ hổng XSS (Cross-Site Scripting) nếu tên khách hàng, lý do hủy hoặc tên nhân viên lập phiếu có chứa các ký tự đặc biệt như `<`, `>`, `&`, `"`.
 4. **Tại sao phải thiết kế CSS `@page { size: A4 portrait; margin: 10mm 12mm; }`?**
@@ -1277,14 +1277,14 @@ Trước khi chụp ảnh, bạn mở MySQL Workbench chạy lại file `databas
    git push origin main
    ```
 
-### 6.2. Nhiệm vụ TU7 (13/11): Thu thập thông tin hành chính của 4 thành viên gửi cho Thịnh
+### 6.2. Nhiệm vụ TU7 (13/11): Rà soát thông tin hành chính của 4 thành viên gửi cho Thịnh
 
-Bạn nhắn vào nhóm chat để lấy chính xác các thông tin sau của cả 4 người (Khánh, Đạt, Tuân, Thịnh) và gửi cho Thịnh điền vào trang bìa + Bảng phân công nhiệm vụ (Mục 1.3):
-- Họ và tên đầy đủ (đúng dấu tiếng Việt).
-- Mã số sinh viên (MSSV).
-- Tên lớp hành chính / lớp tín chỉ.
-- Họ tên giảng viên hướng dẫn (đúng học hàm/học vị: ThS. / TS. ...).
-- Tỷ lệ đóng góp của từng thành viên (`25%` mỗi người, tổng cộng `100%`).
+Danh sách Họ tên và Mã số sinh viên (MSSV) chính thức của 4 thành viên (đã điền sẵn vào Trang bìa và Bảng 2 của báo cáo Word):
+- `Nguyễn Tất Đạt` — MSSV: `B24DCCN117` (Tỷ lệ đóng góp: `25%`).
+- `Nguyễn Tiến Thịnh` — MSSV: `B24DCCN546` (Tỷ lệ đóng góp: `25%`).
+- `Bùi Đức Tuân` — MSSV: `B24DCCN590` (Tỷ lệ đóng góp: `25%`).
+- `Nguyễn Quốc Khánh` — MSSV: `B24DCCN311` (Tỷ lệ đóng góp: `25%`).
+- Bạn bổ sung thêm Mã lớp tín chỉ và Họ tên giảng viên hướng dẫn (đúng học hàm/học vị: ThS. / TS. ...) gửi cho Thịnh điền nốt vào trang bìa.
 
 ---
 
@@ -1305,11 +1305,11 @@ Vào ngày 14/11, bạn mở ứng dụng và kiểm thử màn hình `3_Danh_gi
 
 | Số Slide | Tiêu đề Slide | Nội dung hiển thị trên Slide | Người trình bày |
 | :---: | :--- | :--- | :---: |
-| **Slide 1** | **BÀI TẬP LỚN CƠ SỞ DỮ LIỆU: HỆ THỐNG QUẢN LÝ ĐẶT TOUR DU LỊCH** | - Tên học phần, tên giảng viên hướng dẫn.<br>- Danh sách 4 thành viên (Khánh, Đạt, Tuân, Thịnh) kèm MSSV và vai trò. | Tuân (0:00 - 0:30) |
+| **Slide 1** | **BÀI TẬP LỚN CƠ SỞ DỮ LIỆU: HỆ THỐNG QUẢN LÝ ĐẶT TOUR DU LỊCH** | - Tên học phần, tên giảng viên hướng dẫn.<br>- Danh sách 4 thành viên (`Nguyễn Tất Đạt - B24DCCN117`, `Nguyễn Tiến Thịnh - B24DCCN546`, `Bùi Đức Tuân - B24DCCN590`, `Nguyễn Quốc Khánh - B24DCCN311`) kèm vai trò. | Tuân (0:00 - 0:30) |
 | **Slide 2** | **1. BÀI TOÁN NGHIỆP VỤ & QUY TẮC CỐT LÕI** | - Sơ đồ luồng 4 trạng thái: `DAT -> THANHTOAN -> HOANTHANH` và nhánh rẽ `HUY`.<br>- Công thức tính tổng tiền tự động: `TongTien = TienTour + TienPhong`.<br>- Bảng 5 mức phạt hủy tour (`0%`, `10%`, `30%`, `50%`, `100%`). | Tuân (0:30 - 1:30) |
 | **Slide 3** | **2. SƠ ĐỒ THỰC THỂ LIÊN KẾT (ERD KÝ HIỆU CHEN)** | - Chèn ảnh `Hinh01_ERD_Chen.png` độ phân giải cao.<br>- Hộp chú thích nổi bật: 11 thực thể (1 thực thể yếu `ChuyenTrungChuyen`), 12 mối kết hợp, thuộc tính đa trị `SDT`, thuộc tính dẫn xuất `TongTien`. | Đạt (1:30 - 4:30) |
 | **Slide 4** | **3. LƯỢC ĐỒ QUAN HỆ & 56 RÀNG BUỘC TOÀN VẸN** | - Chèn ảnh `Hinh02_DataDiagram_Workbench.png`.<br>- Thống kê: **12 bảng quan hệ**, **13 khóa ngoại (`FK`)**, **27 `CHECK`**, **4 `UNIQUE`**, **2 `VIEW`**, **104 dòng dữ liệu mẫu**. | Thịnh (4:30 - 5:45) |
-| **Slide 5** | **4. CHUẨN HÓA LƯỢC ĐỒ CƠ SỞ DỮ LIỆU (3NF & BCNF)** | - Bảng tổng hợp: 11/12 bảng gốc đạt ngay 3NF & BCNF.<br>- Điểm nhấn: Phát hiện phụ thuộc bắc cầu `MaKH -> SoID -> LoaiThe` tại bảng `KhachHang` (vi phạm 3NF) và tách bảng thứ 12 `TheThanhToan(SoID, LoaiThe)` bảo toàn thông tin & phụ thuộc hàm. | Thịnh (5:45 - 7:00) |
+| **Slide 5** | **4. CHUẨN HÓA LƯỢC ĐỒ CƠ SỞ DỮ LIỆU ĐẠT CHUẨN 3NF** | - Bảng tổng hợp: 10/11 bảng gốc đạt ngay chuẩn 3NF.<br>- Điểm nhấn: Phát hiện phụ thuộc bắc cầu `MaKH -> SoID -> LoaiThe` tại bảng `KhachHang` (vi phạm 3NF) và tách bảng thứ 12 `TheThanhToan(SoID, LoaiThe)` để toàn bộ 12 bảng đạt chuẩn 3NF. | Thịnh (5:45 - 7:00) |
 | **Slide 6** | **5. KIẾN TRÚC ỨNG DỤNG & QUẢN LÝ GIAO DỊCH (TRANSACTION)** | - Sơ đồ 3 tầng: Giao diện `Streamlit` -> Tầng kết nối `db.py` (Parameterized Queries + Transaction) -> `MySQL 8.0`.<br>- Cơ chế bảo vệ kép: Kiểm tra tại tầng giao diện + 56 ràng buộc khai báo tại MySQL.<br>- Minh họa giao dịch nguyên tử khi Đặt tour (`F1`) và Hủy tour (`F2`). | Khánh (7:00 - 8:30) |
 | **Slide 7** | **6. DEMO TRỰC TIẾP 6 CHỨC NĂNG (`F1, F2, F3, S1, R1, R2`)** | - Liệt kê kịch bản Demo khép kín 6 màn hình trên dữ liệu thực tế.<br>- Mời giảng viên theo dõi màn hình ứng dụng trực tiếp. | Khánh điều phối Demo (8:30 - 11:30) |
 | **Slide 8** | **7. TỔNG KẾT & PHẦN HỎI ĐÁP (Q&A)** | - Bảng đối chiếu 7/7 tiêu chí đánh giá của học phần đều hoàn thành 100%.<br>- Lời cảm ơn giảng viên và lắng nghe câu hỏi vấn đáp. | Cả nhóm (11:30 - 12:00) |

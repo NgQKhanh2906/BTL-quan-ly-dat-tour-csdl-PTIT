@@ -1,12 +1,12 @@
 # HƯỚNG DẪN CÔNG VIỆC CHI TIẾT DÀNH RIÊNG CHO THỊNH (DATABASE NORMALIZATION, F3 & WORD REPORT EDITOR)
 
-- **Họ và tên thành viên:** Thịnh
-- **Vai trò trong nhóm:** Database Normalization Specialist, UI Developer (`F3`) & Chief Report Editor (Phụ trách kiểm chứng chuẩn hóa 3NF/BCNF tại Chương 4, lập trình màn hình `F3 - Đánh giá sau chuyến đi`, và là **người duy nhất** biên tập trực tiếp file báo cáo Word `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` + xuất file `.pdf` hoàn chỉnh)
+- **Họ và tên thành viên:** Nguyễn Tiến Thịnh (`B24DCCN546`)
+- **Vai trò trong nhóm:** Database Normalization Specialist, UI Developer (`F3`) & Chief Report Editor (Phụ trách kiểm chứng chuẩn hóa 3NF tại Chương 4, lập trình màn hình `F3 - Đánh giá sau chuyến đi`, và là **người duy nhất** biên tập trực tiếp file báo cáo Word `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` + xuất file `.pdf` hoàn chỉnh)
 - **Phạm vi file được phép chỉnh sửa trực tiếp:**
   1. `tour_app/pages/3_Danh_gia.py`
   2. `screenshots/Hinh08_F3_GiaoDien.png`
   3. `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` và bản xuất `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.pdf`
-- **Nguyên tắc quan trọng:** Tài liệu này đã bao gồm **100% bảng đối chiếu 11 thực thể, 12 bảng quan hệ, 32 quy tắc toàn vẹn (`RB01` - `RB32`), phân tích chuẩn hóa 3NF/BCNF, câu lệnh SQL, mã nguồn Python và từng phím tắt trên Microsoft Word** dành cho bạn. Bạn chỉ cần làm đúng từ trên xuống dưới theo từng ngày mà không cần mở bất kỳ tài liệu cũ nào khác.
+- **Nguyên tắc quan trọng:** Tài liệu này đã bao gồm **100% bảng đối chiếu 11 thực thể, 12 bảng quan hệ, 32 quy tắc toàn vẹn (`RB01` - `RB32`), phân tích chuẩn hóa 3NF, câu lệnh SQL, mã nguồn Python và từng phím tắt trên Microsoft Word** dành cho bạn. Bạn chỉ cần làm đúng từ trên xuống dưới theo từng ngày mà không cần mở bất kỳ tài liệu cũ nào khác.
 
 ---
 
@@ -16,7 +16,7 @@
 2. [Chuẩn bị môi trường và quy trình Git dành riêng cho Thịnh](#2-chuẩn-bị-môi-trường-và-quy-trình-git-dành-riêng-cho-thịnh)
 3. [Nhiệm vụ TH1 & TH2 (05/11 - 07/11): Quản lý báo cáo Word và Rà soát Mục 2.1, 3.3, 3.4](#3-nhiệm-vụ-th1--th2-0511---0711-quản-lý-báo-cáo-word-và-rà-soát-mục-21-33-34)
 4. [Nhiệm vụ TH3 (08/11 - 09/11): Xây dựng màn hình F3 - Đánh giá sau chuyến đi](#4-nhiệm-vụ-th3-0811---0911-xây-dựng-màn-hình-f3---đánh-giá-sau-chuyến-đi)
-5. [Nhiệm vụ TH4 (10/11): Kiểm chứng chuẩn hóa 3NF / BCNF tại Chương 4](#5-nhiệm-vụ-th4-1011-kiểm-chứng-chuẩn-hóa-3nf--bcnf-tại-chương-4)
+5. [Nhiệm vụ TH4 (10/11): Kiểm chứng chuẩn hóa 3NF tại Chương 4](#5-nhiệm-vụ-th4-1011-kiểm-chứng-chuẩn-hóa-3nf-tại-chương-4)
 6. [Nhiệm vụ TH5, TH6, TH7, TH8, TH9, TH10 (11/11 - 21/11): Chụp ảnh, Kiểm thử chéo và Hoàn thiện báo cáo Word/PDF](#6-nhiệm-vụ-th5-th6-th7-th8-th9-th10-1111---2111-chụp-ảnh-kiểm-thử-chéo-và-hoàn-thiện-báo-cáo-wordpdf)
 7. [Kịch bản thuyết trình và Trả lời vấn đáp dành riêng cho Thịnh](#7-kịch-bản-thuyết-trình-và-trả-lời-vấn-đáp-dành-riêng-cho-thịnh)
 
@@ -29,7 +29,7 @@
 | **TH1** | 05/11 | Mở và kiểm tra định dạng chuẩn của file `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` trên Microsoft Word | Đảm bảo khổ giấy A4, lề chuẩn, font Times New Roman 13pt |
 | **TH2** | 06/11 - 07/11 | Đối chiếu Mục 2.1 (11 thực thể), Mục 3.3 (Từ điển dữ liệu 12 bảng) và Mục 3.4 (32 ràng buộc `RB01` - `RB32`) với file `1_QuanLyDatTour_v3.sql` | Cập nhật số liệu 12 bảng, 13 `FK`, 56 ràng buộc khai báo vào file Word |
 | **TH3** | 08/11 - 09/11 | Lập trình màn hình `F3 - Đánh giá sau chuyến đi` (`tour_app/pages/3_Danh_gia.py`) | Code chạy qua 6 ca kiểm thử, tạo Pull Request `feature/f3-danh-gia` |
-| **TH4** | 10/11 | Rà soát Chương 4 (Chuẩn hóa lược đồ CSDL 1NF -> 2NF -> 3NF -> BCNF) và chạy thử SQL chứng minh trên MySQL | Chương 4 khớp 100% với Phương án A (12 bảng đều đạt 3NF & BCNF) |
+| **TH4** | 10/11 | Rà soát Chương 4 (Chuẩn hóa lược đồ CSDL 1NF -> 2NF -> 3NF) và chạy thử SQL chứng minh trên MySQL | Chương 4 khớp 100% với Phương án A (12 bảng đều đạt chuẩn 3NF) |
 | **TH5** | 11/11 - 12/11 | Chụp ảnh giao diện `screenshots/Hinh08_F3_GiaoDien.png` | File `Hinh08_F3_GiaoDien.png` đẩy lên Git |
 | **TH6** | 14/11 | Kiểm thử chéo màn hình `F1 - Đặt tour mới` của Đạt theo 6 kịch bản | Báo cáo kết quả kiểm thử `F1` cho Đạt |
 | **TH7** | 15/11 | Tổng hợp góp ý từ 3 file `GopY_Dat.md`, `GopY_Tuan.md`, `GopY_Khanh.md` và cập nhật vào báo cáo Word | Nội dung văn bản các chương từ 1 đến 9 hoàn chỉnh |
@@ -209,7 +209,7 @@ Kiểm tra Mục 3.4 đảm bảo 32 quy tắc toàn vẹn được phân thành
 ### 4.1. Tại sao màn hình F3 lại được thiết kế như vậy? (Giải thích lý do kỹ thuật)
 
 1. **Tại sao thông tin đánh giá lại lưu ngay trong bảng `DonHang` mà không tách ra bảng `DanhGia` riêng?**
-   - Theo mô hình ERD ở Chương 2, mỗi đơn đặt tour sau khi hoàn thành (`HOANTHANH`) chỉ có **tối đa 1 lượt đánh giá duy nhất** (quan hệ `1 : 1` với đơn hàng). Vì vậy, hai thuộc tính phức hợp `DanhGiaTour(DiemDanhGiaTour, NhanXetTour, NgayDanhGia)` và `DanhGiaNhaNghi(DiemDanhGiaNhaNghi, NhanXetNhaNghi)` được làm phẳng (flatten) trực tiếp thành 5 cột trong bảng `DonHang`. Thiết kế này vừa đạt chuẩn **BCNF** (vì mọi cột đánh giá đều phụ thuộc hàm trực tiếp vào khóa chính `MaDonHang`), vừa tránh phải `JOIN` thêm bảng phụ khi thống kê điểm trung bình.
+   - Theo mô hình ERD ở Chương 2, mỗi đơn đặt tour sau khi hoàn thành (`HOANTHANH`) chỉ có **tối đa 1 lượt đánh giá duy nhất** (quan hệ `1 : 1` với đơn hàng). Vì vậy, hai thuộc tính phức hợp `DanhGiaTour(DiemDanhGiaTour, NhanXetTour, NgayDanhGia)` và `DanhGiaNhaNghi(DiemDanhGiaNhaNghi, NhanXetNhaNghi)` được làm phẳng (flatten) trực tiếp thành 5 cột trong bảng `DonHang`. Thiết kế này vừa đạt chuẩn **3NF** (vì mọi cột đánh giá đều phụ thuộc hàm trực tiếp vào khóa chính `MaDonHang`), vừa tránh phải `JOIN` thêm bảng phụ khi thống kê điểm trung bình.
 2. **Tại sao khi người dùng không nhập nhận xét bằng chữ, code Python phải truyền giá trị `None` (tức `NULL` trong SQL) thay vì chuỗi rỗng `""`?**
    - Trong bảng `DonHang`, ràng buộc `chk_DonHang_NhanXet` quy định:
      `CHECK ((NhanXetTour IS NULL OR TRIM(NhanXetTour) <> '') AND (NhanXetNhaNghi IS NULL OR TRIM(NhanXetNhaNghi) <> ''))`
@@ -432,16 +432,15 @@ Mở PowerShell chạy ứng dụng (`streamlit run app.py`), bấm vào mục *
 
 ---
 
-## 5. NHIỆM VỤ TH4 (10/11): KIỂM CHỨNG CHUẨN HÓA 3NF / BCNF TẠI CHƯƠNG 4
+## 5. NHIỆM VỤ TH4 (10/11): KIỂM CHỨNG CHUẨN HÓA 3NF TẠI CHƯƠNG 4
 
 Đây là chương lý thuyết ăn điểm cao nhất của bạn khi bảo vệ trước giảng viên. Hãy nắm vững toàn bộ lập luận và chạy thử các câu lệnh SQL chứng minh dưới đây trên MySQL Workbench.
 
-### 5.1. Định nghĩa 4 dạng chuẩn sử dụng trong Chương 4
+### 5.1. Định nghĩa 3 dạng chuẩn sử dụng trong Chương 4
 
 1. **Dạng chuẩn 1 (`1NF`):** Mọi thuộc tính trong quan hệ đều mang giá trị nguyên tố (atomic), không có thuộc tính lặp hay thuộc tính đa trị.
 2. **Dạng chuẩn 2 (`2NF`):** Quan hệ đạt `1NF` và mọi thuộc tính không khóa đều phụ thuộc hàm đầy đủ vào khóa chính (không tồn tại phụ thuộc hàm bộ phận vào một tập con thực sự của khóa chính ghép).
 3. **Dạng chuẩn 3 (`3NF`):** Quan hệ đạt `2NF` và không có thuộc tính không khóa nào phụ thuộc bắc cầu (transitive dependency) vào khóa chính thông qua một thuộc tính không khóa khác. Nói cách khác, với mọi phụ thuộc hàm không tầm thường $X \rightarrow A$, thì $X$ phải là siêu khóa (superkey) hoặc $A$ là thuộc tính khóa (prime attribute).
-4. **Dạng chuẩn Boyce-Codd (`BCNF`):** Mạnh hơn `3NF`: với mọi phụ thuộc hàm không tầm thường $X \rightarrow A$, vế trái $X$ **bắt buộc phải là một siêu khóa**.
 
 ### 5.2. Tổng hợp 5 bước chuẩn hóa đã thực hiện từ mô hình thực tế sang lược đồ 12 bảng
 
@@ -453,38 +452,38 @@ Mở PowerShell chạy ứng dụng (`streamlit run app.py`), bấm vào mục *
    - Nếu lưu cột `TongTien` trong `DonHang`, sẽ xuất hiện phụ thuộc hàm liên bảng từ `(MaLichTrinh, SoLuongKhach, MaNhaNghi, SoPhong) -> TongTien` và dễ gây dị thường cập nhật khi đổi giá phòng hoặc số khách. Nhóm tính động `TongTien` qua View `v_DonHang_ChiTiet`.
 4. **Không lưu lại `MaTinh` trong `DonHang` hay `MaDonVi` trong `ChuyenTrungChuyen` (Tránh phụ thuộc bắc cầu `3NF`):**
    - Tỉnh của nhà nghỉ đã xác định qua `MaNhaNghi -> MaTinh` tại bảng `NhaNghi`; đơn vị vận tải đã xác định qua `MaXe -> MaDonVi` tại bảng `Xe`.
-5. **Phát hiện và xử lý phụ thuộc bắc cầu `MaKH -> SoID -> LoaiThe` tại bảng `KhachHang` (Tách bảng thứ 12 `TheThanhToan` để đạt `3NF` và `BCNF` tuyệt đối):**
+5. **Phát hiện và xử lý phụ thuộc bắc cầu `MaKH -> SoID -> LoaiThe` tại bảng `KhachHang` (Tách bảng thứ 12 `TheThanhToan` để đạt chuẩn `3NF`):**
    - **Phân tích nguyên nhân vi phạm nếu để chung trong `KhachHang`:**
      - Trong bảng `KhachHang` ban đầu có các thuộc tính: `MaKH` (khóa chính), `HoTen`, `DiaChi`, `Email`, `SoID` (số thẻ 16 chữ số), `LoaiThe` (`Visa`, `MasterCard`, `JCB`, `Napas`).
      - Mỗi khách hàng có tối đa 1 thẻ thanh toán mặc định nên `MaKH -> SoID`.
      - Tuy nhiên, nhiều khách hàng trong cùng một gia đình (ví dụ hai vợ chồng `KH001 - Nguyễn Văn An` và `KH002 - Trần Thị Bình`) có thể dùng chung một thẻ thanh toán gia đình (`SoID = '4111111111111111'`). Do đó `SoID` **không phải là khóa ứng viên** của bảng `KhachHang`.
      - Mặt khác, mỗi số thẻ `SoID` chỉ thuộc về đúng một tổ chức phát hành thẻ duy nhất (số thẻ đầu `4` luôn là `Visa`), tức là tồn tại phụ thuộc hàm `SoID -> LoaiThe`.
-     - Kết hợp lại ta có chuỗi phụ thuộc bắc cầu: **`MaKH -> SoID -> LoaiThe`**, trong đó `SoID` không phải siêu khóa và `LoaiThe` không phải thuộc tính khóa. Điều này **vi phạm chuẩn `3NF` và `BCNF`**, dẫn đến 3 dị thường dữ liệu (Anomalies):
+     - Kết hợp lại ta có chuỗi phụ thuộc bắc cầu: **`MaKH -> SoID -> LoaiThe`**, trong đó `SoID` không phải siêu khóa và `LoaiThe` không phải thuộc tính khóa. Điều này **vi phạm chuẩn `3NF`**, dẫn đến 3 dị thường dữ liệu (Anomalies):
        1. *Dị thường cập nhật (Update Anomaly):* Nếu cập nhật `LoaiThe` của thẻ `'4111111111111111'` ở dòng `KH001` mà quên cập nhật ở dòng `KH002`, cùng một số thẻ sẽ mang 2 loại thẻ khác nhau!
        2. *Dị thường chèn (Insert Anomaly):* Không thể lưu thông tin một thẻ thanh toán hợp lệ nếu chưa gắn với khách hàng nào.
        3. *Dị thường xóa (Delete Anomaly):* Nếu xóa khách hàng cuối cùng đang dùng một thẻ, thông tin loại thẻ của số thẻ đó cũng bị mất.
    - **Giải pháp phân rã (Phương án A):**
      - Tách quan hệ `KhachHang` thành 2 quan hệ:
-       1. `TheThanhToan(SoID, LoaiThe)` với khóa chính `SoID` và phụ thuộc hàm `SoID -> LoaiThe` (đạt `BCNF`).
-       2. `KhachHang(MaKH, HoTen, DiaChi, Email, SoID)` với khóa chính `MaKH`, khóa dự tuyển `Email`, và khóa ngoại `SoID` tham chiếu `TheThanhToan(SoID)` (đạt `BCNF`).
+       1. `TheThanhToan(SoID, LoaiThe)` với khóa chính `SoID` và phụ thuộc hàm `SoID -> LoaiThe` (đạt `3NF`).
+       2. `KhachHang(MaKH, HoTen, DiaChi, Email, SoID)` với khóa chính `MaKH`, khóa dự tuyển `Email`, và khóa ngoại `SoID` tham chiếu `TheThanhToan(SoID)` (đạt `3NF`).
      - Theo **Định lý Heath**, vì `SoID -> LoaiThe` giữ nguyên và $R_1 \cap R_2 = \{\text{SoID}\}$ là khóa chính của bảng `TheThanhToan`, phép phân rã này **bảo toàn thông tin (Lossless-Join Decomposition)** và **bảo toàn toàn bộ phụ thuộc hàm (Dependency-Preserving)**.
 
 ### 5.3. Bảng tổng hợp kiểm tra dạng chuẩn của toàn bộ 12 bảng trong Chương 4
 
 | STT | Tên bảng quan hệ | Khóa ứng viên (Candidate Keys) | Các phụ thuộc hàm không tầm thường ($F$) | Dạng chuẩn đạt được | Giải thích ngắn gọn |
 | :---: | :--- | :--- | :--- | :---: | :--- |
-| 1 | `TinhThanh` | `MaTinh`, `TenTinh` | `MaTinh -> TenTinh`; `TenTinh -> MaTinh` | **3NF & BCNF** | Mọi vế trái đều là khóa ứng viên |
-| 2 | `TheThanhToan` | `SoID` | `SoID -> LoaiThe` | **3NF & BCNF** | Bảng có 2 thuộc tính, vế trái `SoID` là khóa chính |
-| 3 | `KhachHang` | `MaKH`, `Email` | `MaKH -> HoTen, DiaChi, Email, SoID`; `Email -> MaKH, HoTen, DiaChi, SoID` | **3NF & BCNF** | Đã tách `LoaiThe` sang `TheThanhToan`, mọi vế trái đều là khóa ứng viên |
-| 4 | `SDT_KhachHang` | `(MaKH, SoDienThoai)` | *(Không có phụ thuộc hàm không tầm thường vì toàn bộ bảng là khóa)* | **3NF & BCNF** | Quan hệ toàn khóa (All-key relation) |
-| 5 | `Tour` | `MaTour` | `MaTour -> TenTour, MoTa, SoNgay, GiaCoBan, MaTinhXuatPhat, MaTinhDen` | **3NF & BCNF** | Khóa đơn `MaTour` xác định trực tiếp mọi cột |
-| 6 | `LichTrinh` | `MaLichTrinh` | `MaLichTrinh -> MaTour, NgayKhoiHanh, NgayKetThuc, SoChoToiDa, SoChoDaDat` | **3NF & BCNF** | Khóa đơn `MaLichTrinh` xác định trực tiếp mọi cột |
-| 7 | `NhaNghi` | `MaNhaNghi` | `MaNhaNghi -> TenNhaNghi, DiaChi, MaTinh, SucChuaPhong, GiaPhongMoiDem` | **3NF & BCNF** | Khóa đơn `MaNhaNghi` xác định trực tiếp mọi cột |
-| 8 | `DonViVanTai` | `MaDonVi`, `Email` | `MaDonVi -> TenDonVi, DiaChi, SoDienThoai, Email`; `Email -> MaDonVi, ...` | **3NF & BCNF** | Mọi vế trái đều là khóa ứng viên |
-| 9 | `Xe` | `MaXe`, `BienSoXe` | `MaXe -> BienSoXe, LoaiXe, SoChoNgoi, MaDonVi`; `BienSoXe -> MaXe, ...` | **3NF & BCNF** | Mọi vế trái đều là khóa ứng viên |
-| 10 | `TrangThaiDonHang` | `MaTrangThai` | `MaTrangThai -> TenTrangThai, MoTa` | **3NF & BCNF** | Khóa đơn `MaTrangThai` xác định trực tiếp mọi cột |
-| 11 | `DonHang` | `MaDonHang` | `MaDonHang -> MaKH, MaLichTrinh, MaNhaNghi, NgayDat, SoLuongKhach, SoPhong, MaTrangThai, NgayHuy, LyDoHuy, PhiPhatHuy, DiemDanhGiaTour, NhanXetTour, NgayDanhGia, DiemDanhGiaNhaNghi, NhanXetNhaNghi` | **3NF & BCNF** | Mọi thuộc tính đều phụ thuộc trực tiếp vào khóa đơn `MaDonHang` |
-| 12 | `ChuyenTrungChuyen` | `(MaDonHang, SoThuTuChuyen)` | `(MaDonHang, SoThuTuChuyen) -> MaXe, DiemDon, DiemTra` | **3NF & BCNF** | Phụ thuộc đầy đủ vào khóa ghép `(MaDonHang, SoThuTuChuyen)`, không có phụ thuộc bộ phận hay bắc cầu |
+| 1 | `TinhThanh` | `MaTinh`, `TenTinh` | `MaTinh -> TenTinh`; `TenTinh -> MaTinh` | **Đạt 3NF** | Mọi vế trái đều là khóa ứng viên |
+| 2 | `TheThanhToan` | `SoID` | `SoID -> LoaiThe` | **Đạt 3NF** | Bảng có 2 thuộc tính, vế trái `SoID` là khóa chính |
+| 3 | `KhachHang` | `MaKH`, `Email` | `MaKH -> HoTen, DiaChi, Email, SoID`; `Email -> MaKH, HoTen, DiaChi, SoID` | **Đạt 3NF** | Đã tách `LoaiThe` sang `TheThanhToan`, không còn phụ thuộc bắc cầu |
+| 4 | `SDT_KhachHang` | `(MaKH, SoDienThoai)` | *(Không có phụ thuộc hàm không tầm thường vì toàn bộ bảng là khóa)* | **Đạt 3NF** | Quan hệ toàn khóa (All-key relation) |
+| 5 | `Tour` | `MaTour` | `MaTour -> TenTour, MoTa, SoNgay, GiaCoBan, MaTinhXuatPhat, MaTinhDen` | **Đạt 3NF** | Khóa đơn `MaTour` xác định trực tiếp mọi cột |
+| 6 | `LichTrinh` | `MaLichTrinh` | `MaLichTrinh -> MaTour, NgayKhoiHanh, NgayKetThuc, SoChoToiDa, SoChoDaDat` | **Đạt 3NF** | Khóa đơn `MaLichTrinh` xác định trực tiếp mọi cột |
+| 7 | `NhaNghi` | `MaNhaNghi` | `MaNhaNghi -> TenNhaNghi, DiaChi, MaTinh, SucChuaPhong, GiaPhongMoiDem` | **Đạt 3NF** | Khóa đơn `MaNhaNghi` xác định trực tiếp mọi cột |
+| 8 | `DonViVanTai` | `MaDonVi`, `Email` | `MaDonVi -> TenDonVi, DiaChi, SoDienThoai, Email`; `Email -> MaDonVi, ...` | **Đạt 3NF** | Mọi vế trái đều là khóa ứng viên |
+| 9 | `Xe` | `MaXe`, `BienSoXe` | `MaXe -> BienSoXe, LoaiXe, SoChoNgoi, MaDonVi`; `BienSoXe -> MaXe, ...` | **Đạt 3NF** | Mọi vế trái đều là khóa ứng viên |
+| 10 | `TrangThaiDonHang` | `MaTrangThai` | `MaTrangThai -> TenTrangThai, MoTa` | **Đạt 3NF** | Khóa đơn `MaTrangThai` xác định trực tiếp mọi cột |
+| 11 | `DonHang` | `MaDonHang` | `MaDonHang -> MaKH, MaLichTrinh, MaNhaNghi, NgayDat, SoLuongKhach, SoPhong, MaTrangThai, NgayHuy, LyDoHuy, PhiPhatHuy, DiemDanhGiaTour, NhanXetTour, NgayDanhGia, DiemDanhGiaNhaNghi, NhanXetNhaNghi` | **Đạt 3NF** | Mọi thuộc tính đều phụ thuộc trực tiếp vào khóa đơn `MaDonHang` |
+| 12 | `ChuyenTrungChuyen` | `(MaDonHang, SoThuTuChuyen)` | `(MaDonHang, SoThuTuChuyen) -> MaXe, DiemDon, DiemTra` | **Đạt 3NF** | Phụ thuộc đầy đủ vào khóa ghép `(MaDonHang, SoThuTuChuyen)`, không có phụ thuộc bộ phận hay bắc cầu |
 
 ### 5.4. Câu lệnh SQL kiểm chứng phép nối không mất thông tin (Lossless-Join) trên MySQL Workbench
 
@@ -558,7 +557,7 @@ Sau khi Khánh, Đạt, Tuân và bạn đã đẩy đủ ảnh vào thư mục 
 
 #### C. Quy trình tìm và xóa sạch 100% các chỗ tô nền vàng (`Highlight`) trong báo cáo Word
 
-Sau khi đã điền thông tin trang bìa, bảng phân công nhiệm vụ (do Tuân gửi ở `TU7`) và chèn xong 13 hình ảnh, bạn thực hiện bài kiểm tra tự động sau trên Word để chắc chắn không còn sót bất kỳ dòng `[CẦN BỔ SUNG]` nào:
+Thông tin Họ tên, Mã số sinh viên (MSSV) và Công việc phụ trách của cả 4 thành viên (`Nguyễn Tất Đạt - B24DCCN117`, `Nguyễn Tiến Thịnh - B24DCCN546`, `Bùi Đức Tuân - B24DCCN590`, `Nguyễn Quốc Khánh - B24DCCN311`) đã được điền sẵn vào Trang bìa và Bảng 2 (trang 4). Sau khi chèn xong 13 hình ảnh, bạn thực hiện bài kiểm tra tự động sau trên Word để chắc chắn không còn sót bất kỳ dòng `[CẦN BỔ SUNG]` nào:
 
 1. Nhấn tổ hợp phím **`Ctrl + H`** để mở hộp thoại **Find and Replace**, chuyển sang thẻ **Find**.
 2. Để trống ô **Find what**, bấm vào nút **More >>** ở góc dưới.
@@ -594,18 +593,19 @@ Sau khi đã điền thông tin trang bìa, bảng phân công nhiệm vụ (do 
 > - Đặc biệt, thuộc tính đa trị `SDT` của khách hàng được tách thành bảng `SDT_KhachHang(MaKH, SoDienThoai)` có khóa chính ghép; thực thể yếu `ChuyenTrungChuyen` nhận khóa chính ghép `(MaDonHang, SoThuTuChuyen)`.
 > - Toàn bộ lược đồ được bảo vệ bởi **56 ràng buộc toàn vẹn khai báo** ngay trong MySQL (`12 PRIMARY KEY`, `13 FOREIGN KEY`, `27 CHECK`, `4 UNIQUE`) cùng **2 khung nhìn (`VIEW`)** tính toán tự động tổng tiền và lịch xe trung chuyển.
 >
-> Trên Slide 5 là kết quả phân tích chuẩn hóa từ `1NF` lên `3NF` và `BCNF`:
+> Trên Slide 5 là kết quả phân tích chuẩn hóa từ `1NF`, `2NF` lên `3NF`:
 > - Qua kiểm tra phụ thuộc hàm trên bảng `KhachHang` ban đầu, nhóm phát hiện: nhiều khách hàng trong cùng gia đình có thể dùng chung một số thẻ `SoID` (ví dụ `KH001` và `KH002` cùng dùng thẻ `'4111111111111111'`), nên `SoID` không phải là khóa ứng viên của `KhachHang`. Tuy nhiên mỗi số thẻ `SoID` lại xác định duy nhất một `LoaiThe` (`SoID -> LoaiThe`), tạo ra phụ thuộc bắc cầu **`MaKH -> SoID -> LoaiThe`** vi phạm chuẩn `3NF`.
-> - Để giải quyết triệt để dị thường cập nhật, nhóm đã tách bảng thứ 12 là `TheThanhToan(SoID, LoaiThe)` theo định lý Heath. Sau bước phân rã này, **100% cả 12 bảng trong hệ thống đều đạt chuẩn 3NF và chuẩn Boyce-Codd (BCNF)**, vừa bảo toàn thông tin (Lossless-Join), vừa bảo toàn phụ thuộc hàm.
+> - Để giải quyết triệt để dị thường cập nhật, nhóm đã tách bảng thứ 12 là `TheThanhToan(SoID, LoaiThe)` theo định lý Heath. Sau bước phân rã này, **100% cả 12 bảng trong hệ thống đều đạt chuẩn 3NF**, vừa bảo toàn thông tin (Lossless-Join), vừa bảo toàn phụ thuộc hàm.
 > Tiếp theo, em xin mời bạn Khánh trình bày về kiến trúc ứng dụng và điều phối phần Demo trực tiếp ạ."
 
-### 7.2. Bộ câu hỏi vấn đáp trọng tâm dành cho Thịnh (Câu 1, Câu 2, Câu 15 và 6 câu hỏi xoáy về Chuẩn hóa)
+### 7.2. Bộ câu hỏi vấn đáp trọng tâm dành cho Thịnh (Câu 1, Câu 2, Câu 15 và 5 câu hỏi xoáy về Chuẩn hóa 3NF)
 
-#### Câu 1: "Hãy chỉ ra sự khác biệt giữa 3NF và BCNF. Trong 12 bảng của nhóm, tại sao tất cả các bảng đạt 3NF lại đồng thời đạt luôn BCNF?"
+#### Câu 1: "Hãy nêu điều kiện để một lược đồ quan hệ đạt chuẩn 1NF, 2NF và 3NF. Trong 12 bảng của nhóm, bảng nào có khóa chính ghép và tại sao bảng đó đạt 2NF, 3NF?"
 
 - **Cách trả lời chuẩn xác:**
-  > "Thưa thầy/cô, một lược đồ quan hệ $R$ đạt `3NF` nếu với mọi phụ thuộc hàm không tầm thường $X \rightarrow A$, thì hoặc $X$ là siêu khóa, hoặc $A$ là thuộc tính khóa (thuộc về một khóa ứng viên nào đó). Còn `BCNF` chặt hơn ở chỗ: bỏ đi vế thứ hai, tức là **bắt buộc $X$ phải luôn là siêu khóa** trong mọi phụ thuộc hàm không tầm thường.
-  > Một bảng đạt `3NF` mà vi phạm `BCNF` chỉ xảy ra khi bảng đó có từ 2 khóa ứng viên chồng lấn nhau trở lên và có một thuộc tính không khóa quyết định một phần của khóa ứng viên. Trong 12 bảng của nhóm em, sau khi đã tách `TheThanhToan(SoID, LoaiThe)`, mọi phụ thuộc hàm không tầm thường ở cả 12 bảng đều có vế trái $X$ là khóa chính hoặc khóa ứng viên (`UNIQUE NOT NULL` như `TenTinh`, `Email`, `BienSoXe`). Do đó cả 12 bảng đạt `3NF` đều đạt luôn `BCNF` ạ."
+  > "Thưa thầy/cô:
+  > - Một lược đồ đạt `1NF` khi mọi thuộc tính đều mang giá trị đơn nguyên tố; đạt `2NF` khi đạt `1NF` và mọi thuộc tính không khóa đều phụ thuộc hàm đầy đủ vào khóa chính (không phụ thuộc vào một phần của khóa ghép); đạt `3NF` khi đạt `2NF` và không có thuộc tính không khóa nào phụ thuộc bắc cầu vào khóa chính.
+  > - Trong 12 bảng của nhóm em có 2 bảng dùng khóa chính ghép là `SDT_KhachHang(MaKH, SoDienThoai)` và `ChuyenTrungChuyen(MaDonHang, SoThuTuChuyen, MaXe, DiemDon, DiemTra)`. Bảng `SDT_KhachHang` có toàn bộ các cột đều thuộc khóa chính nên hiển nhiên đạt `2NF` và `3NF`. Còn ở bảng `ChuyenTrungChuyen`, mỗi đơn hàng có thể có cả chuyến đón (`SoThuTuChuyen = 1`) và chuyến trả (`SoThuTuChuyen = 2`) với xe, điểm đón, điểm trả khác nhau nên phải kết hợp cả `(MaDonHang, SoThuTuChuyen)` mới xác định được `MaXe`, `DiemDon`, `DiemTra` — tức là phụ thuộc hàm đầy đủ (đạt `2NF`) và không có phụ thuộc bắc cầu giữa các cột không khóa (đạt `3NF`) ạ."
 
 #### Câu 2: "Hãy chứng minh phụ thuộc bắc cầu ở bảng KhachHang trước khi tách và chứng minh phép tách bảng TheThanhToan không làm mất mát thông tin."
 
@@ -621,17 +621,15 @@ Sau khi đã điền thông tin trang bìa, bảng phân công nhiệm vụ (do 
   > - **Ở tầng CSDL (MySQL):** Ràng buộc `chk_DonHang_DanhGia` kiểm tra nếu `MaTrangThai <> 'HOANTHANH'` thì toàn bộ 5 cột đánh giá (`DiemDanhGiaTour`, `NhanXetTour`, `NgayDanhGia`, `DiemDanhGiaNhaNghi`, `NhanXetNhaNghi`) bắt buộc phải là `NULL`. Nếu câu lệnh nào cố tình ghi điểm đánh giá cho đơn đang ở trạng thái `DAT`, `THANHTOAN` hoặc `HUY`, MySQL sẽ từ chối ngay.
   > - **Ở tầng Ứng dụng & Giao dịch (`F3`):** Câu truy vấn `F3.1` chỉ nạp các đơn có `MaTrangThai = 'HOANTHANH' AND NgayDanhGia IS NULL`. Khi lưu đánh giá, câu lệnh `UPDATE` (`F3.2`) kiểm tra lại điều kiện `WHERE MaDonHang = %s AND MaTrangThai = 'HOANTHANH' AND NgayDanhGia IS NULL` kèm cờ `phai_co_dong = True`. Ngay khi đánh giá lần đầu thành công, cột `NgayDanhGia` khác `NULL` nên đơn đó không thể bị đánh giá lần thứ hai ạ."
 
-#### 6 câu hỏi phản biện chuyên sâu về Chuẩn hóa (Dành cho điểm 9 - 10)
+#### 5 câu hỏi phản biện chuyên sâu về Chuẩn hóa 3NF (Dành cho điểm 9 - 10)
 
 1. **"Tại sao cột `SoChoDaDat` trong bảng `LichTrinh` có thể tính được từ `SUM(SoLuongKhach)` của bảng `DonHang` mà nhóm vẫn lưu trong bảng `LichTrinh`? Như vậy có vi phạm 3NF không?"**
-   - *Trả lời:* Xét trong phạm vi nội bộ một quan hệ `LichTrinh`, `SoChoDaDat` chỉ phụ thuộc vào khóa chính `MaLichTrinh` (`MaLichTrinh -> SoChoDaDat`), nên xét theo định nghĩa toán học của phụ thuộc hàm trong một quan hệ thì bảng `LichTrinh` vẫn đạt `BCNF`. Về mặt thiết kế hệ thống, đây là kỹ thuật **dư thừa có kiểm soát (Controlled Redundancy)** nhằm phục vụ khóa dòng (`Row-level Locking`) và kiểm tra tức thời `CHECK (SoChoDaDat <= SoChoToiDa)` ngay tại bảng `LichTrinh` để chống đặt quá số chỗ (Overbooking) khi có nhiều giao dịch đồng thời, được đồng bộ tuyệt đối bằng `Transaction` ở `F1` và `F2`.
+   - *Trả lời:* Xét trong phạm vi nội bộ một quan hệ `LichTrinh`, `SoChoDaDat` chỉ phụ thuộc vào khóa chính `MaLichTrinh` (`MaLichTrinh -> SoChoDaDat`), không phụ thuộc bắc cầu qua cột không khóa nào trong bảng `LichTrinh`, nên xét theo định nghĩa phụ thuộc hàm trong một quan hệ thì bảng `LichTrinh` vẫn đạt `3NF`. Về mặt thiết kế hệ thống, đây là kỹ thuật **dư thừa có kiểm soát (Controlled Redundancy)** nhằm phục vụ khóa dòng (`Row-level Locking`) và kiểm tra tức thời `CHECK (SoChoDaDat <= SoChoToiDa)` ngay tại bảng `LichTrinh` để chống đặt quá số chỗ (Overbooking) khi có nhiều giao dịch đồng thời, được đồng bộ tuyệt đối bằng `Transaction` ở `F1` và `F2`.
 2. **"Trong bảng `DonHang` có nhiều cột có thể nhận giá trị `NULL` (như `MaNhaNghi`, `NgayHuy`, `LyDoHuy`, `PhiPhatHuy`, `DiemDanhGiaTour`...). Việc có nhiều cột `NULL` có vi phạm 3NF không?"**
-   - *Trả lời:* Không vi phạm `3NF` hay `BCNF` vì khi các thuộc tính này có giá trị, chúng đều phụ thuộc hàm trực tiếp và duy nhất vào khóa chính `MaDonHang`. Nhóm không tách thành các bảng con `HuyDonHang` hay `DanhGiaDonHang` vì mỗi đơn chỉ có tối đa 1 lần hủy hoặc 1 lần đánh giá (quan hệ `1 : 0..1`), và nhóm đã dùng các ràng buộc `chk_DonHang_Huy`, `chk_DonHang_DanhGia` để kiểm soát chặt chẽ khi nào các cột này được phép `NULL` hay `NOT NULL`.
+   - *Trả lời:* Không vi phạm `3NF` vì khi các thuộc tính này có giá trị, chúng đều phụ thuộc hàm trực tiếp và duy nhất vào khóa chính `MaDonHang`. Nhóm không tách thành các bảng con `HuyDonHang` hay `DanhGiaDonHang` vì mỗi đơn chỉ có tối đa 1 lần hủy hoặc 1 lần đánh giá (quan hệ `1 : 0..1`), và nhóm đã dùng các ràng buộc `chk_DonHang_Huy`, `chk_DonHang_DanhGia` để kiểm soát chặt chẽ khi nào các cột này được phép `NULL` hay `NOT NULL`.
 3. **"Tại sao không lưu cứng cột `TongTien` vào bảng `DonHang`?"**
    - *Trả lời:* Vì `TongTien` được tính từ `SoLuongKhach * GiaCoBan + SoPhong * GiaPhongMoiDem * SoDem`. Nếu lưu cứng vào `DonHang`, khi thay đổi số phòng hoặc nhà nghỉ mà quên tính lại sẽ gây bất nhất dữ liệu. Do đó nhóm cài đặt `TongTien` qua View `v_DonHang_ChiTiet` để luôn chính xác theo thời gian thực.
 4. **"Phụ thuộc hàm được xác định dựa trên 104 dòng dữ liệu mẫu hay dựa trên quy tắc nghiệp vụ?"**
    - *Trả lời:* Phụ thuộc hàm **luôn luôn được xác định dựa trên quy tắc nghiệp vụ (Business Rules)** của bài toán chứ không phải chỉ nhìn vào vài dòng dữ liệu mẫu hiện tại. Dữ liệu mẫu chỉ dùng để minh họa trường hợp phản ví dụ (như `KH001` và `KH002` dùng chung 1 thẻ thanh toán).
-5. **"Lược đồ 12 bảng của nhóm có đạt dạng chuẩn 4 (`4NF`) không?"**
-   - *Trả lời:* Có đạt `4NF` ạ. Một lược đồ đạt `BCNF` sẽ đạt `4NF` nếu không chứa phụ thuộc đa trị (Multivalued Dependency - MVD) không tầm thường nào ngoài các phụ thuộc hàm. Thuộc tính đa trị duy nhất trong bài toán là `SDT` của khách hàng đã được tách riêng ra bảng `SDT_KhachHang(MaKH, SoDienThoai)` chỉ gồm 2 cột khóa nên cả 12 bảng đều đạt `4NF`.
-6. **"Trong bảng `ChuyenTrungChuyen(MaDonHang, SoThuTuChuyen, MaXe, DiemDon, DiemTra)`, có phụ thuộc hàm bộ phận nào vào riêng `MaDonHang` không?"**
-   - *Trả lời:* Không có ạ. Vì một đơn hàng có 2 chuyến trung chuyển (chuyến 1 là lượt đón, chuyến 2 là lượt trả), mỗi chuyến có điểm đón, điểm trả và xe phục vụ khác nhau (`XE01` đón, `XE02` trả). Do đó phải kết hợp cả cặp `(MaDonHang, SoThuTuChuyen)` mới xác định được `MaXe`, `DiemDon`, `DiemTra`, tức là đạt chuẩn `2NF`, `3NF` và `BCNF`.
+5. **"Trong bảng `ChuyenTrungChuyen(MaDonHang, SoThuTuChuyen, MaXe, DiemDon, DiemTra)`, có phụ thuộc hàm bộ phận nào vào riêng `MaDonHang` không?"**
+   - *Trả lời:* Không có ạ. Vì một đơn hàng có 2 chuyến trung chuyển (chuyến 1 là lượt đón, chuyến 2 là lượt trả), mỗi chuyến có điểm đón, điểm trả và xe phục vụ khác nhau (`XE01` đón, `XE02` trả). Do đó phải kết hợp cả cặp `(MaDonHang, SoThuTuChuyen)` mới xác định được `MaXe`, `DiemDon`, `DiemTra`, tức là đạt chuẩn `2NF` và `3NF`.

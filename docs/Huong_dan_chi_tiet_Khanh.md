@@ -8,20 +8,20 @@
 
 ## Phần 1. Tổng quan Lịch làm việc của Khánh theo Ngày (K1 -> K12)
 
-| Mã Task | Ngày thực hiện | Tên công việc | Nền tảng sử dụng | Sản phẩm đầu ra (File cụ thể) | Cách tự kiểm tra đã đạt |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **K1** | **05/11/2026** | Bàn giao báo cáo nháp `.docx` cho Thịnh | GitHub / Thư mục chung | `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` | Thịnh mở được trong Word và cập nhật được mục lục |
-| **K2** | **05/11 - 06/11** | Tạo 4 tệp SQL (12 bảng) và khung ứng dụng (`db.py`, `app.py`, `requirements.txt`) | MySQL Workbench 8.0, VS Code, PowerShell | 4 file trong `database/`, 3 file trong `tour_app/` | Chạy tệp 1 có 12 bảng, 56 ràng buộc; chạy `streamlit run app.py` báo `"Đã kết nối cơ sở dữ liệu: 12 bảng"` |
-| **K3** | **07/11/2026** | Đẩy tệp SQL số 1 và khung `tour_app` lên GitHub, hỗ trợ 3 bạn cài máy | PowerShell, GitHub | Nhánh `main` trên GitHub | Cả 4 máy trong nhóm mở được trang chủ tại `http://localhost:8501` |
-| **K4** | **08/11 - 09/11** | Viết màn hình Tìm kiếm `S1` và Báo cáo doanh thu `R2` | VS Code, Streamlit | `tour_app/pages/4_Tim_kiem.py`, `6_Bao_cao_doanh_thu.py`, `templates/bao_cao_doanh_thu.html` | `S1` đạt 6 ca kiểm thử; `R2` kỳ `01/09 - 31/12/2026` có dòng `TỔNG CỘNG` = `79.110.000 đ` |
-| **K5** | **09/11/2026** | Bổ sung Người lập, Nơi nhận, Khối ký cho báo cáo `R2` | VS Code, Microsoft Edge | Cập nhật `6_Bao_cao_doanh_thu.py` và `bao_cao_doanh_thu.html` | Để trống người lập thì ẩn nút tải; in ra PDF A4 ngang vừa khít 1 trang |
-| **K6** | **10/11/2026** | Vẽ sơ đồ `DataDiagram` bằng Reverse Engineer | MySQL Workbench 8.0 | `docs/diagrams/DataDiagram.mwb`, `DataDiagram.png`, `screenshots/Hinh02_DataDiagram.png` | Sơ đồ có đúng 12 hộp bảng (không có view), 13 đường nối chân gà |
-| **K7** | **11/11/2026** | Chụp Hình 3, 9, 12, 13 và thử nghiệm phát hiện lỗi `RB26` trên `LT07` | MySQL Workbench, Edge, Paint | `Hinh03_LoiRangBuoc.png`, `Hinh09_S1_CaoCap.png`, `Hinh12_R2_ManHinh.png`, `Hinh13_R2_PDF.png` | 4 ảnh rõ nét đặt trong `screenshots/`; tệp 4 bắt được lỗi `RB26 - LT07` |
-| **K8** | **12/11 - 13/11** | Rà soát mục 3.5, Chương 5, Chương 7, mục 8.2, Phụ lục trong báo cáo Word | Microsoft Word (chế độ đọc), VS Code | `docs/GopY_Khanh.md` | Mọi câu SQL và số đếm trong báo cáo khớp 100% với tệp SQL và code thật |
-| **K9** | **14/11/2026** | Kiểm thử chéo màn hình `F2` và `R1` của Tuân | Streamlit, MySQL Workbench | Danh sách lỗi gửi Tuân (nếu có) | Kiểm tra đủ 5 ca của `F2` và 3 điểm kiểm tra của `R1` |
-| **K10** | **15/11 - 16/11** | Sửa lỗi `S1`/`R2` (nếu có), gộp (merge) code cả nhóm vào `main`, hoàn thiện `README.md` | PowerShell, GitHub | Nhánh `main` hoàn chỉnh (đóng băng tính năng tối 16/11) | Clone repo mới về máy bất kỳ đều chạy được ngay |
-| **K11** | **17/11 - 19/11** | Đóng gói bộ file nộp (`CSDL/`, `ThietKe/`, `UngDung/tour_app.zip`, `README.txt`) | Windows Explorer, PowerShell | Bộ thư mục nộp chuẩn hóa | Giải nén `tour_app.zip` ra thư mục khác chạy được, không chứa `.venv` hay mật khẩu |
-| **K12** | **20/11 - 22/11** | Chuẩn bị máy demo chính và quay Video demo dự phòng 6 phút | Xbox Game Bar (`Win + Alt + R`), Streamlit, Workbench | File video `.mp4` dài ~6 phút | Xem lại video thấy rõ chữ, chạy mượt cả 8 bước demo |
+| Mã Task | Ngày thực hiện    | Tên công việc                                                                           | Nền tảng sử dụng                                      | Sản phẩm đầu ra (File cụ thể)                                                                  | Cách tự kiểm tra đã đạt                                                                                    |
+| :------ | :---------------- | :-------------------------------------------------------------------------------------- | :---------------------------------------------------- | :--------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
+| **K1**  | **05/11/2026**    | Bàn giao báo cáo nháp `.docx` cho Thịnh                                                 | GitHub / Thư mục chung                                | `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx`                                              | Thịnh mở được trong Word và cập nhật được mục lục                                                          |
+| **K2**  | **05/11 - 06/11** | Tạo 4 tệp SQL (12 bảng) và khung ứng dụng (`db.py`, `app.py`, `requirements.txt`)       | MySQL Workbench 8.0, VS Code, PowerShell              | 4 file trong `database/`, 3 file trong `tour_app/`                                             | Chạy tệp 1 có 12 bảng, 56 ràng buộc; chạy `streamlit run app.py` báo `"Đã kết nối cơ sở dữ liệu: 12 bảng"` |
+| **K3**  | **07/11/2026**    | Đẩy tệp SQL số 1 và khung `tour_app` lên GitHub, hỗ trợ 3 bạn cài máy                   | PowerShell, GitHub                                    | Nhánh `main` trên GitHub                                                                       | Cả 4 máy trong nhóm mở được trang chủ tại `http://localhost:8501`                                          |
+| **K4**  | **08/11 - 09/11** | Viết màn hình Tìm kiếm `S1` và Báo cáo doanh thu `R2`                                   | VS Code, Streamlit                                    | `tour_app/pages/4_Tim_kiem.py`, `6_Bao_cao_doanh_thu.py`, `templates/bao_cao_doanh_thu.html`   | `S1` đạt 6 ca kiểm thử; `R2` kỳ `01/09 - 31/12/2026` có dòng `TỔNG CỘNG` = `79.110.000 đ`                  |
+| **K5**  | **09/11/2026**    | Bổ sung Người lập, Nơi nhận, Khối ký cho báo cáo `R2`                                   | VS Code, Microsoft Edge                               | Cập nhật `6_Bao_cao_doanh_thu.py` và `bao_cao_doanh_thu.html`                                  | Để trống người lập thì ẩn nút tải; in ra PDF A4 ngang vừa khít 1 trang                                     |
+| **K6**  | **10/11/2026**    | Vẽ sơ đồ `DataDiagram` bằng Reverse Engineer                                            | MySQL Workbench 8.0                                   | `docs/diagrams/DataDiagram.mwb`, `DataDiagram.png`, `screenshots/Hinh02_DataDiagram.png`       | Sơ đồ có đúng 12 hộp bảng (không có view), 13 đường nối chân gà                                            |
+| **K7**  | **11/11/2026**    | Chụp Hình 3, 9, 12, 13 và thử nghiệm phát hiện lỗi `RB26` trên `LT07`                   | MySQL Workbench, Edge, Paint                          | `Hinh03_LoiRangBuoc.png`, `Hinh09_S1_CaoCap.png`, `Hinh12_R2_ManHinh.png`, `Hinh13_R2_PDF.png` | 4 ảnh rõ nét đặt trong `screenshots/`; tệp 4 bắt được lỗi `RB26 - LT07`                                    |
+| **K8**  | **12/11 - 13/11** | Rà soát mục 3.5, Chương 5, Chương 7, mục 8.2, Phụ lục trong báo cáo Word                | Microsoft Word (chế độ đọc), VS Code                  | `docs/GopY_Khanh.md`                                                                           | Mọi câu SQL và số đếm trong báo cáo khớp 100% với tệp SQL và code thật                                     |
+| **K9**  | **14/11/2026**    | Kiểm thử chéo màn hình `F2` và `R1` của Tuân                                            | Streamlit, MySQL Workbench                            | Danh sách lỗi gửi Tuân (nếu có)                                                                | Kiểm tra đủ 5 ca của `F2` và 3 điểm kiểm tra của `R1`                                                      |
+| **K10** | **15/11 - 16/11** | Sửa lỗi `S1`/`R2` (nếu có), gộp (merge) code cả nhóm vào `main`, hoàn thiện `README.md` | PowerShell, GitHub                                    | Nhánh `main` hoàn chỉnh (đóng băng tính năng tối 16/11)                                        | Clone repo mới về máy bất kỳ đều chạy được ngay                                                            |
+| **K11** | **17/11 - 19/11** | Đóng gói bộ file nộp (`CSDL/`, `ThietKe/`, `UngDung/tour_app.zip`, `README.txt`)        | Windows Explorer, PowerShell                          | Bộ thư mục nộp chuẩn hóa                                                                       | Giải nén `tour_app.zip` ra thư mục khác chạy được, không chứa `.venv` hay mật khẩu                         |
+| **K12** | **20/11 - 22/11** | Chuẩn bị máy demo chính và quay Video demo dự phòng 6 phút                              | Xbox Game Bar (`Win + Alt + R`), Streamlit, Workbench | File video `.mp4` dài ~6 phút                                                                  | Xem lại video thấy rõ chữ, chạy mượt cả 8 bước demo                                                        |
 
 ---
 
@@ -32,7 +32,8 @@
 ### BƯỚC 1 (Task K2 - Phần A): Tạo 4 Tệp SQL Chuẩn 12 Bảng trên MySQL Workbench
 
 #### 1. Tại sao phải chia thành 4 tệp SQL và tại sao có 12 bảng?
-- **Lý do tách thành 12 bảng:** Thiết kế ban đầu có 11 bảng, trong đó bảng `KhachHang` chứa cả `SoID` (số thẻ thanh toán) và `LoaiThe` (Visa, MasterCard, ATM nội địa). Vì mỗi số thẻ thuộc đúng 1 loại thẻ (`SoID -> LoaiThe`), nên `LoaiThe` phụ thuộc bắc cầu vào khóa chính `MaKH` (`MaKH -> SoID -> LoaiThe`), làm vi phạm dạng chuẩn 3NF. Nhóm tách riêng bảng `TheThanhToan(SoID, LoaiThe)` (Phương án A) để cả **12 bảng đều đạt chuẩn 3NF và BCNF**.
+
+- **Lý do tách thành 12 bảng:** Thiết kế ban đầu có 11 bảng, trong đó bảng `KhachHang` chứa cả `SoID` (số thẻ thanh toán) và `LoaiThe` (Visa, MasterCard, ATM nội địa). Vì mỗi số thẻ thuộc đúng 1 loại thẻ (`SoID -> LoaiThe`), nên `LoaiThe` phụ thuộc bắc cầu vào khóa chính `MaKH` (`MaKH -> SoID -> LoaiThe`), làm vi phạm dạng chuẩn 3NF. Nhóm tách riêng bảng `TheThanhToan(SoID, LoaiThe)` (Phương án A) để cả **12 bảng đều đạt chuẩn 3NF**.
 - **Lý do chia đúng 4 tệp SQL đánh số 1 -> 4:**
   - Tệp `1_QuanLyDatTour_v3.sql`: Chứa lệnh xóa và tạo lại CSDL, 12 bảng, 56 ràng buộc, 2 view và 104 dòng dữ liệu mẫu. Bất cứ khi nào dữ liệu bị thay đổi sau khi thử nghiệm, chỉ cần mở tệp số 1 nhấn `Ctrl + Shift + Enter` là toàn bộ CSDL quay về trạng thái gốc trong 2 giây.
   - Tệp `2_QuanLyDatTour_v3_TruyVan.sql`: Chứa 13 câu truy vấn mẫu từ cơ bản đến nâng cao (JOIN, GROUP BY, HAVING, Subquery, Phép chia `NOT EXISTS` lồng nhau, Transaction) phục vụ Chương 5 báo cáo.
@@ -40,6 +41,7 @@
   - Tệp `4_KiemTra_RangBuoc.sql`: Vì MySQL không cho phép `CHECK` tham chiếu sang bảng khác và nhóm không dùng Trigger, các ràng buộc liên bảng (`RB22` đến `RB32`) được kiểm tra bằng tệp này. Chạy tệp số 4 mà trả về **0 dòng (rỗng)** tức là dữ liệu hoàn toàn đúng.
 
 #### 2. Thao tác tạo Tệp 1: `database/1_QuanLyDatTour_v3.sql`
+
 1. Mở **VS Code** tại thư mục `D:\Khanh\CSDL`.
 2. Tạo file mới tại đường dẫn `database/1_QuanLyDatTour_v3.sql` (lưu bảng mã `UTF-8`).
 3. Dán toàn bộ nội dung SQL hoàn chỉnh dưới đây vào `database/1_QuanLyDatTour_v3.sql` rồi nhấn `Ctrl + S`:
@@ -61,7 +63,7 @@ CREATE TABLE TinhThanh (
     CONSTRAINT uq_TinhThanh_TenTinh UNIQUE (TenTinh)
 );
 
--- 2. Bang TheThanhToan (Tach tu KhachHang de dat 3NF/BCNF)
+-- 2. Bang TheThanhToan (Tach tu KhachHang de dat 3NF)
 CREATE TABLE TheThanhToan (
     SoID    VARCHAR(30) NOT NULL,
     LoaiThe VARCHAR(30) COLLATE utf8mb4_0900_as_cs NOT NULL,
@@ -505,6 +507,7 @@ INSERT INTO ChuyenTrungChuyen (MaDonHang, LoaiChuyen, DiaChiDon, ThoiGianDon, Bi
 ```
 
 #### 3. Thao tác tạo Tệp 2: `database/2_QuanLyDatTour_v3_TruyVan.sql`
+
 Tạo file `database/2_QuanLyDatTour_v3_TruyVan.sql` trong VS Code và dán 13 câu truy vấn minh họa sau vào:
 
 ```sql
@@ -646,6 +649,7 @@ ROLLBACK;
 ```
 
 #### 4. Thao tác tạo Tệp 3: `database/3_QuanLyDatTour_v3_UngDung.sql`
+
 Tạo file `database/3_QuanLyDatTour_v3_UngDung.sql` tổng hợp toàn bộ các câu lệnh SQL của F1, F2, F3, S1, R1, R2:
 
 ```sql
@@ -984,6 +988,7 @@ ORDER BY DiemTB DESC, SoLuotDanhGia DESC;
 ```
 
 #### 5. Thao tác tạo Tệp 4: `database/4_KiemTra_RangBuoc.sql`
+
 Tạo file `database/4_KiemTra_RangBuoc.sql` trong VS Code và dán đoạn SQL kiểm tra `RB22` đến `RB32` dưới đây:
 
 ```sql
@@ -1060,7 +1065,9 @@ WHERE NOT EXISTS (
 ### BƯỚC 2 (Task K2 - Phần B): Tạo Khung Ứng dụng (`requirements.txt`, `db.py`, `app.py`)
 
 #### 1. Tạo file `tour_app/requirements.txt`
+
 Mở VS Code, tạo file `tour_app/requirements.txt` với đúng 3 dòng sau:
+
 ```text
 streamlit==1.66.0
 mysql-connector-python==26.7.0
@@ -1068,6 +1075,7 @@ pandas==3.0.6
 ```
 
 #### 2. Tạo file `tour_app/db.py`
+
 - **Tại sao phải dùng `os.environ.get("MYSQL_PASSWORD", "")` và `CHE_DO_DEMO = True`?**
   - Dùng `os.environ.get("MYSQL_PASSWORD", "")` để mỗi thành viên trong nhóm tự đặt mật khẩu MySQL trên máy mình bằng lệnh `setx MYSQL_PASSWORD "..."` mà không bao giờ phải sửa file `db.py` hay làm lộ mật khẩu trên GitHub.
   - Dùng `CHE_DO_DEMO = True` cố định thời điểm hiện tại là `23/10/2026 08:00` để dù hôm thuyết trình là ngày 23/11 hay 30/11/2026, các lịch trình trong tháng 10 và 11 vẫn chưa khởi hành, giúp mọi kết quả tìm kiếm, đặt tour, hủy đơn khớp 100% với số liệu đã in trong báo cáo Word.
@@ -1178,6 +1186,7 @@ def dinh_dang_ngay(gia_tri):
 ```
 
 #### 3. Tạo file `tour_app/app.py`
+
 Tạo file `tour_app/app.py` để làm Trang chủ kiểm tra kết nối 12 bảng:
 
 ```python
@@ -1221,6 +1230,7 @@ st.markdown(
 ### BƯỚC 3 (Tasks K4 & K5): Viết Màn hình Tìm kiếm (`S1`) và Báo cáo Doanh thu (`R2`)
 
 #### 1. Tạo màn hình Tìm kiếm `S1`: `tour_app/pages/4_Tim_kiem.py`
+
 - **Tại sao câu lệnh SQL tìm kiếm lại viết `(@TuKhoa IS NULL OR t.TenTour LIKE ...)`?**
   - Khi người dùng bỏ trống một ô lọc trên giao diện, code Python truyền giá trị `None` (tương ứng `NULL` trong SQL). Khi đó biểu thức `@Loc IS NULL` có giá trị `TRUE`, khiến toàn bộ cụm `OR` luôn đúng và bộ lọc đó được bỏ qua. Nhờ vậy chỉ cần **duy nhất 1 câu SQL tĩnh có tham số** là xử lý được mọi tổ hợp của 8 bộ lọc mà không phải nối chuỗi `if/else` (tránh hoàn toàn lỗi SQL Injection).
 - **Các bước làm:**
@@ -1236,6 +1246,7 @@ st.markdown(
      - Thêm nút bấm `"Tour cao cấp (từ 10 triệu)"`: khi bấm sẽ gán `GiaTu = 10000000` và chạy tìm kiếm ra 3 lịch trình `LT08`, `LT09`, `LT12`.
 
 #### 2. Tạo Báo cáo Doanh thu `R2` kèm Người lập, Nơi nhận, Khối ký: `tour_app/pages/6_Bao_cao_doanh_thu.py` & `tour_app/templates/bao_cao_doanh_thu.html`
+
 - **Tại sao phải thêm Người lập, Nơi nhận và Khối ký (Task `K5`)?**
   - Thang điểm của giảng viên ở Tiêu chí 7 (1,0 điểm) yêu cầu rõ: *"2 báo cáo xem trên màn hình, xuất file thực tế, nói rõ ai tạo, gửi ai"*. Nếu chỉ xuất bảng dữ liệu thuần túy sẽ bị trừ điểm chứng từ.
 - **Các bước cập nhật trong `tour_app/pages/6_Bao_cao_doanh_thu.py`:**
@@ -1243,10 +1254,12 @@ st.markdown(
   2. Đầu file đảm bảo có `from html import escape` và `from string import Template`.
   3. Đặt hằng số `NOI_NHAN = "Ban Giám đốc công ty du lịch"`.
   4. Dưới 2 ô chọn `Từ ngày` (mặc định `01/09/2026`) và `Đến ngày` (mặc định `31/12/2026`), thêm:
+   
      ```python
      nguoi_lap = st.text_input("Người lập báo cáo", max_chars=100, placeholder="Họ tên nhân viên kế toán")
      st.caption(f"Nơi nhận: {NOI_NHAN}")
      ```
+
   5. Sau khi hiển thị 4 ô chỉ số tổng (`79.110.000 đ`, `10` đơn, `26` khách, `4` đơn hủy), Bảng A (Doanh thu theo tour dùng SQL `R2.1`) và Bảng B (Xếp hạng nơi nghỉ dùng SQL `R2.2`) trên màn hình, thêm đoạn kiểm tra trước khi tạo nút tải HTML:
      ```python
      if not nguoi_lap.strip():
@@ -1306,7 +1319,9 @@ st.markdown(
 Trước khi chụp, mở Workbench chạy lại `database/1_QuanLyDatTour_v3.sql` để reset dữ liệu gốc.
 
 #### 1. Chụp `screenshots/Hinh03_LoiRangBuoc.png` (4 mã lỗi trên Workbench)
+
 1. Mở một tab Query mới trong MySQL Workbench (`Ctrl + T`), dán đúng 4 câu lệnh sai dưới đây vào:
+
    ```sql
    USE QuanLyDatTour;
    -- 1. Loi 1062: Trung khoa chinh
@@ -1324,6 +1339,7 @@ Trước khi chụp, mở Workbench chạy lại `database/1_QuanLyDatTour_v3.sq
 5. Khi khung `Action Output` hiện đủ 4 dòng dấu nhân màu đỏ chứa 4 mã lỗi `Error Code: 1062`, `Error Code: 3819`, `Error Code: 1452`, `Error Code: 1451`, nhấn `Win + Shift + S` quét chụp gọn khung `Action Output`, mở Paint nhấn `Ctrl + V` và lưu vào `D:\Khanh\CSDL\screenshots\Hinh03_LoiRangBuoc.png`.
 
 #### 2. Thử nghiệm Tệp 4 phát hiện lỗi `RB26` (Khớp đoạn cuối mục 5.5 báo cáo)
+
 1. Chạy câu lệnh cố ý làm lệch số chỗ của `LT07`:
    ```sql
    UPDATE LichTrinh SET SoChoDaDat = 5 WHERE MaLichTrinh = 'LT07';
@@ -1332,6 +1348,7 @@ Trước khi chụp, mở Workbench chạy lại `database/1_QuanLyDatTour_v3.sq
 3. Chạy lại `database/1_QuanLyDatTour_v3.sql` để khôi phục dữ liệu đúng -> Chạy lại tệp 4 xác nhận trả về **0 dòng**.
 
 #### 3. Chụp `Hinh09_S1_CaoCap.png`, `Hinh12_R2_ManHinh.png`, `Hinh13_R2_PDF.png`
+
 1. Mở trình duyệt tại `http://localhost:8501`, để tỷ lệ thu phóng `100%`, chiều rộng cửa sổ khoảng `1400 px`.
 2. **`screenshots/Hinh09_S1_CaoCap.png`:** Vào menu **Tìm kiếm**, bấm nút `"Tour cao cấp (từ 10 triệu)"`, chụp vùng giao diện có bộ lọc và bảng kết quả 3 dòng (`LT08`, `LT09`, `LT12`).
 3. **`screenshots/Hinh12_R2_ManHinh.png`:** Vào menu **Báo cáo doanh thu**, để kỳ mặc định `01/09/2026` đến `31/12/2026`, nhập tên `"Nguyễn Quốc Khánh"` vào ô Người lập báo cáo, chụp giao diện trên màn hình (thấy rõ 4 ô chỉ số `79.110.000 đ`, `10`, `26`, `4` và bảng doanh thu).
@@ -1342,6 +1359,7 @@ Trước khi chụp, mở Workbench chạy lại `database/1_QuanLyDatTour_v3.sq
 ### BƯỚC 6 (Tasks K8, K9, K10, K11, K12): Rà Báo cáo, Quản lý GitHub, Đóng gói và Chuẩn bị Demo
 
 #### 1. Task `K8` (12/11 - 13/11): Rà soát báo cáo và lập `docs/GopY_Khanh.md`
+
 - Mở `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` (chỉ đọc, không sửa trực tiếp vào file Word vì Thịnh là người duy nhất sửa file Word).
 - Kiểm tra:
   - Mục 3.5 (tr. 16): Bảng đối chiếu ERD và Data Diagram (11 thực thể, 12 mối liên kết, 12 bảng, 13 khóa ngoại).
@@ -1351,6 +1369,7 @@ Trước khi chụp, mở Workbench chạy lại `database/1_QuanLyDatTour_v3.sq
 - Nếu có điểm nào cần sửa cho khớp với code thực tế, tạo file `docs/GopY_Khanh.md` theo bảng: `| Trang | Mục | Đang ghi | Sửa thành | Lý do |`.
 
 #### 2. Task `K10` (16/11): Quy trình Review và Merge Pull Request của 3 thành viên vào `main`
+
 Khi Đạt, Thịnh, Tuân đẩy nhánh `feature/...` lên GitHub, bạn thực hiện kiểm tra và gộp nhánh trên PowerShell:
 ```powershell
 git fetch origin
@@ -1372,7 +1391,9 @@ git push origin main
 ```
 
 #### 3. Task `K11` (17/11 - 19/11): Đóng gói Bộ File Nộp chuẩn hóa
+
 Tạo một thư mục đóng gói bên ngoài (ví dụ `D:\Khanh\Nhom_QuanLyDatTour`) theo đúng cấu trúc:
+
 - `README.txt`: Chép nội dung từ mục `PHỤ LỤC. HƯỚNG DẪN CÀI ĐẶT VÀ CHẠY` của báo cáo Word (thêm tên đề tài và danh sách 4 thành viên ở đầu file).
 - `CSDL/`: Chép đủ 4 file từ `database/` (`1_QuanLyDatTour_v3.sql` đến `4_KiemTra_RangBuoc.sql`).
 - `ThietKe/`: Chép đủ 4 file từ `docs/diagrams/` (`ERD.drawio`, `ERD.png`, `DataDiagram.mwb`, `DataDiagram.png`).
@@ -1383,6 +1404,7 @@ Tạo một thư mục đóng gói bên ngoài (ví dụ `D:\Khanh\Nhom_QuanLyDa
 ## Phần 3. Phần Thuyết trình và Câu hỏi Vấn đáp Bảo vệ của Khánh
 
 ### I. Nhiệm vụ trong 15 phút Bảo vệ
+
 - **Từ phút `7:00` đến `13:00` (6 phút Demo):** Bạn là người trực tiếp điều khiển chuột và bàn phím cho cả 8 bước demo (xem bảng 8 bước tại cuối file `docs/Ke_hoach_Tong_hop_BTL_CSDL.md`). Bạn trực tiếp thuyết minh ở:
   - **Bước 1 (`S1` - 40 giây):** Bấm `"Tour cao cấp (từ 10 triệu)"`, giải thích kỹ thuật dùng 1 câu `SELECT` có tham số `(@Loc IS NULL OR ...)` xử lý mọi tổ hợp lọc, kết quả ra `LT08`, `LT09`, `LT12`.
   - **Bước 7 (`R2` - 50 giây):** Mở báo cáo doanh thu kỳ `01/09/2026 - 31/12/2026`, nhập tên người lập, mở file PDF A4 ngang, giải thích kỹ thuật `GROUP BY ... WITH ROLLUP` và hàm `GROUPING()` để tính dòng `TỔNG CỘNG` (`79.110.000 đ`).
@@ -1395,7 +1417,7 @@ Tạo một thư mục đóng gói bên ngoài (ví dụ `D:\Khanh\Nhom_QuanLyDa
 2. **Các ràng buộc liên quan đến nhiều bảng (như nơi nghỉ phải cùng tỉnh điểm đến của tour) được kiểm tra như thế nào?**
    - *Trả lời:* Trong MySQL, `CHECK` chỉ kiểm tra được các cột trên cùng một dòng của một bảng. Nhóm bảo đảm các ràng buộc liên bảng (`RB22` đến `RB32`) bằng 2 cơ chế: (1) khi nhập liệu, form lọc dữ liệu đầu vào và thực thi trong `Transaction`; (2) đối soát hậu kiểm bằng tệp `4_KiemTra_RangBuoc.sql` sử dụng các câu `SELECT ... UNION ALL` tìm dòng vi phạm — kết quả rỗng chứng minh dữ liệu nhất quán.
 3. **Vì sao nhóm không dùng Trigger hay Stored Procedure?**
-   - *Trả lời:* Trọng tâm của học phần Cơ sở dữ liệu là thiết kế lược đồ đạt chuẩn 3NF/BCNF, cài đặt các ràng buộc khai báo (`PRIMARY KEY`, `FOREIGN KEY`, `UNIQUE`, `CHECK`) và viết câu lệnh truy vấn SQL chuẩn. Việc đưa logic vào câu lệnh SQL có tham số và `Transaction` giúp luồng dữ liệu tường minh, dễ kiểm chứng; Trigger được nhóm đưa vào mục 9.3 (Hướng phát triển).
+   - *Trả lời:* Trọng tâm của học phần Cơ sở dữ liệu là thiết kế lược đồ đạt chuẩn 3NF, cài đặt các ràng buộc khai báo (`PRIMARY KEY`, `FOREIGN KEY`, `UNIQUE`, `CHECK`) và viết câu lệnh truy vấn SQL chuẩn. Việc đưa logic vào câu lệnh SQL có tham số và `Transaction` giúp luồng dữ liệu tường minh, dễ kiểm chứng; Trigger được nhóm đưa vào mục 9.3 (Hướng phát triển).
 4. **Làm thế nào chỉ dùng 1 câu lệnh SQL trong màn hình tìm kiếm S1 mà xử lý được 8 bộ lọc tùy chọn?**
    - *Trả lời:* Mỗi điều kiện lọc trong mệnh đề `WHERE` được viết theo mẫu `(@ThamSo IS NULL OR cot = @ThamSo)`. Khi người dùng để trống bộ lọc nào trên giao diện, ứng dụng truyền giá trị `NULL` cho tham số đó; vế `@ThamSo IS NULL` nhận giá trị đúng nên điều kiện lọc đó tự động được bỏ qua.
 5. **Ứng dụng chống lỗi bảo mật SQL Injection bằng cách nào?**
