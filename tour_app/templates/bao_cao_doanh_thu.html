@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Báo cáo Doanh thu Tour</title>
+    <style>
+      @page {
+        size: A4 landscape;
+        margin: 12mm;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        font-size: 9pt;
+        color: #111;
+        margin: 0;
+        padding: 0;
+      }
+      .header {
+        text-align: center;
+        margin-bottom: 6px;
+      }
+      .header h2 {
+        margin: 0 0 4px 0;
+        font-size: 14pt;
+        text-transform: uppercase;
+      }
+      .ky {
+        font-style: italic;
+        font-size: 9.5pt;
+        margin-bottom: 4px;
+      }
+      .nguoi-lap {
+        text-align: center;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+      .chi-so {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 8px;
+      }
+      .o {
+        border: 1px solid #777;
+        padding: 4px 8px;
+        text-align: center;
+        flex: 1;
+        margin: 0 4px;
+        background-color: #fafafa;
+      }
+      .o-tieu-de {
+        font-size: 8pt;
+        color: #555;
+        text-transform: uppercase;
+      }
+      .o-gia-tri {
+        font-size: 11pt;
+        font-weight: bold;
+        color: #0b5ed7;
+        margin-top: 2px;
+      }
+      .muc-tieu-de {
+        font-size: 9.5pt;
+        font-weight: bold;
+        margin: 6px 0 4px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 8px;
+        font-size: 8.5pt;
+      }
+      th,
+      td {
+        border: 1px solid #444;
+        padding: 3px 5px;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+        text-align: center;
+      }
+      .text-right {
+        text-align: right;
+      }
+      .text-center {
+        text-align: center;
+      }
+      .hang-tong {
+        font-weight: bold;
+        background-color: #f9f9f9;
+      }
+      .ghi-chu {
+        font-size: 8pt;
+        font-style: italic;
+        margin-top: 4px;
+      }
+      .ky-ten {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 14px;
+        text-align: center;
+      }
+      .ky-ten div {
+        width: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h2>BÁO CÁO TỔNG HỢP DOANH THU VÀ ĐÁNH GIÁ CHẤT LƯỢNG TOUR</h2>
+      <div class="ky">Kỳ báo cáo: Từ ngày $tu_ngay đến ngày $den_ngay</div>
+      <div class="nguoi-lap">Người lập: $nguoi_lap | Nơi nhận: $noi_nhan</div>
+    </div>
+
+    <div class="chi-so">
+      <div class="o">
+        <div class="o-tieu-de">Tổng doanh thu</div>
+        <div class="o-gia-tri">$tong_doanh_thu</div>
+      </div>
+      <div class="o">
+        <div class="o-tieu-de">Số đơn thành công</div>
+        <div class="o-gia-tri">$so_don</div>
+      </div>
+      <div class="o">
+        <div class="o-tieu-de">Số khách phục vụ</div>
+        <div class="o-gia-tri">$so_khach</div>
+      </div>
+      <div class="o">
+        <div class="o-tieu-de">Số đơn đã hủy</div>
+        <div class="o-gia-tri">$so_don_huy</div>
+      </div>
+    </div>
+
+    <div class="muc-tieu-de">A. TỔNG HỢP DOANH THU THEO TOUR</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 70px">Mã tour</th>
+          <th>Tên tour</th>
+          <th style="width: 65px">Số LT</th>
+          <th style="width: 55px">Số đơn</th>
+          <th style="width: 60px">Số khách</th>
+          <th style="width: 60px">Đơn hủy</th>
+          <th style="width: 100px">Doanh thu DV</th>
+          <th style="width: 95px">Tiền phạt hủy</th>
+          <th style="width: 105px">Tổng doanh thu</th>
+          <th style="width: 70px">Điểm TB</th>
+        </tr>
+      </thead>
+      <tbody>
+        $bang_tour_html
+      </tbody>
+    </table>
+
+    <div class="muc-tieu-de">B. BẢNG XẾP HẠNG ĐÁNH GIÁ NƠI NGHỈ</div>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 70px">Mã</th>
+          <th>Tên nơi nghỉ</th>
+          <th style="width: 90px">Loại hình</th>
+          <th style="width: 100px">Tỉnh thành</th>
+          <th style="width: 100px">Số lượt đánh giá</th>
+          <th style="width: 90px">Điểm trung bình</th>
+        </tr>
+      </thead>
+      <tbody>
+        $bang_noi_nghi_html
+      </tbody>
+    </table>
+
+    <div class="ghi-chu">
+      * Báo cáo được trích xuất tự động từ Hệ thống Quản lý Đặt tour du lịch các
+      tỉnh thành miền Bắc. Thời điểm xuất: $ngay_xuat.
+    </div>
+
+    <div class="ky-ten">
+      <div>
+        <b>Người lập báo cáo</b><br />
+        (Ký, ghi rõ họ tên)<br /><br /><br /><br />
+        <b>$nguoi_lap</b>
+      </div>
+      <div>
+        <b>Ban Giám đốc duyệt</b><br />
+        (Ký, đóng dấu, ghi rõ họ tên)
+      </div>
+    </div>
+  </body>
+</html>
