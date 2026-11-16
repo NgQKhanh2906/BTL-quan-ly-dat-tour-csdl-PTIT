@@ -142,7 +142,6 @@ if not ds_lich_trinh:
 
 # ----------------- 1. THÔNG TIN KHÁCH HÀNG -----------------
 st.subheader("1. Thông tin khách hàng")
-st.caption("Vui lòng điền đủ 4 thông tin: Họ tên, Số điện thoại, Email và Địa chỉ liên hệ.")
 
 c_ten, c_sdt = st.columns(2)
 with c_ten:
@@ -196,7 +195,7 @@ if da_nhap_du_4_thong_tin:
             - **Địa chỉ:** {kh_info['DiaChi']}
             """
         )
-        st.info("📌 Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có. Không tạo bản ghi trùng lặp.")
+        st.info("📌 Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có.")
     else:
         # 2. Nếu không khớp cả 4, kiểm tra xem Email hoặc SĐT đã có trong DB chưa để xử lý trường hợp bấm tạo mới gây thừa/lỗi
         try:
@@ -220,13 +219,13 @@ if da_nhap_du_4_thong_tin:
                 f"⚠️ Email hoặc Số điện thoại này đã thuộc về khách hàng trong hệ thống: **{kh_trung['HoTen']}** "
                 f"({kh_trung['Email']} | SĐT: {kh_trung['CacSDT']})."
             )
-            st.info("📌 Để tránh tạo bản ghi dư thừa và lỗi trùng lặp dữ liệu, đơn đặt tour sẽ được gắn vào hồ sơ khách hàng đã có này.")
+            st.info("📌 Đơn đặt tour sẽ được gắn vào hồ sơ khách hàng đã có này.")
         else:
             # Hoàn toàn mới
             la_khach_moi = True
             st.info("✨ Khách hàng mới: Thông tin sẽ được tự động lưu vào cơ sở dữ liệu khi xác nhận đặt tour.")
 else:
-    st.caption("ℹ️ Vui lòng điền đủ 4 thông tin (Họ tên, Số điện thoại, Email, Địa chỉ) để hệ thống kiểm tra và xác nhận hồ sơ.")
+    st.caption("Vui lòng điền đủ 4 thông tin (Họ tên, Số điện thoại, Email, Địa chỉ) để hệ thống kiểm tra và xác nhận hồ sơ.")
 
 # ----------------- 2. THÔNG TIN CHUYẾN ĐI -----------------
 st.markdown("---")
@@ -291,7 +290,7 @@ else:
                 if i == 0
                 else f"{cac_lua_chon_nn[i]['TenNhaNghi']} ({cac_lua_chon_nn[i]['LoaiHinh']}) - {dinh_dang_tien(cac_lua_chon_nn[i]['GiaPhongMoiDem'])}/đêm"
             ),
-            help="Tự động lọc nhà nghỉ, homestay tại đúng tỉnh điểm đến của tour (RB24)",
+            help="Tự động lọc nhà nghỉ, homestay tại đúng tỉnh điểm đến của tour",
         )
         nn_chon = cac_lua_chon_nn[idx_nn]
         ma_nha_nghi = nn_chon["MaNhaNghi"]
@@ -305,7 +304,7 @@ else:
                 min_value=1,
                 value=1,
                 step=1,
-                help="Số phòng phải từ 1 đến số khách (RB16)",
+                help="Số phòng phải từ 1 đến số khách",
             )
         else:
             so_phong = 0
@@ -356,7 +355,7 @@ with col_xe2:
             dt_ve = datetime.combine(ngay_ve, gio_ve)
             gio_ve_str = dt_ve.strftime("%Y-%m-%d %H:%M:%S")
     else:
-        st.info("Chuyến xe về nơi nghỉ chỉ áp dụng khi khách có đăng ký nơi nghỉ (RB27).")
+        st.info("Chuyến xe về nơi nghỉ chỉ áp dụng khi khách có đăng ký nơi nghỉ.")
 
 # ----------------- 4. DỰ TOÁN VÀ XÁC NHẬN -----------------
 st.markdown("---")
@@ -386,7 +385,7 @@ if st.button("Xác nhận đặt tour", type="primary", use_container_width=True
         st.stop()
 
     if not re.match(r"^0[0-9]{9}$", sdt_chot):
-        st.error("Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0 (RB02).")
+        st.error("Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.")
         st.stop()
 
     if not email_chot:
