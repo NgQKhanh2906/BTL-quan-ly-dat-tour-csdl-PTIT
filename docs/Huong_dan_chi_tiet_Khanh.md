@@ -1,6 +1,7 @@
 # Hướng dẫn Cầm tay Chỉ việc Chi tiết cho KHÁNH (Từ A đến Z)
 
 - **Họ và tên:** Nguyễn Quốc Khánh (`B24DCCN311`)
+- **Trạng thái hoàn thành (17/11/2026):** Đã hoàn thành `K1` đến `K10` (4 tệp SQL, `db.py`, `app.py`, `S1`, `R2`, `DataDiagram`, `Hinh03/09/12/13`, `docs/GopY_Khanh.md`, đồng bộ `services.py`, `tour_app/tests/` và `README.md`). Còn lại `K11` (đóng gói bộ nộp) và `K12` (quay video demo).
 - **Vai trò trong nhóm:** Phụ trách Cơ sở dữ liệu (4 tệp SQL), Sơ đồ vật lý (`DataDiagram.mwb`, `DataDiagram.png`), Khung ứng dụng dùng chung (`db.py`, `app.py`, `requirements.txt`), Màn hình Tìm kiếm (`S1` - `4_Tim_kiem.py`), Báo cáo Doanh thu (`R2` - `6_Bao_cao_doanh_thu.py` & `bao_cao_doanh_thu.html`), Quản lý GitHub Repository, Máy chạy Demo chính và Phụ lục báo cáo.
 - **Mục tiêu của tài liệu này:** Bạn chỉ cần đọc duy nhất tài liệu này và làm lần lượt từ Bước 1 đến Bước cuối là hoàn thành 100% công việc của mình mà không cần mở lại bất kỳ tài liệu cũ nào. Mọi câu lệnh SQL, code Python, thao tác phím bấm trên MySQL Workbench, VS Code, PowerShell, Edge và lý do kỹ thuật đằng sau từng bước đều nằm trọn tại đây.
 

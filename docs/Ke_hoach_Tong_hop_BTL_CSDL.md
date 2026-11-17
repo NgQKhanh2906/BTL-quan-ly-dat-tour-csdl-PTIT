@@ -1,7 +1,8 @@
 # Kế hoạch và Hướng dẫn Thực thi Tổng hợp Bài tập lớn Cơ sở dữ liệu
 
 - **Đề tài:** Hệ thống quản lý đặt tour du lịch các tỉnh thành tại miền Bắc
-- **Học phần:** Cơ sở dữ liệu — Học viện Công nghệ Bưu chính Viễn thông (PTIT)
+- **Học phần:** Cơ sở dữ liệu (`INT1313`) — Nhóm `14` — Học viện Công nghệ Bưu chính Viễn thông (PTIT)
+- **Trạng thái cập nhật (17/11/2026):** Toàn bộ 6 màn hình `tour_app/`, lớp `services.py`, bộ kiểm thử `tour_app/tests/`, `ERD.drawio` (sửa `DenTai`, `TenTour`, `LyDoHuy`), 4 file `GopY_*.md`, 14 ảnh trong `screenshots/` và chèn 13 hình + điền mã môn/nhóm vào `Bao_cao_BTL_CSDL_QuanLyDatTour.docx` đã hoàn tất. Phần việc ngoài mã nguồn còn lại: xuất lại `ERD.png` bằng draw.io Desktop, điền `[Họ tên giảng viên]` & `[Tên giáo trình...]`, cập nhật Mục lục + xuất `.pdf` bằng Microsoft Word, làm `Slide_Nhom.pptx`, quay video demo (`K12`), đóng gói zip (`K11`) và nộp Drive (`TU11`).
 - **Thành viên nhóm:**
   1. Nguyễn Tất Đạt (`B24DCCN117`) — Phụ trách ERD, ánh xạ lược đồ quan hệ, màn hình `F1`
   2. Nguyễn Tiến Thịnh (`B24DCCN546`) — Phụ trách thực thể, ràng buộc toàn vẹn, chuẩn hóa 3NF, màn hình `F3`, biên tập báo cáo Word

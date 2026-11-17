@@ -1,6 +1,7 @@
 # HƯỚNG DẪN CÔNG VIỆC CHI TIẾT DÀNH RIÊNG CHO TUÂN (UI/FRONTEND, SLIDE & SUBMISSION)
 
 - **Họ và tên thành viên:** Bùi Đức Tuân (`B24DCCN590`)
+- **Trạng thái hoàn thành (17/11/2026):** Đã hoàn thành `TU2` đến `TU7` (`2_Quan_ly_don.py`, `5_Phieu_xac_nhan.py`, `phieu_xac_nhan.html`, chụp lại `Hinh06`, `Hinh07`, `Hinh10`, `Hinh11`, cập nhật `docs/GopY_Tuan.md` và đối chiếu Bảng 2 thành viên). Việc còn lại ngoài repo: xin tên giảng viên + tài liệu tham khảo cho phần bìa báo cáo (`TU1`), kiểm thử chéo bổ sung & tạo `Slide_Nhom.pptx` (`TU8`, `TU9`, lưu ý xem phần đính chính schema tại `docs/GopY_Thinh.md` mục 2) và nộp Google Drive (`TU11`).
 - **Vai trò trong nhóm:** UI/Frontend Developer, Slide Designer & Submission Coordinator (Phụ trách màn hình `F2 - Quản lý đơn & hủy tour`, màn hình `R1 - Phiếu xác nhận đặt tour` in PDF A4 1 trang, thiết kế slide thuyết trình 8 trang, liên hệ giảng viên và nộp bài lên Google Drive)
 - **Phạm vi file được phép chỉnh sửa trực tiếp:**
   1. `tour_app/pages/2_Quan_ly_don.py`
