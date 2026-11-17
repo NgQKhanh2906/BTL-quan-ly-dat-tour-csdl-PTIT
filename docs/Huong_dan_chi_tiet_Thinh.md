@@ -1,6 +1,7 @@
 # HƯỚNG DẪN CÔNG VIỆC CHI TIẾT DÀNH RIÊNG CHO THỊNH (DATABASE NORMALIZATION, F3 & WORD REPORT EDITOR)
 
 - **Họ và tên thành viên:** Nguyễn Tiến Thịnh (`B24DCCN546`)
+- **Trạng thái hoàn thành (17/11/2026):** Đã hoàn thành `TH1` đến `TH8` (`3_Danh_gia.py`, `Hinh08_F3_GiaoDien.png`, `docs/GopY_Thinh.md`, tổng hợp góp ý và chèn đủ 13 hình + điền mã môn `INT1313` / Nhóm `14` vào `Bao_cao_BTL_CSDL_QuanLyDatTour.docx`). Còn lại: điền `[Họ tên giảng viên]` và `[Tên giáo trình...]`, cập nhật Mục lục (`Update Field`) và xuất `.pdf` bằng Microsoft Word (`TH9` - `TH10`). Lưu ý xem mục 2 của `docs/GopY_Thinh.md` về các chỗ sai lệch cột/hàm cũ bên dưới tài liệu này.
 - **Vai trò trong nhóm:** Database Normalization Specialist, UI Developer (`F3`) & Chief Report Editor (Phụ trách kiểm chứng chuẩn hóa 3NF tại Chương 4, lập trình màn hình `F3 - Đánh giá sau chuyến đi`, và là **người duy nhất** biên tập trực tiếp file báo cáo Word `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx` + xuất file `.pdf` hoàn chỉnh)
 - **Phạm vi file được phép chỉnh sửa trực tiếp:**
   1. `tour_app/pages/3_Danh_gia.py`
