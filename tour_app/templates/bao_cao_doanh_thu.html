@@ -18,6 +18,25 @@
         margin: 0;
         padding: 0;
       }
+      .toolbar-print {
+        text-align: right;
+        margin-bottom: 6px;
+      }
+      .btn-print {
+        background: #0b5ed7;
+        color: #fff;
+        border: none;
+        padding: 5px 12px;
+        font-size: 9.5pt;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+      @media print {
+        .toolbar-print {
+          display: none !important;
+        }
+      }
       .header {
         text-align: center;
         margin-bottom: 6px;
@@ -65,12 +84,20 @@
         font-size: 9.5pt;
         font-weight: bold;
         margin: 6px 0 4px 0;
+        break-after: avoid;
+        page-break-after: avoid;
       }
       table {
         width: 100%;
         border-collapse: collapse;
         margin-bottom: 8px;
         font-size: 8.5pt;
+      }
+      tr,
+      .chi-so,
+      .ky-ten {
+        break-inside: avoid;
+        page-break-inside: avoid;
       }
       th,
       td {
@@ -109,6 +136,11 @@
     </style>
   </head>
   <body>
+    <div class="toolbar-print">
+      <button class="btn-print" onclick="window.print()">
+        In báo cáo (A4 ngang)
+      </button>
+    </div>
     <div class="header">
       <h2>BÁO CÁO TỔNG HỢP DOANH THU VÀ ĐÁNH GIÁ CHẤT LƯỢNG TOUR</h2>
       <div class="ky">Kỳ báo cáo: Từ ngày $tu_ngay đến ngày $den_ngay</div>
