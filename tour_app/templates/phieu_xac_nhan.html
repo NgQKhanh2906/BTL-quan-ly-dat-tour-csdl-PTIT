@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Phiếu xác nhận đặt tour - {{MA_DON_HANG}}</title>
+    <style>
+        @page {
+            size: A4 portrait;
+            margin: 8mm 10mm;
+        }
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Times New Roman", Times, serif;
+            font-size: 10.2pt;
+            line-height: 1.24;
+            color: #111;
+            margin: 0;
+            padding: 6px;
+            background: #fff;
+        }
+        .toolbar-print {
+            text-align: right;
+            margin-bottom: 6px;
+        }
+        .btn-print {
+            background: #0b5ed7;
+            color: #fff;
+            border: none;
+            padding: 5px 12px;
+            font-size: 10.5pt;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        @media print {
+            .toolbar-print {
+                display: none !important;
+            }
+            body {
+                padding: 0;
+            }
+        }
+        .header-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 4px;
+        }
+        .header-table td {
+            vertical-align: top;
+            font-size: 9.8pt;
+        }
+        .title-block {
+            text-align: center;
+            margin: 4px 0 6px 0;
+            border-top: 1.5px solid #222;
+            border-bottom: 1.5px solid #222;
+            padding: 4px 0;
+        }
+        .title-block h1 {
+            font-size: 14pt;
+            margin: 0 0 2px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+        .meta-line {
+            font-size: 9.8pt;
+            margin: 1px 0;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 10.5pt;
+            text-transform: uppercase;
+            background: #f0f4f8;
+            border-left: 4px solid #0b5ed7;
+            padding: 2px 7px;
+            margin: 5px 0 3px 0;
+            break-after: avoid;
+            page-break-after: avoid;
+        }
+        table.info-grid, table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 3px;
+            font-size: 9.9pt;
+        }
+        table.info-grid td {
+            padding: 1.5px 5px;
+            vertical-align: top;
+        }
+        table.data-table th, table.data-table td {
+            border: 1px solid #444;
+            padding: 2.5px 5px;
+        }
+        table.data-table th {
+            background: #e9ecef;
+            text-align: center;
+            font-weight: bold;
+        }
+        table.data-table tr,
+        .policy-box,
+        .sign-table {
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+        .note-empty {
+            padding: 2px 6px;
+            font-style: italic;
+            font-size: 9.8pt;
+        }
+        .text-right {
+            text-align: right;
+        }
+        .text-center {
+            text-align: center;
+        }
+        .policy-box {
+            border: 1px dashed #555;
+            padding: 4px 7px;
+            font-size: 9.2pt;
+            margin-top: 4px;
+            background: #fafafa;
+        }
+        .sign-table {
+            width: 100%;
+            margin-top: 6px;
+            text-align: center;
+            font-size: 10pt;
+        }
+        .sign-table td {
+            width: 50%;
+            vertical-align: top;
+        }
+        .sign-space {
+            height: 32px;
+        }
+    </style>
+</head>
+<body>
+    <div class="toolbar-print">
+        <button class="btn-print" onclick="window.print()">In phiếu xác nhận (A4)</button>
+    </div>
+
+    <table class="header-table">
+        <tr>
+            <td style="width: 52%;">
+                <strong>CÔNG TY DU LỊCH &amp; LỮ HÀNH PTIT TOUR</strong><br>
+                Địa chỉ: Km10, Đường Nguyễn Trãi, Quận Hà Đông, Hà Nội<br>
+                Hotline: 1900 1234 | Email: dieuhanh@ptittour.edu.vn
+            </td>
+            <td style="width: 48%; text-align: right;">
+                <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br>
+                <span>Độc lập - Tự do - Hạnh phúc</span><br>
+                <em>Ngày in phiếu: {{NGAY_IN}}</em>
+            </td>
+        </tr>
+    </table>
+
+    <div class="title-block">
+        <h1>PHIẾU XÁC NHẬN ĐẶT TOUR DU LỊCH</h1>
+        <div class="meta-line">
+            <strong>Mã đơn hàng:</strong> {{MA_DON_HANG}} &nbsp;|&nbsp;
+            <strong>Ngày đặt:</strong> {{NGAY_DAT}} &nbsp;|&nbsp;
+            <strong>Trạng thái:</strong> {{TEN_TRANG_THAI}}
+        </div>
+        <div class="meta-line">
+            <strong>Người lập phiếu (Nhân viên KD):</strong> {{NGUOI_LAP}} &nbsp;|&nbsp;
+            <strong>Người nhận phiếu (Khách hàng):</strong> {{TEN_KHACH_HANG}} ({{MA_KH}})
+        </div>
+    </div>
+
+    <div class="section-title">1. Thông tin khách hàng</div>
+    <table class="info-grid">
+        <tr>
+            <td style="width: 50%;"><strong>Họ và tên khách hàng:</strong> {{TEN_KHACH_HANG}} ({{MA_KH}})</td>
+            <td style="width: 50%;"><strong>Số điện thoại:</strong> {{DANH_SACH_SDT}}</td>
+        </tr>
+        <tr>
+            <td><strong>Email:</strong> {{EMAIL_KH}}</td>
+            <td><strong>Phương thức thanh toán:</strong> {{PHUONG_THUC_THANH_TOAN}}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Địa chỉ liên hệ:</strong> {{DIA_CHI_KH}}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">2. Thông tin chuyến đi &amp; lịch trình</div>
+    <table class="info-grid">
+        <tr>
+            <td colspan="2"><strong>Tên chương trình tour:</strong> {{TEN_TOUR}} (Mã tour: {{MA_TOUR}})</td>
+        </tr>
+        <tr>
+            <td style="width: 50%;"><strong>Tuyến hành trình:</strong> {{TINH_XUAT_PHAT}} &rarr; {{TINH_DEN}}</td>
+            <td style="width: 50%;"><strong>Mã lịch trình:</strong> {{MA_LICH_TRINH}} ({{THOI_LUONG}})</td>
+        </tr>
+        <tr>
+            <td><strong>Ngày khởi hành:</strong> {{NGAY_KHOI_HANH}}</td>
+            <td><strong>Ngày kết thúc:</strong> {{NGAY_KET_THUC}}</td>
+        </tr>
+        <tr>
+            <td colspan="2"><strong>Điểm tập trung khởi hành:</strong> {{DIEM_TAP_TRUNG}}</td>
+        </tr>
+        <tr>
+            <td><strong>Số lượng khách đăng ký:</strong> {{SO_LUONG_KHACH}} khách</td>
+            <td><strong>Đơn giá tour cơ bản:</strong> {{GIA_CO_BAN}} / khách</td>
+        </tr>
+    </table>
+
+    <div class="section-title">3. Dịch vụ lưu trú (Nhà nghỉ / Khách sạn)</div>
+    {{KHOI_NHA_NGHI}}
+
+    <div class="section-title">4. Lịch trình xe trung chuyển đón / trả khách</div>
+    {{KHOI_TRUNG_CHUYEN}}
+
+    <div class="section-title">5. Chi tiết thanh toán</div>
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th style="width: 8%;">STT</th>
+                <th style="width: 44%;">Hạng mục dịch vụ</th>
+                <th style="width: 26%;">Diễn giải cách tính</th>
+                <th style="width: 22%;">Thành tiền</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td class="text-center">1</td>
+                <td>Chi phí chương trình tour du lịch</td>
+                <td class="text-center">{{SO_LUONG_KHACH}} khách &times; {{GIA_CO_BAN}}</td>
+                <td class="text-right">{{TIEN_TOUR}}</td>
+            </tr>
+            <tr>
+                <td class="text-center">2</td>
+                <td>Chi phí phòng nghỉ lưu trú</td>
+                <td class="text-center">{{DIEN_GIAI_PHONG}}</td>
+                <td class="text-right">{{TIEN_PHONG}}</td>
+            </tr>
+            <tr>
+                <td colspan="3" class="text-right"><strong>TỔNG CỘNG GIÁ TRỊ ĐƠN HÀNG (1 + 2):</strong></td>
+                <td class="text-right"><strong>{{TONG_TIEN}}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="section-title">6. Thông tin hủy tour &amp; hoàn tiền (Nếu có)</div>
+    {{KHOI_THONG_TIN_HUY}}
+
+    <div class="policy-box">
+        <strong>Quy định mức phí phạt hủy tour của PTIT Tour:</strong>
+        (1) Hủy trong vòng 24 giờ sau khi đặt và còn trước khởi hành từ 7 ngày trở lên: <strong>0%</strong>;
+        (2) Trước khởi hành &ge; 15 ngày: <strong>10%</strong>;
+        (3) Trước 7 - 14 ngày: <strong>30%</strong>;
+        (4) Trước 3 - 6 ngày: <strong>50%</strong>;
+        (5) Dưới 3 ngày trước khởi hành: <strong>100% tổng giá trị đơn hàng</strong>.
+    </div>
+
+    <table class="sign-table">
+        <tr>
+            <td>
+                <strong>KHÁCH HÀNG (NGƯỜI NHẬN PHIẾU)</strong><br>
+                <em>(Ký và ghi rõ họ tên)</em>
+                <div class="sign-space"></div>
+                <strong>{{TEN_KHACH_HANG}}</strong>
+            </td>
+            <td>
+                <strong>NHÂN VIÊN LẬP PHIẾU</strong><br>
+                <em>(Ký và ghi rõ họ tên)</em>
+                <div class="sign-space"></div>
+                <strong>{{NGUOI_LAP}}</strong>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>

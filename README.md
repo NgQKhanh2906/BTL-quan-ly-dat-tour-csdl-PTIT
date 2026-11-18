@@ -16,8 +16,8 @@ Cơ sở dữ liệu quản lý tour, lịch khởi hành, đơn đặt tour c�
 ## Chức năng chính
 
 - Quản lý tour, lịch khởi hành, số chỗ; không cho bán quá chỗ.
-- Đặt tour kèm nơi nghỉ và tối đa 2 chuyến xe trung chuyển.
-- Hủy đơn có tính tiền phạt, tiền hoàn theo ngày đặt, ngày hủy và ngày khởi hành.
+- Đặt tour cho khách hàng có sẵn hoặc tạo khách hàng mới (kiểm tra trùng Email/SĐT), kèm nơi nghỉ và tối đa 2 chuyến xe trung chuyển.
+- Hủy đơn có xem trước tiền phạt, xác nhận đồng ý mức phạt và tính tiền hoàn theo ngày đặt, ngày hủy, ngày khởi hành.
 - Đánh giá tour và nơi nghỉ sau chuyến đi.
 - Tìm kiếm lịch trình theo từ khóa, tỉnh đến, khoảng giá, ngày, số chỗ, điểm đánh giá.
 - Báo cáo phiếu xác nhận đặt tour và báo cáo doanh thu, đánh giá theo tour (có thông tin người lập, nơi nhận và khối ký xuất PDF).
@@ -50,6 +50,10 @@ BTL-quan-ly-dat-tour-csdl-PTIT/
 │   ├── Huong_dan_chi_tiet_Dat.md
 │   ├── Huong_dan_chi_tiet_Tuan.md
 │   ├── Huong_dan_chi_tiet_Thinh.md
+│   ├── GopY_Khanh.md
+│   ├── GopY_Dat.md
+│   ├── GopY_Tuan.md
+│   ├── GopY_Thinh.md
 │   ├── diagrams/
 │   │   ├── ERD.drawio
 │   │   ├── ERD.png
@@ -60,6 +64,7 @@ BTL-quan-ly-dat-tour-csdl-PTIT/
 ├── tour_app/
 │   ├── app.py
 │   ├── db.py
+│   ├── services.py
 │   ├── requirements.txt
 │   ├── pages/
 │   │   ├── 1_Dat_tour.py
@@ -68,9 +73,14 @@ BTL-quan-ly-dat-tour-csdl-PTIT/
 │   │   ├── 4_Tim_kiem.py
 │   │   ├── 5_Phieu_xac_nhan.py
 │   │   └── 6_Bao_cao_doanh_thu.py
-│   └── templates/
-│       ├── phieu_xac_nhan.html
-│       └── bao_cao_doanh_thu.html
+│   ├── templates/
+│   │   ├── phieu_xac_nhan.html
+│   │   └── bao_cao_doanh_thu.html
+│   └── tests/
+│       ├── __init__.py
+│       ├── helpers.py
+│       ├── test_db_and_services.py
+│       └── test_pages_smoke.py
 └── screenshots/
     ├── Hinh01_ERD.png
     ├── Hinh02_DataDiagram.png
@@ -92,8 +102,8 @@ BTL-quan-ly-dat-tour-csdl-PTIT/
 | -------------- | ---------------------------------------------------------------------------------------------------------- |
 | `database/`    | Script tạo database, truy vấn minh họa, SQL của ứng dụng, truy vấn kiểm tra ràng buộc. Chạy theo số thứ tự |
 | `docs/`        | Kế hoạch thực hiện, ERD, Data Diagram, báo cáo Word/PDF                                                    |
-| `tour_app/`    | Ứng dụng Streamlit: trang chủ, kết nối CSDL, 6 màn hình chức năng (`pages/`) và mẫu in HTML (`templates/`) |
-| `screenshots/` | 13 hình chụp màn hình và sơ đồ dùng để chèn vào báo cáo                                                    |
+| `tour_app/`    | Ứng dụng Streamlit: trang chủ, kết nối CSDL (`db.py`), nghiệp vụ/SQL (`services.py`), 6 màn hình (`pages/`), mẫu in HTML (`templates/`) và bộ kiểm thử (`tests/`) |
+| `screenshots/` | 13 hình chuẩn (14 tệp ảnh PNG dùng để chèn vào báo cáo, trong đó Hình 5 gồm `Hinh05a` và `Hinh05b`)                                                    |
 
 ## Cài đặt và chạy
 
@@ -124,14 +134,21 @@ streamlit run app.py
 - Chế độ demo: trong `db.py`, `CHE_DO_DEMO = True` cố định thời điểm hiện tại là `23/10/2026 08:00` để kết quả khớp dữ liệu mẫu.
 - Muốn đưa dữ liệu về trạng thái ban đầu: chạy lại `database/1_QuanLyDatTour_v3.sql`.
 
+5. Chạy bộ kiểm thử tự động (unit test, tích hợp MySQL, AppTest cho 6 trang và kiểm tra khổ in PDF A4):
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+python -m unittest discover -s tour_app\tests -v
+```
+
 ## Tài liệu và Kiểm tra
 
 - **Kế hoạch tổng hợp & Lộ trình thực thi toàn nhóm:** `docs/Ke_hoach_Tong_hop_BTL_CSDL.md`.
 - **Sổ tay hướng dẫn chi tiết từng bước cho từng thành viên:**
-  - Khánh: `docs/Huong_dan_chi_tiet_Khanh.md`.
-  - Đạt: `docs/Huong_dan_chi_tiet_Dat.md`.
-  - Tuân: `docs/Huong_dan_chi_tiet_Tuan.md`.
-  - Thịnh: `docs/Huong_dan_chi_tiet_Thinh.md`.
+  - Khánh: `docs/Huong_dan_chi_tiet_Khanh.md` (rá soát báo cáo: `docs/GopY_Khanh.md`).
+  - Đạt: `docs/Huong_dan_chi_tiet_Dat.md` (rá soát báo cáo: `docs/GopY_Dat.md`).
+  - Tuân: `docs/Huong_dan_chi_tiet_Tuan.md` (rá soát báo cáo: `docs/GopY_Tuan.md`).
+  - Thịnh: `docs/Huong_dan_chi_tiet_Thinh.md` (rá soát báo cáo: `docs/GopY_Thinh.md`).
 - **Báo cáo tổng hợp (9 chương và Phụ lục):** `docs/report/Bao_cao_BTL_CSDL_QuanLyDatTour.docx`.
 - **Kiểm tra dữ liệu sau khi thao tác:** chạy `database/4_KiemTra_RangBuoc.sql`, kết quả rỗng là dữ liệu đúng.
 
