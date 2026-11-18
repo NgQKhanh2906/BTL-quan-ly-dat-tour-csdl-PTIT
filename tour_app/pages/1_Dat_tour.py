@@ -57,16 +57,11 @@ WHERE LOWER(kh.HoTen) = LOWER(%(HoTen)s)
 LIMIT 1;
 """
 
-# Kiểm tra trùng lặp Email hoặc SĐT đã có trong hệ thống để tránh ghi thừa/lỗi khóa UNIQUE
+# Kiểm tra Email hoặc Số điện thoại đã được sử dụng trong hệ thống chưa
 SQL_KIEM_TRA_TRUNG_EMAIL_SDT = """
-SELECT kh.MaKH, kh.HoTen, kh.Email, kh.DiaChi,
-       GROUP_CONCAT(DISTINCT sdt.SoDienThoai SEPARATOR ', ') AS CacSDT
-FROM KhachHang kh
-LEFT JOIN SDT_KhachHang sdt ON sdt.MaKH = kh.MaKH
-WHERE LOWER(kh.Email) = LOWER(%(Email)s)
-   OR sdt.SoDienThoai = %(SoDienThoai)s
-GROUP BY kh.MaKH, kh.HoTen, kh.Email, kh.DiaChi
-LIMIT 1;
+SELECT
+    (SELECT COUNT(*) FROM KhachHang WHERE LOWER(Email) = LOWER(%(Email)s)) AS TrungEmail,
+    (SELECT COUNT(*) FROM SDT_KhachHang WHERE SoDienThoai = %(SoDienThoai)s) AS TrungSDT;
 """
 
 # F1.5: Tong tien du kien
@@ -145,15 +140,15 @@ st.subheader("1. Thông tin khách hàng")
 
 c_ten, c_sdt = st.columns(2)
 with c_ten:
-    ho_ten_nhap = st.text_input("Họ và tên khách hàng (*)", placeholder="Ví dụ: Vũ Thị Hà", max_chars=100)
+    ho_ten_nhap = st.text_input("Họ và tên khách hàng (*)", placeholder="Ví dụ: Nguyễn Văn A", max_chars=100)
 with c_sdt:
-    sdt_nhap = st.text_input("Số điện thoại (10 chữ số) (*)", placeholder="Ví dụ: 0398765432", max_chars=10)
+    sdt_nhap = st.text_input("Số điện thoại (10 chữ số) (*)", placeholder="Ví dụ: 0123456789", max_chars=10)
 
 c_email, c_dc = st.columns(2)
 with c_email:
-    email_nhap = st.text_input("Email (*)", placeholder="Ví dụ: ha.vu@gmail.com", max_chars=100)
+    email_nhap = st.text_input("Email (*)", placeholder="Ví dụ: nguyenvana@gmail.com", max_chars=100)
 with c_dc:
-    dia_chi_nhap = st.text_input("Địa chỉ liên hệ (*)", placeholder="Ví dụ: 3 Hùng Vương, Lào Cai", max_chars=255)
+    dia_chi_nhap = st.text_input("Địa chỉ liên hệ (*)", placeholder="Ví dụ: số 123, đường ABC, thành phố XYZ", max_chars=255)
 
 ma_kh = None
 la_khach_moi = True
@@ -162,8 +157,27 @@ email_chot = email_nhap.strip()
 sdt_chot = sdt_nhap.strip()
 dia_chi_chot = dia_chi_nhap.strip()
 
-# Kiểm tra: Chỉ khi người dùng đã nhập đủ cả 4 thông tin thì mới đối chiếu CSDL
-da_nhap_du_4_thong_tin = bool(ho_ten_chot and sdt_chot and email_chot and dia_chi_chot)
+# Danh sách thu thập lỗi trên toàn bộ form
+cac_loi_form = []
+
+# Kiểm tra định dạng cơ bản tại chỗ nhập
+loi_sdt_inline = None
+if sdt_chot and not re.match(r"^0[0-9]{9}$", sdt_chot):
+    loi_sdt_inline = "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0."
+    cac_loi_form.append(loi_sdt_inline)
+
+loi_email_inline = None
+if email_chot and not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_chot):
+    loi_email_inline = "Email không đúng định dạng (ví dụ: ten@domain.com)."
+    cac_loi_form.append(loi_email_inline)
+
+if loi_sdt_inline:
+    st.error(f"⚠️ {loi_sdt_inline}")
+if loi_email_inline:
+    st.error(f"⚠️ {loi_email_inline}")
+
+# Kiểm tra: Chỉ khi người dùng đã nhập đủ cả 4 thông tin và không có lỗi định dạng thì mới đối chiếu CSDL
+da_nhap_du_4_thong_tin = bool(ho_ten_chot and sdt_chot and email_chot and dia_chi_chot and not loi_sdt_inline and not loi_email_inline)
 
 if da_nhap_du_4_thong_tin:
     # 1. Kiểm tra khớp tất cả 4 thuộc tính (trừ mã khách hàng)
@@ -186,7 +200,7 @@ if da_nhap_du_4_thong_tin:
         ma_kh = kh_info["MaKH"]
         la_khach_moi = False
 
-        st.success("✅ Khách hàng đã có thông tin trong cơ sở dữ liệu (khớp đầy đủ tất cả thông tin):")
+        st.success("Khách hàng đã có thông tin trong hệ thống:")
         st.markdown(
             f"""
             - **Họ và tên:** {kh_info['HoTen']}
@@ -195,9 +209,9 @@ if da_nhap_du_4_thong_tin:
             - **Địa chỉ:** {kh_info['DiaChi']}
             """
         )
-        st.info("📌 Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có.")
+        st.info("Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có.")
     else:
-        # 2. Nếu không khớp cả 4, kiểm tra xem Email hoặc SĐT đã có trong DB chưa để xử lý trường hợp bấm tạo mới gây thừa/lỗi
+        # 2. Nếu không khớp cả 4, kiểm tra xem Email hoặc SĐT đã có trong DB chưa
         try:
             kq_trung = doc(
                 SQL_KIEM_TRA_TRUNG_EMAIL_SDT,
@@ -206,26 +220,31 @@ if da_nhap_du_4_thong_tin:
                     "SoDienThoai": sdt_chot,
                 },
             )
+            trung_email = kq_trung[0]["TrungEmail"] > 0 if kq_trung else False
+            trung_sdt = kq_trung[0]["TrungSDT"] > 0 if kq_trung else False
         except Exception:
-            kq_trung = []
+            trung_email = False
+            trung_sdt = False
 
-        if kq_trung:
-            # Phát hiện Email hoặc SĐT đã có chủ
-            kh_trung = kq_trung[0]
-            ma_kh = kh_trung["MaKH"]
-            la_khach_moi = False
-
-            st.warning(
-                f"⚠️ Email hoặc Số điện thoại này đã thuộc về khách hàng trong hệ thống: **{kh_trung['HoTen']}** "
-                f"({kh_trung['Email']} | SĐT: {kh_trung['CacSDT']})."
-            )
-            st.info("📌 Đơn đặt tour sẽ được gắn vào hồ sơ khách hàng đã có này.")
+        if trung_email and trung_sdt:
+            thong_bao_trung = "Cả Email và số điện thoại này đều đã được sử dụng trong hệ thống. Vui lòng kiểm tra và nhập lại!"
+            st.error(f"Cảnh báo: {thong_bao_trung}")
+            cac_loi_form.append(thong_bao_trung)
+        elif trung_email:
+            thong_bao_trung = "Email này đã được sử dụng bởi khách hàng khác trong hệ thống. Vui lòng nhập lại email khác!"
+            st.error(f"Cảnh báo: {thong_bao_trung}")
+            cac_loi_form.append(thong_bao_trung)
+        elif trung_sdt:
+            thong_bao_trung = "Số điện thoại này đã được sử dụng bởi khách hàng khác trong hệ thống. Vui lòng nhập lại số điện thoại khác!"
+            st.error(f"Cảnh báo: {thong_bao_trung}")
+            cac_loi_form.append(thong_bao_trung)
         else:
             # Hoàn toàn mới
             la_khach_moi = True
-            st.info("✨ Khách hàng mới: Thông tin sẽ được tự động lưu vào cơ sở dữ liệu khi xác nhận đặt tour.")
+            st.info("Khách hàng mới: Thông tin sẽ được tự động lưu vào hệ thống khi xác nhận đặt tour.")
 else:
-    st.caption("Vui lòng điền đủ 4 thông tin (Họ tên, Số điện thoại, Email, Địa chỉ) để hệ thống kiểm tra và xác nhận hồ sơ.")
+    if not (loi_sdt_inline or loi_email_inline):
+        st.caption("Vui lòng điền đủ 4 thông tin (Họ tên, Số điện thoại, Email, Địa chỉ) để hệ thống kiểm tra và xác nhận hồ sơ.")
 
 # ----------------- 2. THÔNG TIN CHUYẾN ĐI -----------------
 st.markdown("---")
@@ -306,6 +325,10 @@ else:
                 step=1,
                 help="Số phòng phải từ 1 đến số khách",
             )
+            if so_phong > so_khach:
+                loi_sp = f"Số phòng ({so_phong}) không được vượt quá số khách ({so_khach})."
+                st.error(f"⚠️ {loi_sp}")
+                cac_loi_form.append(loi_sp)
         else:
             so_phong = 0
             st.text_input("Số phòng", value="0", disabled=True)
@@ -328,6 +351,11 @@ with col_xe1:
             placeholder="Nhập địa chỉ đón khách",
             key=f"dia_chi_don_{ma_kh if ma_kh else 'moi'}",
         )
+        if not dia_chi_don.strip():
+            loi_dc_don = "Vui lòng nhập địa chỉ đón khi chọn xe đón tại nhà."
+            st.error(f"{loi_dc_don}")
+            cac_loi_form.append(loi_dc_don)
+
         thoi_gian_mac_dinh_don = ngay_xuat_phat - timedelta(hours=2)
         c_ngay_don, c_gio_don = st.columns(2)
         with c_ngay_don:
@@ -336,6 +364,11 @@ with col_xe1:
             gio_don = st.time_input("Giờ đón (*)", value=thoi_gian_mac_dinh_don.time(), key=f"gio_don_{ma_lich_trinh}")
         dt_don = datetime.combine(ngay_don, gio_don)
         gio_don_str = dt_don.strftime("%Y-%m-%d %H:%M:%S")
+
+        if dt_don <= hien_tai() or dt_don >= ngay_xuat_phat:
+            loi_gio_don = f"Giờ đón tại nhà ({dt_don.strftime('%d/%m/%Y %H:%M')}) phải sau thời điểm hiện tại và trước giờ xuất phát."
+            st.error(f"{loi_gio_don}")
+            cac_loi_form.append(loi_gio_don)
 
 with col_xe2:
     co_xe_ve = False
@@ -354,6 +387,11 @@ with col_xe2:
                 gio_ve = st.time_input("Giờ về nơi nghỉ (*)", value=thoi_gian_mac_dinh_ve.time(), key=f"gio_ve_{ma_lich_trinh}")
             dt_ve = datetime.combine(ngay_ve, gio_ve)
             gio_ve_str = dt_ve.strftime("%Y-%m-%d %H:%M:%S")
+
+            if dt_ve < ngay_xuat_phat or dt_ve > ngay_ket_thuc:
+                loi_gio_ve = f"Giờ về nơi nghỉ ({dt_ve.strftime('%d/%m/%Y %H:%M')}) phải nằm trong khoảng thời gian diễn ra tour."
+                st.error(f"{loi_gio_ve}")
+                cac_loi_form.append(loi_gio_ve)
     else:
         st.info("Chuyến xe về nơi nghỉ chỉ áp dụng khi khách có đăng ký nơi nghỉ.")
 
@@ -373,98 +411,121 @@ m2.metric(
 )
 m3.metric("TỔNG TIỀN DỰ KIẾN", dinh_dang_tien(tong_tien_du_kien))
 
+# Tổng hợp tất cả các lỗi trên form
+cac_loi_tong = []
+
+# 1. Kiểm tra họ và tên
+if not ho_ten_chot:
+    cac_loi_tong.append("Chưa nhập họ và tên khách hàng.")
+
+# 2. Kiểm tra số điện thoại
+if not sdt_chot:
+    cac_loi_tong.append("Chưa nhập số điện thoại khách hàng.")
+elif not re.match(r"^0[0-9]{9}$", sdt_chot):
+    cac_loi_tong.append("Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.")
+
+# 3. Kiểm tra email
+if not email_chot:
+    cac_loi_tong.append("Chưa nhập email khách hàng.")
+elif not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_chot):
+    cac_loi_tong.append("Email không đúng định dạng (ví dụ: ten@domain.com).")
+
+# 4. Kiểm tra địa chỉ
+if not dia_chi_chot:
+    cac_loi_tong.append("Chưa nhập địa chỉ liên hệ của khách hàng.")
+
+# 5. Thêm tất cả lỗi thu thập từ các phần nhập liệu (trùng email/sđt, số phòng, giờ đón, giờ về...)
+cac_loi_tong.extend(cac_loi_form)
+
+# Loại bỏ các lỗi trùng lặp nếu có
+cac_loi_tong = list(dict.fromkeys(cac_loi_tong))
+
+# Hiển thị cảnh báo tổng quan nếu form có lỗi
+if cac_loi_tong:
+    st.warning(f"⚠️ Form đang có **{len(cac_loi_tong)}** thông tin chưa hợp lệ. Vui lòng kiểm tra lại các mục báo đỏ ở trên trước khi bấm xác nhận.")
+
 # Nút xác nhận đặt tour
 if st.button("Xác nhận đặt tour", type="primary", use_container_width=True):
-    # Validation thông tin khách hàng
-    if not ho_ten_chot:
-        st.error("Vui lòng nhập họ và tên khách hàng.")
+    # NẾU CÓ BẤT KỲ LỖI NÀO: CHẶN NGAY LẬP TỨC, TUYỆT ĐỐI KHÔNG INSERT VÀO DATABASE
+    if cac_loi_tong:
+        st.error("**Không thể xác nhận đặt tour vì các thông tin sau chưa hợp lệ:**")
+        for loi in cac_loi_tong:
+            st.error(f"- {loi}")
         st.stop()
 
-    if not sdt_chot:
-        st.error("Vui lòng nhập số điện thoại khách hàng.")
-        st.stop()
-
-    if not re.match(r"^0[0-9]{9}$", sdt_chot):
-        st.error("Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.")
-        st.stop()
-
-    if not email_chot:
-        st.error("Vui lòng nhập email khách hàng.")
-        st.stop()
-
-    if not re.match(r"^[^@\s]+@[^@\s]+\.[^@\s]+$", email_chot):
-        st.error("Email không hợp lệ (ví dụ đúng: ten@domain.com).")
-        st.stop()
-
-    if not dia_chi_chot:
-        st.error("Vui lòng nhập địa chỉ liên hệ của khách hàng.")
-        st.stop()
-
-    # Xử lý chống thêm bản ghi dư thừa / lỗi khóa UNIQUE trong database
-    # Kiểm tra lại một lần nữa trong CSDL trước khi quyết định insert hay reuse
-    check_kh = doc(
-        """
-        SELECT kh.MaKH FROM KhachHang kh
-        LEFT JOIN SDT_KhachHang sdt ON sdt.MaKH = kh.MaKH
-        WHERE LOWER(kh.Email) = LOWER(%(Email)s)
-           OR sdt.SoDienThoai = %(SoDienThoai)s
-           OR (LOWER(kh.HoTen) = LOWER(%(HoTen)s) AND LOWER(COALESCE(kh.DiaChi, '')) = LOWER(%(DiaChi)s))
-        LIMIT 1;
-        """,
+    # Xác định khách hàng và kiểm tra lại CSDL một lần nữa trước khi lưu
+    kq_khop_submit = doc(
+        SQL_KHOP_THONG_TIN_KH,
         {
-            "Email": email_chot,
-            "SoDienThoai": sdt_chot,
             "HoTen": ho_ten_chot,
+            "SoDienThoai": sdt_chot,
+            "Email": email_chot,
             "DiaChi": dia_chi_chot,
         },
     )
 
-    if check_kh:
-        # Đã tồn tại khách hàng này trong database -> Sử dụng lại MaKH, KHÔNG insert mới
-        ma_kh = check_kh[0]["MaKH"]
-        la_khach_moi = False
-    elif la_khach_moi:
+    if kq_khop_submit:
+        # Khớp toàn bộ 4 thông tin -> khách hàng cũ, tái sử dụng MaKH
+        ma_kh_luu = kq_khop_submit[0]["MaKH"]
+        la_khach_moi_luu = False
+    else:
+        # Kiểm tra xem Email hoặc SĐT có bị trùng với ai trong hệ thống không
+        kq_check_trung = doc(
+            SQL_KIEM_TRA_TRUNG_EMAIL_SDT,
+            {
+                "Email": email_chot,
+                "SoDienThoai": sdt_chot,
+            },
+        )
+        trung_email = kq_check_trung[0]["TrungEmail"] > 0 if kq_check_trung else False
+        trung_sdt = kq_check_trung[0]["TrungSDT"] > 0 if kq_check_trung else False
+
+        if trung_email and trung_sdt:
+            st.error("Cả Email và số điện thoại này đều đã được sử dụng trong hệ thống. Vui lòng kiểm tra và nhập lại!")
+            st.stop()
+        elif trung_email:
+            st.error("Email này đã được sử dụng trong hệ thống. Vui lòng nhập lại email khác!")
+            st.stop()
+        elif trung_sdt:
+            st.error("Số điện thoại này đã được sử dụng trong hệ thống. Vui lòng nhập lại số điện thoại khác!")
+            st.stop()
+
+        # Khách hàng mới hoàn toàn -> Cấp mã khách hàng mới
+        la_khach_moi_luu = True
         try:
             kq_kh = doc(SQL_MA_KH_MOI)
-            ma_kh = kq_kh[0]["MaKHMoi"] if kq_kh else "KH001"
+            ma_kh_luu = kq_kh[0]["MaKHMoi"] if kq_kh else "KH001"
         except Exception as loi:
             st.error(thong_bao_loi(loi))
             st.stop()
 
-    # Validation tầng form chuyến đi (Lớp 1)
+    # Kiểm tra thêm số chỗ còn lại của lịch trình (Lớp 1)
     if so_cho_con_lai <= 0:
         st.error("Lịch trình đã hết chỗ, không thể đặt thêm.")
         st.stop()
 
-    if so_khach < 1:
-        st.error("Số lượng khách phải lớn hơn 0.")
+    if so_khach < 1 or so_khach > so_cho_con_lai:
+        st.error(f"Số lượng khách ({so_khach}) không hợp lệ (còn lại: {so_cho_con_lai} chỗ).")
         st.stop()
 
-    if so_khach > so_cho_con_lai:
-        st.error(f"Số lượng khách ({so_khach}) vượt quá số chỗ còn lại ({so_cho_con_lai}).")
+    if ma_nha_nghi and (so_phong < 1 or so_phong > so_khach):
+        st.error(f"Số phòng ({so_phong}) phải từ 1 đến số khách ({so_khach}).")
         st.stop()
-
-    if ma_nha_nghi:
-        if so_phong < 1 or so_phong > so_khach:
-            st.error("Số phòng phải từ 1 đến số khách")
-            st.stop()
-    else:
-        so_phong = 0
 
     if co_xe_don:
         if not dia_chi_don.strip():
-            st.error("Vui lòng nhập địa chỉ đón")
+            st.error("Vui lòng nhập địa chỉ đón khi chọn xe đón tại nhà.")
             st.stop()
         if dt_don <= hien_tai() or dt_don >= ngay_xuat_phat:
-            st.error("Giờ đón tại nhà phải sau thời điểm hiện tại và trước giờ xuất phát")
+            st.error("Giờ đón tại nhà phải sau thời điểm hiện tại và trước giờ xuất phát.")
             st.stop()
 
     if co_xe_ve:
         if not ma_nha_nghi:
-            st.error("Chỉ có thể đăng ký xe về nơi nghỉ khi có đặt nơi nghỉ")
+            st.error("Chỉ có thể đăng ký xe về nơi nghỉ khi có đặt nơi nghỉ.")
             st.stop()
         if dt_ve < ngay_xuat_phat or dt_ve > ngay_ket_thuc:
-            st.error("Giờ về nơi nghỉ phải nằm trong khoảng thời gian diễn ra tour")
+            st.error("Giờ về nơi nghỉ phải nằm trong khoảng thời gian diễn ra tour.")
             st.stop()
 
     # Sinh mã đơn hàng mới (F1.4)
@@ -477,7 +538,7 @@ if st.button("Xác nhận đặt tour", type="primary", use_container_width=True
 
     # Chuẩn bị tham số và gọi luu_don trong 1 transaction (F1.6)
     tham_so_luu = {
-        "LaKhachMoi": la_khach_moi,
+        "LaKhachMoi": la_khach_moi_luu,
         "HoTen": ho_ten_chot,
         "Email": email_chot,
         "SoDienThoai": sdt_chot,
@@ -485,7 +546,7 @@ if st.button("Xác nhận đặt tour", type="primary", use_container_width=True
         "MaDonHang": ma_don_moi,
         "SoKhach": so_khach,
         "SoPhong": so_phong,
-        "MaKH": ma_kh,
+        "MaKH": ma_kh_luu,
         "MaLichTrinh": ma_lich_trinh,
         "MaNhaNghi": ma_nha_nghi,
         "DiaChiDon": dia_chi_don.strip() if co_xe_don else None,
