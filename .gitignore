@@ -24,3 +24,6 @@ desktop.ini
 node_modules/
 web_app/frontend/dist/
 *.tsbuildinfo
+
+# Submission package folder
+Nhom14_QuanLyDatTour/
