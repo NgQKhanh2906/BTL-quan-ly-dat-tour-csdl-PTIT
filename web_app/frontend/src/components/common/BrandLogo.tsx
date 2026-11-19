@@ -59,40 +59,10 @@ export function BrandLogo({
         <span className={titleClass}>{isAdmin ? 'Bắc Việt Admin' : 'Bắc Việt Travel'}</span>
         {showSubtitle && (
           <span className={subtitleClass}>
-            {isAdmin ? 'Điều hành & Vận hành' : 'Du lịch miền Bắc'}
+            {isAdmin ? 'Điều hành & Vận hành' : 'Hệ thống đặt tour miền Bắc'}
           </span>
         )}
       </span>
     </span>
-  );
-}
-
-export function HeroFlightArc({ className = '' }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 132 30"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden="true"
-    >
-      <path
-        d="M2 22C28 7 68 4 108 14"
-        stroke="#93C5FD"
-        strokeWidth="1.6"
-        strokeDasharray="4 4"
-        strokeLinecap="round"
-      />
-      <path
-        d="M113 14.5L125 11.5L117 19.5L116 15.8L113 14.5Z"
-        fill="#1D63ED"
-      />
-      <path
-        d="M116 15.8L125 11.5"
-        stroke="#1D63ED"
-        strokeWidth="1.2"
-        strokeLinecap="round"
-      />
-    </svg>
   );
 }

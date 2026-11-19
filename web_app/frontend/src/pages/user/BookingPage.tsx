@@ -8,11 +8,11 @@ import {
   Car,
   CheckCircle2,
   Download,
+  Info,
   LogOut,
   MapPin,
   Minus,
   Plus,
-  Sparkles,
   UserCheck,
   UserPlus,
   Users,
@@ -49,6 +49,20 @@ interface ConfirmedReceipt {
   coXeVe: boolean;
 }
 
+function validateCustomerFullName(raw: string): string | null {
+  const normalized = raw.normalize('NFC').trim().replace(/\s+/g, ' ');
+  if (!normalized) {
+    return 'Vui lòng nhập họ và tên khách hàng.';
+  }
+  if (normalized.length > 100) {
+    return 'Họ và tên khách hàng tối đa 100 ký tự.';
+  }
+  if (!/^[\p{L}]+(?:\s+[\p{L}]+)*$/u.test(normalized) || normalized.replace(/\s+/g, '').length < 2) {
+    return 'Họ và tên chỉ được chứa chữ cái và khoảng trắng (tối thiểu 2 ký tự, không chứa số hoặc ký tự đặc biệt).';
+  }
+  return null;
+}
+
 export default function BookingPage() {
   const [searchParams] = useSearchParams();
   const initialScheduleParam = searchParams.get('schedule') || '';
@@ -69,11 +83,14 @@ export default function BookingPage() {
   const [guestMode, setGuestMode] = useState<'new' | 'existing'>('new');
   const [selectedExistingMaKh, setSelectedExistingMaKh] = useState('');
   const [hoTen, setHoTen] = useState('');
+  const [hoTenTouched, setHoTenTouched] = useState(false);
   const [soDienThoai, setSoDienThoai] = useState('');
   const [email, setEmail] = useState('');
   const [diaChi, setDiaChi] = useState('');
   const [duplicateCustomer, setDuplicateCustomer] = useState<CustomerItem | null>(null);
   const [checkingDuplicate, setCheckingDuplicate] = useState(false);
+
+  const hoTenError = hoTenTouched ? validateCustomerFullName(hoTen) : null;
 
   // Accommodation
   const [selectedAccId, setSelectedAccId] = useState<string | null>(null);
@@ -284,6 +301,7 @@ export default function BookingPage() {
     setGuestMode('existing');
     setSelectedExistingMaKh(dup.ma_kh);
     setDuplicateCustomer(null);
+    setHoTenTouched(false);
     setPickupEditedByUser(false);
     setFormErrors([]);
   };
@@ -304,9 +322,12 @@ export default function BookingPage() {
 
     const clientErrors: string[] = [];
     const isNewGuest = !customer && guestMode === 'new';
+    const normalizedHoTen = hoTen.normalize('NFC').trim().replace(/\s+/g, ' ');
 
     if (isNewGuest) {
-      if (!hoTen.trim()) clientErrors.push('Vui lòng nhập họ và tên khách hàng.');
+      setHoTenTouched(true);
+      const nameError = validateCustomerFullName(hoTen);
+      if (nameError) clientErrors.push(nameError);
       if (!/^0[0-9]{9}$/.test(soDienThoai.trim())) {
         clientErrors.push('Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng số 0.');
       }
@@ -339,7 +360,7 @@ export default function BookingPage() {
       const result = await api.createBooking({
         la_khach_moi: isNewGuest,
         ma_kh: customer ? customer.ma_kh : isNewGuest ? null : selectedExistingMaKh,
-        ho_ten: isNewGuest ? hoTen.trim() : null,
+        ho_ten: isNewGuest ? normalizedHoTen : null,
         so_dien_thoai: isNewGuest ? soDienThoai.trim() : null,
         email: isNewGuest ? email.trim() : null,
         dia_chi: isNewGuest ? diaChi.trim() : null,
@@ -411,22 +432,22 @@ export default function BookingPage() {
 
   if (confirmed) {
     return (
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-        <div className="rounded-[28px] border border-slate-200/85 bg-white p-6 sm:p-10 shadow-[var(--shadow-floating)]">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-[var(--shadow-floating)]">
           <div className="flex flex-col items-center text-center">
-            <span className="inline-flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 mb-4">
-              <CheckCircle2 className="h-9 w-9" strokeWidth={1.75} />
+            <span className="inline-flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 mb-4">
+              <CheckCircle2 className="h-8 w-8" strokeWidth={1.75} />
             </span>
-            <h1 className="font-display text-3xl sm:text-4xl font-bold text-slate-950">
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
               Đặt tour thành công
             </h1>
-            <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-lg">
+            <p className="mt-2 text-sm text-slate-600 max-w-lg">
               Đơn hàng của bạn đã được ghi nhận trên hệ thống. Bạn có thể tải phiếu xác nhận khổ A4
               ngay bây giờ hoặc theo dõi chi tiết trong mục Đơn của tôi.
             </p>
           </div>
 
-          <div className="mt-7 rounded-2xl border border-slate-200/80 bg-[#F7FAFF] p-5 space-y-3 text-sm">
+          <div className="mt-6 rounded-xl border border-slate-200 bg-[#F8FAFC] p-5 space-y-3 text-sm">
             <div className="flex items-center justify-between gap-4 pb-3 border-b border-slate-200/70">
               <span className="text-slate-500">Mã đơn hàng</span>
               <span className="text-base font-bold text-[#1D63ED] tabular-nums">
@@ -481,10 +502,10 @@ export default function BookingPage() {
             </p>
           )}
 
-          <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Button
               variant="primary"
-              shape="pill"
+              shape="rounded"
               size="lg"
               loading={downloadingPdf}
               leftIcon={<Download className="h-4.5 w-4.5" strokeWidth={1.85} />}
@@ -494,14 +515,14 @@ export default function BookingPage() {
               Tải phiếu xác nhận (PDF)
             </Button>
             <Link
-              to="/my-bookings"
-              className="w-full sm:w-auto inline-flex items-center justify-center rounded-full border border-slate-200 bg-white px-6 h-12 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
+              to="/orders"
+              className="w-full sm:w-auto inline-flex items-center justify-center rounded-[10px] border border-slate-200 bg-white px-6 h-12 text-sm font-semibold text-slate-800 hover:bg-slate-50 transition-colors"
             >
-              Xem đơn của tôi
+              Xem danh sách đơn hàng
             </Link>
             <Button
               variant="ghost"
-              shape="pill"
+              shape="rounded"
               size="md"
               onClick={handleBookAnother}
               className="w-full sm:w-auto"
@@ -515,14 +536,14 @@ export default function BookingPage() {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
-      <div className="mb-7">
-        <h1 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 tracking-tight">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8">
+      <div className="mb-6">
+        <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
           Đặt tour trực tuyến
         </h1>
-        <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-2xl">
-          Chọn lịch trình khởi hành, tùy chỉnh lưu trú và xe trung chuyển — chi phí được tính minh
-          bạch ngay trước khi xác nhận.
+        <p className="mt-1.5 text-sm text-slate-600 max-w-2xl">
+          Điền thông tin khách hàng, chọn lịch trình khởi hành, cơ sở lưu trú và xe trung chuyển đi
+          kèm.
         </p>
       </div>
 
@@ -552,23 +573,23 @@ export default function BookingPage() {
           action={
             <Link
               to="/explore"
-              className="inline-flex items-center rounded-full bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2]"
+              className="inline-flex items-center rounded-[10px] bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2]"
             >
-              Quay lại Khám phá tour
+              Quay lại Tra cứu lịch trình
             </Link>
           }
         />
       ) : (
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-7 items-start">
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           {/* Left Form Column (65%) */}
-          <div className="lg:col-span-8 space-y-6">
+          <div className="lg:col-span-8 space-y-5">
             {/* Section 1: Schedule & Guest Count */}
-            <section className="rounded-[24px] border border-slate-200/85 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-5">
+            <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-5">
               <div className="flex items-center gap-2.5">
-                <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#EFF5FF] text-[#1D63ED]">
+                <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#1D63ED]">
                   <Calendar className="h-4 w-4" strokeWidth={1.85} />
                 </span>
-                <h2 className="text-lg font-bold text-slate-900">Lịch trình &amp; Số lượng khách</h2>
+                <h2 className="text-base font-bold text-slate-900">Lịch trình &amp; Số lượng khách</h2>
               </div>
 
               <div>
@@ -667,13 +688,13 @@ export default function BookingPage() {
             </section>
 
             {/* Section 2: Customer Information */}
-            <section className="rounded-[24px] border border-slate-200/85 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-5">
+            <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#EFF5FF] text-[#1D63ED]">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#1D63ED]">
                     <Users className="h-4 w-4" strokeWidth={1.85} />
                   </span>
-                  <h2 className="text-lg font-bold text-slate-900">Thông tin khách hàng</h2>
+                  <h2 className="text-base font-bold text-slate-900">Thông tin khách hàng</h2>
                 </div>
 
                 {customer && (
@@ -714,7 +735,7 @@ export default function BookingPage() {
                 </div>
               ) : (
                 <>
-                  <div className="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1">
+                  <div className="inline-flex rounded-[10px] border border-slate-200 bg-slate-50 p-1">
                     <button
                       type="button"
                       onClick={() => {
@@ -722,7 +743,7 @@ export default function BookingPage() {
                         setPickupEditedByUser(false);
                       }}
                       className={[
-                        'inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-colors cursor-pointer',
+                        'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
                         guestMode === 'new'
                           ? 'bg-[#1D63ED] text-white shadow-xs'
                           : 'text-slate-600 hover:text-slate-900',
@@ -736,10 +757,11 @@ export default function BookingPage() {
                       onClick={() => {
                         setGuestMode('existing');
                         setDuplicateCustomer(null);
+                        setHoTenTouched(false);
                         setPickupEditedByUser(false);
                       }}
                       className={[
-                        'inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold transition-colors cursor-pointer',
+                        'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
                         guestMode === 'existing'
                           ? 'bg-[#1D63ED] text-white shadow-xs'
                           : 'text-slate-600 hover:text-slate-900',
@@ -760,11 +782,24 @@ export default function BookingPage() {
                           <input
                             id="guest-name"
                             type="text"
+                            maxLength={100}
                             value={hoTen}
                             onChange={(e) => setHoTen(e.target.value)}
+                            onBlur={() => setHoTenTouched(true)}
                             placeholder="Nguyễn Minh Anh"
-                            className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+                            aria-invalid={Boolean(hoTenError)}
+                            className={[
+                              'w-full h-10.5 rounded-xl border bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-3',
+                              hoTenError
+                                ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-red-500/15'
+                                : 'border-slate-200 focus:border-[#1D63ED] focus:ring-[#1D63ED]/15',
+                            ].join(' ')}
                           />
+                          {hoTenError && (
+                            <p className="mt-1 text-xs font-medium text-[#B91C1C]" role="alert">
+                              {hoTenError}
+                            </p>
+                          )}
                         </div>
 
                         <div>
@@ -774,6 +809,7 @@ export default function BookingPage() {
                           <input
                             id="guest-phone"
                             type="tel"
+                            maxLength={10}
                             value={soDienThoai}
                             onChange={(e) => setSoDienThoai(e.target.value)}
                             onBlur={handleCheckDuplicate}
@@ -789,6 +825,7 @@ export default function BookingPage() {
                           <input
                             id="guest-email"
                             type="email"
+                            maxLength={100}
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             onBlur={handleCheckDuplicate}
@@ -804,6 +841,7 @@ export default function BookingPage() {
                           <input
                             id="guest-address"
                             type="text"
+                            maxLength={255}
                             value={diaChi}
                             onChange={(e) => setDiaChi(e.target.value)}
                             placeholder="Số 25 Láng Hạ, Đống Đa, Hà Nội"
@@ -829,7 +867,7 @@ export default function BookingPage() {
                           <Button
                             variant="secondary"
                             size="sm"
-                            shape="pill"
+                            shape="rounded"
                             onClick={() => handleUseDuplicateCustomer(duplicateCustomer)}
                             className="shrink-0"
                           >
@@ -881,13 +919,13 @@ export default function BookingPage() {
             </section>
 
             {/* Section 3: Accommodation */}
-            <section className="rounded-[24px] border border-slate-200/85 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-4">
+            <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#EFF5FF] text-[#1D63ED]">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#1D63ED]">
                     <Building2 className="h-4 w-4" strokeWidth={1.85} />
                   </span>
-                  <h2 className="text-lg font-bold text-slate-900">Dịch vụ lưu trú</h2>
+                  <h2 className="text-base font-bold text-slate-900">Dịch vụ lưu trú</h2>
                 </div>
                 {selectedSchedule && selectedSchedule.so_dem > 0 && (
                   <span className="text-xs font-medium text-slate-500">
@@ -897,8 +935,8 @@ export default function BookingPage() {
               </div>
 
               {selectedSchedule && selectedSchedule.so_dem === 0 ? (
-                <div className="rounded-2xl bg-[#F7FAFF] border border-slate-200/70 px-4 py-4 flex items-center gap-3 text-sm text-slate-700">
-                  <Sparkles className="h-4.5 w-4.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
+                <div className="rounded-xl bg-[#F8FAFC] border border-slate-200 px-4 py-3.5 flex items-center gap-3 text-sm text-slate-700">
+                  <Info className="h-4.5 w-4.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
                   <span>Chuyến đi trong ngày không bao gồm lưu trú qua đêm.</span>
                 </div>
               ) : loadingAccommodations ? (
@@ -998,13 +1036,13 @@ export default function BookingPage() {
             </section>
 
             {/* Section 4: Shuttle Transfers (Max 2) */}
-            <section className="rounded-[24px] border border-slate-200/85 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-4">
+            <section className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] space-y-4">
               <div className="flex items-center justify-between gap-3">
                 <div className="flex items-center gap-2.5">
-                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-[#EFF5FF] text-[#1D63ED]">
+                  <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-[#EFF6FF] text-[#1D63ED]">
                     <Car className="h-4 w-4" strokeWidth={1.85} />
                   </span>
-                  <h2 className="text-lg font-bold text-slate-900">Xe trung chuyển</h2>
+                  <h2 className="text-base font-bold text-slate-900">Xe trung chuyển</h2>
                 </div>
                 <span className="text-xs font-medium text-slate-500">Tối đa 2 chuyến đi kèm</span>
               </div>

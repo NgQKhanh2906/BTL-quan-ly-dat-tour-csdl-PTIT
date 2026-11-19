@@ -2,15 +2,13 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { MotionConfig } from 'framer-motion';
 import { AuthProvider } from './context/AuthContext';
 import { UserLayout } from './components/layout/UserLayout';
-import { AdminLayout } from './components/layout/AdminLayout';
 import LandingPage from './pages/user/LandingPage';
 import ExplorePage from './pages/user/ExplorePage';
 import BookingPage from './pages/user/BookingPage';
-import MyBookingsPage from './pages/user/MyBookingsPage';
-import AdminLoginPage from './pages/admin/AdminLoginPage';
-import AdminDashboardPage from './pages/admin/AdminDashboardPage';
-import AdminOrdersPage from './pages/admin/AdminOrdersPage';
-import AdminConfirmationsPage from './pages/admin/AdminConfirmationsPage';
+import ReviewsPage from './pages/user/ReviewsPage';
+import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
+import { AdminConfirmationsPage } from './pages/admin/AdminConfirmationsPage';
+import { AdminDashboardPage } from './pages/admin/AdminDashboardPage';
 
 export default function App() {
   return (
@@ -18,21 +16,22 @@ export default function App() {
       <AuthProvider>
         <BrowserRouter>
           <Routes>
-            {/* User Portal */}
             <Route element={<UserLayout />}>
               <Route path="/" element={<LandingPage />} />
               <Route path="/explore" element={<ExplorePage />} />
               <Route path="/book" element={<BookingPage />} />
-              <Route path="/my-bookings" element={<MyBookingsPage />} />
-            </Route>
+              <Route path="/orders" element={<AdminOrdersPage />} />
+              <Route path="/reviews" element={<ReviewsPage />} />
+              <Route path="/confirmations" element={<AdminConfirmationsPage />} />
+              <Route path="/reports" element={<AdminDashboardPage />} />
 
-            {/* Admin Portal */}
-            <Route path="/admin/login" element={<AdminLoginPage />} />
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Navigate to="/admin/dashboard" replace />} />
-              <Route path="dashboard" element={<AdminDashboardPage />} />
-              <Route path="orders" element={<AdminOrdersPage />} />
-              <Route path="confirmations" element={<AdminConfirmationsPage />} />
+              {/* Chuyển hướng các đường dẫn cũ sang form tương ứng */}
+              <Route path="/my-bookings" element={<Navigate to="/orders" replace />} />
+              <Route path="/admin" element={<Navigate to="/orders" replace />} />
+              <Route path="/admin/login" element={<Navigate to="/orders" replace />} />
+              <Route path="/admin/orders" element={<Navigate to="/orders" replace />} />
+              <Route path="/admin/dashboard" element={<Navigate to="/reports" replace />} />
+              <Route path="/admin/confirmations" element={<Navigate to="/confirmations" replace />} />
             </Route>
 
             {/* Fallback */}

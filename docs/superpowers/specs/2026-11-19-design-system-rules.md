@@ -2,6 +2,10 @@
 
 Tài liệu này phân tích hiện trạng giao diện trong mã nguồn hiện tại (`tour_app/`) và thiết lập bộ quy tắc Design System thống nhất cho ứng dụng Web mới (`web_app/`), phục vụ triển khai đồng bộ theo chủ đề thị giác đã phê duyệt và sẵn sàng tích hợp Figma MCP trong tương lai.
 
+### Cập nhật giao diện dạng Form & Bảng (19/11/2026)
+- Thống nhất toàn bộ Cổng Khách hàng và Cổng Quản trị về phong cách **Form & Operations Workspace** trên nền `#F8FAFC` kết hợp nhấn `#1D63ED`, dùng duy nhất font `Be Vietnam Pro` (loại bỏ font serif `Spectral`).
+- Gỡ bỏ bộ 11 ảnh tĩnh và các component quảng bá (`HeroOrganicFrame`, `FloatingSearchBar`, `TourCard`); toàn bộ biểu mẫu sử dụng nút bo góc `10px` (`shape="rounded"`) và thẻ nội dung bo `12px–16px`.
+
 ---
 
 ## 1. Hiện trạng Codebase (`tour_app/` — Trước khi nâng cấp)

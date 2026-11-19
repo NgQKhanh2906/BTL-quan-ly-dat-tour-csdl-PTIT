@@ -18,7 +18,6 @@ import {
 } from 'lucide-react';
 import { api, ApiError } from '../../api/client';
 import type { CustomerItem, CustomerOrderItem, PendingReviewItem } from '../../api/types';
-import { getTourImage, getTourImageAlt } from '../../constants/tourImages';
 import { useAuth } from '../../context/AuthContext';
 import { formatDate, formatDateTime, formatVnd, getInitials } from '../../utils/format';
 import { Button } from '../../components/common/Button';
@@ -220,18 +219,18 @@ export default function MyBookingsPage() {
   // Guest Login Gate
   if (!customer) {
     return (
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-        <div className="rounded-[28px] border border-slate-200/85 bg-white p-6 sm:p-9 shadow-[var(--shadow-floating)]">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 shadow-[var(--shadow-floating)]">
           <div className="text-center">
-            <span className="inline-flex h-13 w-13 items-center justify-center rounded-2xl bg-[#EFF5FF] text-[#1D63ED] mb-4">
+            <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-[#EFF6FF] text-[#1D63ED] mb-3.5">
               <Ticket className="h-6 w-6" strokeWidth={1.75} />
             </span>
-            <h1 className="font-display text-3xl font-bold text-slate-950">
-              Quản lý đơn hàng &amp; Đánh giá
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
+              Đơn của tôi &amp; Đánh giá
             </h1>
-            <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
-              Đăng nhập bằng email hoặc số điện thoại bạn đã dùng khi đặt tour để xem lịch sử chuyến
-              đi, tải phiếu xác nhận PDF và chia sẻ cảm nhận.
+            <p className="mt-1.5 text-sm text-slate-600 max-w-md mx-auto">
+              Đăng nhập bằng email hoặc số điện thoại đã đặt tour để xem danh sách đơn hàng, tải
+              phiếu xác nhận PDF và gửi đánh giá chuyến đi.
             </p>
           </div>
 
@@ -249,7 +248,7 @@ export default function MyBookingsPage() {
                   if (loginError) setLoginError(null);
                 }}
                 placeholder="Nhập email hoặc số điện thoại của bạn..."
-                className="w-full h-12 rounded-xl border border-slate-200 bg-slate-50/70 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+                className="w-full h-11 rounded-[10px] border border-slate-200 bg-slate-50/70 pl-10 pr-4 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-2 focus:ring-[#1D63ED]/15"
               />
             </div>
 
@@ -262,7 +261,7 @@ export default function MyBookingsPage() {
             <Button
               type="submit"
               variant="primary"
-              shape="pill"
+              shape="rounded"
               size="lg"
               loading={loggingIn}
               rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={1.85} />}
@@ -312,15 +311,15 @@ export default function MyBookingsPage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8">
       {/* Customer Header */}
-      <div className="rounded-[24px] border border-slate-200/85 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] mb-7 flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div className="flex items-center gap-4 min-w-0">
-          <span className="inline-flex h-13 w-13 shrink-0 items-center justify-center rounded-full bg-[#1D63ED] text-base font-bold text-white shadow-[0_8px_18px_rgba(29,99,237,0.25)]">
+          <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-[#1D63ED] text-sm font-bold text-white">
             {getInitials(customer.ho_ten)}
           </span>
           <div className="min-w-0">
-            <h1 className="font-display text-2xl sm:text-3xl font-bold text-slate-950 truncate">
+            <h1 className="text-xl sm:text-2xl font-bold text-slate-900 truncate">
               {customer.ho_ten}
             </h1>
             <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-slate-500">
@@ -340,22 +339,22 @@ export default function MyBookingsPage() {
 
         <Link
           to="/explore"
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2] transition-colors shrink-0"
+          className="inline-flex items-center justify-center gap-2 rounded-[10px] bg-[#1D63ED] px-4 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2] transition-colors shrink-0"
         >
           <Compass className="h-4 w-4" strokeWidth={1.8} />
-          Khám phá tour mới
+          Tra cứu tour mới
         </Link>
       </div>
 
       {/* Tabs */}
-      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200/90 pb-3 mb-6">
+      <div className="flex flex-wrap items-center gap-2 border-b border-slate-200 pb-3 mb-6">
         <button
           type="button"
           onClick={() => setActiveTab('orders')}
           className={[
-            'inline-flex items-center gap-2 rounded-full px-4.5 py-2.5 text-sm font-semibold transition-all cursor-pointer',
+            'inline-flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-semibold transition-colors cursor-pointer',
             activeTab === 'orders'
-              ? 'bg-[#1D63ED] text-white shadow-[0_8px_18px_rgba(29,99,237,0.22)]'
+              ? 'bg-[#1D63ED] text-white'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50',
           ].join(' ')}
         >
@@ -363,7 +362,7 @@ export default function MyBookingsPage() {
           <span>Đơn đã đặt</span>
           <span
             className={[
-              'inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-full text-xs font-bold tabular-nums',
+              'inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-md text-xs font-bold tabular-nums',
               activeTab === 'orders' ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-700',
             ].join(' ')}
           >
@@ -375,9 +374,9 @@ export default function MyBookingsPage() {
           type="button"
           onClick={() => setActiveTab('reviews')}
           className={[
-            'inline-flex items-center gap-2 rounded-full px-4.5 py-2.5 text-sm font-semibold transition-all cursor-pointer',
+            'inline-flex items-center gap-2 rounded-[10px] px-4 py-2 text-sm font-semibold transition-colors cursor-pointer',
             activeTab === 'reviews'
-              ? 'bg-[#1D63ED] text-white shadow-[0_8px_18px_rgba(29,99,237,0.22)]'
+              ? 'bg-[#1D63ED] text-white'
               : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50',
           ].join(' ')}
         >
@@ -385,7 +384,7 @@ export default function MyBookingsPage() {
           <span>Đánh giá chuyến đi</span>
           <span
             className={[
-              'inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-full text-xs font-bold tabular-nums',
+              'inline-flex min-w-5 h-5 px-1.5 items-center justify-center rounded-md text-xs font-bold tabular-nums',
               activeTab === 'reviews'
                 ? 'bg-white/20 text-white'
                 : pendingReviews.length > 0
@@ -428,144 +427,135 @@ export default function MyBookingsPage() {
         orders.length === 0 ? (
           <EmptyState
             title="Bạn chưa có đơn đặt tour nào"
-            description="Hãy khám phá các tuyến hành trình miền Bắc sắp khởi hành để đặt chỗ cho chuyến đi tiếp theo."
+            description="Hãy tra cứu lịch trình đang mở bán để đặt chỗ cho chuyến đi tiếp theo."
             action={
               <Link
                 to="/explore"
-                className="inline-flex items-center rounded-full bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2]"
+                className="inline-flex items-center rounded-[10px] bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2]"
               >
-                Khám phá tour ngay
+                Tra cứu lịch trình
               </Link>
             }
           />
         ) : (
-          <div className="space-y-5">
+          <div className="space-y-4">
             {orders.map((order) => (
               <article
                 key={order.ma_don_hang}
-                className="rounded-[22px] border border-slate-200/85 bg-white shadow-[var(--shadow-card)] overflow-hidden"
+                className="rounded-xl border border-slate-200 bg-white shadow-[var(--shadow-card)] overflow-hidden"
               >
-                <div className="p-5 sm:p-6 flex flex-col md:flex-row gap-5">
-                  <img
-                    src={getTourImage(order.ma_tour)}
-                    alt={getTourImageAlt(order.ma_tour, order.ten_tour)}
-                    loading="lazy"
-                    className="w-full md:w-48 h-40 md:h-auto rounded-2xl object-cover shrink-0 bg-slate-100"
-                  />
-
-                  <div className="flex-1 min-w-0 flex flex-col justify-between gap-4">
-                    <div>
-                      <div className="flex flex-wrap items-center justify-between gap-2">
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-xs font-bold text-[#1D63ED] bg-[#EFF5FF] px-2.5 py-1 rounded-full tabular-nums">
-                            {order.ma_don_hang}
-                          </span>
-                          <span className="text-xs text-slate-500 tabular-nums">
-                            Đặt ngày {formatDate(order.ngay_dat)}
-                          </span>
-                        </div>
-                        <StatusBadge
-                          status={order.ma_trang_thai}
-                          label={order.ten_trang_thai}
-                        />
-                      </div>
-
-                      <h2 className="mt-2.5 text-lg font-bold text-slate-950 leading-snug">
-                        {order.ten_tour}
-                      </h2>
-
-                      <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs text-slate-600">
-                        <span className="inline-flex items-center gap-1.5 tabular-nums">
-                          <Calendar className="h-3.5 w-3.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
-                          {formatDate(order.ngay_xuat_phat)} – {formatDate(order.ngay_ket_thuc)}
+                <div className="p-5 sm:p-6 space-y-4">
+                  <div>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <div className="flex items-center gap-2.5">
+                        <span className="text-xs font-bold text-[#1D4ED8] bg-[#EFF6FF] border border-[#BFDBFE] px-2.5 py-0.5 rounded-md tabular-nums">
+                          {order.ma_don_hang}
                         </span>
-                        <span className="inline-flex items-center gap-1.5 tabular-nums">
-                          <Users className="h-3.5 w-3.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
-                          {order.so_luong_khach} khách
-                        </span>
-                        <span className="inline-flex items-center gap-1.5">
-                          <Building2 className="h-3.5 w-3.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
-                          {order.ten_nha_nghi
-                            ? `${order.ten_nha_nghi} (${order.so_phong} phòng)`
-                            : 'Không đặt nơi nghỉ'}
+                        <span className="text-xs text-slate-500 tabular-nums">
+                          Đặt ngày {formatDate(order.ngay_dat)}
                         </span>
                       </div>
-
-                      {/* Cancellation summary if cancelled */}
-                      {order.ma_trang_thai === 'HUY' && (
-                        <div className="mt-3.5 rounded-xl border border-red-200/80 bg-red-50/75 p-3.5 text-xs text-red-900 space-y-1">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="font-semibold">
-                              Thời điểm hủy: {formatDateTime(order.ngay_huy)}
-                            </span>
-                            <span className="tabular-nums font-bold">
-                              Phí phạt: {formatVnd(order.tien_phat)} ({order.ty_le_phat ?? 0}%) ·
-                              Hoàn lại: {formatVnd(order.tien_hoan)}
-                            </span>
-                          </div>
-                          {order.ly_do_huy && <p className="text-red-800">Lý do: {order.ly_do_huy}</p>}
-                        </div>
-                      )}
-
-                      {/* Submitted review display */}
-                      {order.ngay_danh_gia && order.diem_tour !== null && (
-                        <div className="mt-3.5 rounded-xl border border-slate-200/70 bg-[#F7FAFF] p-3.5 text-xs text-slate-700 space-y-1.5">
-                          <div className="flex flex-wrap items-center justify-between gap-2">
-                            <span className="font-semibold text-slate-900 inline-flex items-center gap-2">
-                              Đánh giá của bạn:
-                              <StarRating value={order.diem_tour} size="sm" showValue />
-                            </span>
-                            <span className="text-slate-400 tabular-nums">
-                              {formatDate(order.ngay_danh_gia)}
-                            </span>
-                          </div>
-                          {order.nhan_xet_tour && <p className="text-slate-600">{order.nhan_xet_tour}</p>}
-                          {order.diem_nha_nghi !== null && (
-                            <div className="pt-1.5 border-t border-slate-200/60 flex flex-wrap items-center gap-2">
-                              <span className="font-semibold text-slate-800">Lưu trú:</span>
-                              <StarRating value={order.diem_nha_nghi} size="sm" showValue />
-                              {order.nhan_xet_nha_nghi && (
-                                <span className="text-slate-600">— {order.nhan_xet_nha_nghi}</span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      )}
+                      <StatusBadge
+                        status={order.ma_trang_thai}
+                        label={order.ten_trang_thai}
+                      />
                     </div>
 
-                    {/* Footer actions & price */}
-                    <div className="pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
-                      <div>
-                        <p className="text-[11px] text-slate-500">Tổng chi phí đơn hàng</p>
-                        <p className="text-lg font-bold text-[#1D63ED] tabular-nums">
-                          {formatVnd(order.tong_tien)}
-                        </p>
+                    <h2 className="mt-2.5 text-base sm:text-lg font-bold text-slate-900 leading-snug">
+                      {order.ten_tour}
+                    </h2>
+
+                    <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs text-slate-600">
+                      <span className="inline-flex items-center gap-1.5 tabular-nums">
+                        <Calendar className="h-3.5 w-3.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
+                        {formatDate(order.ngay_xuat_phat)} – {formatDate(order.ngay_ket_thuc)}
+                      </span>
+                      <span className="inline-flex items-center gap-1.5 tabular-nums">
+                        <Users className="h-3.5 w-3.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
+                        {order.so_luong_khach} khách
+                      </span>
+                      <span className="inline-flex items-center gap-1.5">
+                        <Building2 className="h-3.5 w-3.5 text-[#1D63ED] shrink-0" strokeWidth={1.75} />
+                        {order.ten_nha_nghi
+                          ? `${order.ten_nha_nghi} (${order.so_phong} phòng)`
+                          : 'Không đặt nơi nghỉ'}
+                      </span>
+                    </div>
+
+                    {/* Cancellation summary if cancelled */}
+                    {order.ma_trang_thai === 'HUY' && (
+                      <div className="mt-3.5 rounded-xl border border-red-200/80 bg-red-50/75 p-3.5 text-xs text-red-900 space-y-1">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-semibold">
+                            Thời điểm hủy: {formatDateTime(order.ngay_huy)}
+                          </span>
+                          <span className="tabular-nums font-bold">
+                            Phí phạt: {formatVnd(order.tien_phat)} ({order.ty_le_phat ?? 0}%) ·
+                            Hoàn lại: {formatVnd(order.tien_hoan)}
+                          </span>
+                        </div>
+                        {order.ly_do_huy && <p className="text-red-800">Lý do: {order.ly_do_huy}</p>}
                       </div>
+                    )}
 
-                      <div className="flex flex-wrap items-center gap-2.5">
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          shape="pill"
-                          loading={downloadingOrderId === order.ma_don_hang}
-                          leftIcon={<Download className="h-3.5 w-3.5" strokeWidth={1.8} />}
-                          onClick={() => handleDownloadPdf(order.ma_don_hang)}
-                        >
-                          Tải phiếu xác nhận (PDF)
-                        </Button>
-
-                        {order.co_the_danh_gia && (
-                          <Button
-                            variant="primary"
-                            size="sm"
-                            shape="pill"
-                            leftIcon={<Star className="h-3.5 w-3.5" strokeWidth={1.85} />}
-                            onClick={() => handleJumpToReview(order.ma_don_hang)}
-                          >
-                            Viết đánh giá
-                          </Button>
+                    {/* Submitted review display */}
+                    {order.ngay_danh_gia && order.diem_tour !== null && (
+                      <div className="mt-3.5 rounded-xl border border-slate-200 bg-[#F8FAFC] p-3.5 text-xs text-slate-700 space-y-1.5">
+                        <div className="flex flex-wrap items-center justify-between gap-2">
+                          <span className="font-semibold text-slate-900 inline-flex items-center gap-2">
+                            Đánh giá của bạn:
+                            <StarRating value={order.diem_tour} size="sm" showValue />
+                          </span>
+                          <span className="text-slate-400 tabular-nums">
+                            {formatDate(order.ngay_danh_gia)}
+                          </span>
+                        </div>
+                        {order.nhan_xet_tour && <p className="text-slate-600">{order.nhan_xet_tour}</p>}
+                        {order.diem_nha_nghi !== null && (
+                          <div className="pt-1.5 border-t border-slate-200/60 flex flex-wrap items-center gap-2">
+                            <span className="font-semibold text-slate-800">Lưu trú:</span>
+                            <StarRating value={order.diem_nha_nghi} size="sm" showValue />
+                            {order.nhan_xet_nha_nghi && (
+                              <span className="text-slate-600">— {order.nhan_xet_nha_nghi}</span>
+                            )}
+                          </div>
                         )}
                       </div>
+                    )}
+                  </div>
+
+                  {/* Footer actions & price */}
+                  <div className="pt-3.5 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <p className="text-[11px] text-slate-500">Tổng chi phí đơn hàng</p>
+                      <p className="text-lg font-bold text-[#1D63ED] tabular-nums">
+                        {formatVnd(order.tong_tien)}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        shape="rounded"
+                        loading={downloadingOrderId === order.ma_don_hang}
+                        leftIcon={<Download className="h-3.5 w-3.5" strokeWidth={1.8} />}
+                        onClick={() => handleDownloadPdf(order.ma_don_hang)}
+                      >
+                        Tải phiếu xác nhận (PDF)
+                      </Button>
+
+                      {order.co_the_danh_gia && (
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          shape="rounded"
+                          leftIcon={<Star className="h-3.5 w-3.5" strokeWidth={1.85} />}
+                          onClick={() => handleJumpToReview(order.ma_don_hang)}
+                        >
+                          Viết đánh giá
+                        </Button>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -577,20 +567,20 @@ export default function MyBookingsPage() {
         <EmptyState
           icon={<MessageSquareHeart className="h-7 w-7" strokeWidth={1.75} />}
           title="Không còn chuyến đi nào chờ đánh giá"
-          description="Mọi hành trình đã hoàn tất của bạn đều đã được ghi nhận đánh giá. Hãy chọn thêm điểm đến mới cho kỳ nghỉ sắp tới."
+          description="Mọi hành trình đã hoàn tất của bạn đều đã được ghi nhận đánh giá."
           action={
             <Link
               to="/explore"
-              className="inline-flex items-center rounded-full bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2]"
+              className="inline-flex items-center rounded-[10px] bg-[#1D63ED] px-5 py-2.5 text-sm font-semibold text-white hover:bg-[#154EC2]"
             >
-              Khám phá hành trình mới
+              Tra cứu lịch trình mới
             </Link>
           }
         />
       ) : (
         <form
           onSubmit={handleSubmitReview}
-          className="rounded-[24px] border border-slate-200/85 bg-white p-6 sm:p-8 shadow-[var(--shadow-card)] space-y-6 max-w-3xl"
+          className="rounded-xl border border-slate-200 bg-white p-6 sm:p-7 shadow-[var(--shadow-card)] space-y-6 max-w-3xl"
         >
           <div>
             <label
@@ -729,7 +719,7 @@ export default function MyBookingsPage() {
                 <Button
                   type="submit"
                   variant="primary"
-                  shape="pill"
+                  shape="rounded"
                   size="lg"
                   loading={submittingReview}
                   leftIcon={<CheckCircle2 className="h-4.5 w-4.5" strokeWidth={1.85} />}

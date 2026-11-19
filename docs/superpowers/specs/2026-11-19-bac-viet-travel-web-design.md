@@ -4,6 +4,13 @@
 - **Phạm vi:** Xây dựng mới ứng dụng Web Full-Stack (React + Vite + FastAPI) tái sử dụng toàn bộ tầng dữ liệu và nghiệp vụ MySQL trong `tour_app/db.py` và `tour_app/services.py`, đồng thời giữ nguyên thư mục `tour_app/` gốc để đối chiếu và bảo toàn bộ kiểm thử hiện có.
 - **Tài liệu quy tắc Design System đi kèm:** `docs/superpowers/specs/2026-11-19-design-system-rules.md`
 
+### Cập nhật giao diện dạng Form & Bảng (19/11/2026)
+Theo điều chỉnh phạm vi mới nhất, tầng giao diện Frontend chuyển từ bố cục Landing Page quảng bá nhiều hình ảnh sang **giao diện ứng dụng Form và Bảng gọn nhẹ, dễ điền và dễ nhận biết** phù hợp đồ án CSDL:
+- Loại bỏ toàn bộ thư mục 11 ảnh mẫu (`web_app/frontend/public/images/`) và các component quảng bá (`HeroOrganicFrame`, `FloatingSearchBar`, `TourCard`, `HeroFlightArc`), chỉ giữ font `Be Vietnam Pro` đồng nhất.
+- Trang chủ (`/`) trở thành trang **Tổng quan hệ thống** gọn nhẹ gồm 4 thẻ số liệu thực từ MySQL, lối tắt mở nhanh từng biểu mẫu theo 2 vai trò (`Khách hàng` và `Quản trị & Điều hành`), và bảng lịch khởi hành sắp tới.
+- Trang Tra cứu (`/explore`) hiển thị trực tiếp biểu mẫu lọc 8 tiêu chí kèm bảng kết quả toàn chiều rộng; trang Đặt tour (`/book`) và Đơn của tôi (`/my-bookings`) sử dụng form và danh sách không ảnh minh họa.
+- Giữ nguyên toàn bộ kiến trúc `web_app/backend/`, cơ chế phân quyền User/Admin bằng HMAC-SHA256, quy tắc loại bỏ mã `F1..R2` / chú thích kỹ thuật kiểu AI / thông tin PTIT-12 bảng, và xuất file **PDF khổ A4** cho cả Báo cáo doanh thu lẫn Phiếu xác nhận.
+
 ---
 
 ## 1. Mục tiêu, Non-goals và Anti-goals

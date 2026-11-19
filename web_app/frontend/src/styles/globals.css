@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
 @theme inline {
-  --font-display: var(--font-display);
   --font-sans: var(--font-sans);
   --color-canvas: var(--color-bg-canvas);
   --color-surface: var(--color-bg-surface);
@@ -53,10 +52,6 @@
     outline: 2px solid var(--color-brand-primary);
     outline-offset: 2px;
   }
-}
-
-.font-display {
-  font-family: var(--font-display);
 }
 
 .tabular-nums {
