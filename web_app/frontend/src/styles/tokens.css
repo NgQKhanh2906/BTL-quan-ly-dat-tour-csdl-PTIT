@@ -1,0 +1,57 @@
+/* Design System Tokens — Bắc Việt Travel */
+:root {
+  /* --- Color Palette: User Portal (Airy Cobalt Travel Theme) --- */
+  --color-bg-canvas: #F7FAFF;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-subtle: #EFF5FF;
+
+  --color-brand-primary: #1D63ED;
+  --color-brand-hover: #154EC2;
+  --color-brand-soft: #DBEAFE;
+  --color-brand-gradient-start: #1E5CE6;
+  --color-brand-gradient-end: #0B3A99;
+
+  --color-ink-primary: #0F172A;
+  --color-ink-secondary: #475569;
+  --color-ink-muted: #64748B;
+  --color-border-subtle: #E2E8F0;
+  --color-border-strong: #CBD5E1;
+
+  /* --- Color Palette: Admin Portal (Slate Operations Theme) --- */
+  --color-admin-sidebar: #0F172A;
+  --color-admin-sidebar-hover: #1E293B;
+  --color-admin-canvas: #F8FAFC;
+
+  /* --- Semantic Status Colors --- */
+  --color-status-booked-bg: #EFF6FF;
+  --color-status-booked-fg: #1D4ED8;
+  --color-status-paid-bg: #ECFDF5;
+  --color-status-paid-fg: #047857;
+  --color-status-done-bg: #F0FDF4;
+  --color-status-done-fg: #15803D;
+  --color-status-cancelled-bg: #FEF2F2;
+  --color-status-cancelled-fg: #B91C1C;
+  --color-rating-star: #F59E0B;
+
+  /* --- Typography --- */
+  --font-display: 'Spectral', Georgia, serif;
+  --font-sans: 'Be Vietnam Pro', system-ui, -apple-system, sans-serif;
+
+  /* --- Radius Scale --- */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+  --radius-pill: 9999px;
+
+  /* --- Elevation --- */
+  --shadow-card: 0 4px 20px rgba(15, 23, 42, 0.05);
+  --shadow-floating: 0 20px 50px rgba(15, 23, 42, 0.10);
+  --shadow-glass: 0 12px 32px rgba(15, 23, 42, 0.14);
+
+  /* --- Motion --- */
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --duration-fast: 150ms;
+  --duration-base: 220ms;
+  --duration-slow: 420ms;
+}

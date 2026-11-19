@@ -19,3 +19,8 @@ desktop.ini
 
 ~$*.docx
 *.tmp
+
+# Node / Vite frontend
+node_modules/
+web_app/frontend/dist/
+*.tsbuildinfo
