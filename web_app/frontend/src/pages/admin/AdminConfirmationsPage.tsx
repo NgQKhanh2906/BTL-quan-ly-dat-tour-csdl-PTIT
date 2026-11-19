@@ -200,7 +200,17 @@ export function AdminConfirmationsPage() {
   }, []);
 
   return (
-    <div className="space-y-5">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8 space-y-6">
+      {/* Tiêu đề trang */}
+      <div>
+        <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
+          Phiếu xác nhận đặt tour
+        </h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Xem trước biểu mẫu xác nhận dịch vụ theo từng đơn hàng, in trực tiếp hoặc xuất file PDF khổ A4 dọc.
+        </p>
+      </div>
+
       {/* Compact Full-Width Horizontal Control Bar */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(15,23,42,0.03)] space-y-4">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-start">

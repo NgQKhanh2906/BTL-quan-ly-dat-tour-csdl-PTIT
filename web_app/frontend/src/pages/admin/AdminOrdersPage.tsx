@@ -105,7 +105,36 @@ export function AdminOrdersPage() {
   const hasActiveFilter = statusFilter !== 'ALL' || debouncedSearch.length > 0;
 
   return (
-    <div className="space-y-5">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8 space-y-6">
+      {/* Tiêu đề trang */}
+      <div>
+        <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
+          Quản lý và Hủy đơn đặt tour
+        </h1>
+        <p className="mt-1 text-sm text-slate-600">
+          Theo dõi danh sách toàn bộ đơn hàng, cập nhật trạng thái và xử lý hủy tour tính phạt tự động.
+        </p>
+      </div>
+
+      {bannerMessage && (
+        <div
+          role="status"
+          className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 flex items-center justify-between gap-3"
+        >
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            <span>{bannerMessage}</span>
+          </div>
+          <button
+            type="button"
+            onClick={() => setBannerMessage(null)}
+            className="text-emerald-700 hover:text-emerald-900 cursor-pointer"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      )}
+
       {/* Status pills + Search toolbar */}
       <section className="rounded-2xl border border-slate-200 bg-white p-4 sm:p-5 shadow-[0_2px_10px_rgba(15,23,42,0.03)] space-y-4">
         <div
@@ -353,7 +382,7 @@ export function AdminOrdersPage() {
                       >
                         <div className="inline-flex items-center gap-1.5">
                           <Link
-                            to={`/admin/confirmations?order=${encodeURIComponent(order.ma_don_hang)}`}
+                            to={`/confirmations?order=${encodeURIComponent(order.ma_don_hang)}`}
                             title="Mở phiếu xác nhận"
                             aria-label={`Mở phiếu xác nhận cho đơn ${order.ma_don_hang}`}
                             className="inline-flex h-8 w-8 items-center justify-center rounded-lg border border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:bg-slate-50 hover:text-[#1D63ED] transition-colors"

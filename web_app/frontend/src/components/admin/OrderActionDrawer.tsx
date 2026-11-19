@@ -290,7 +290,7 @@ export function OrderActionDrawer({
             </Button>
             {detail && (
               <Link
-                to={`/admin/confirmations?order=${encodeURIComponent(detail.ma_don_hang)}`}
+                to={`/confirmations?order=${encodeURIComponent(detail.ma_don_hang)}`}
                 className="inline-flex h-9 items-center gap-1.5 rounded-[10px] border border-slate-200 bg-white px-3 text-xs font-semibold text-slate-700 hover:bg-slate-50 hover:text-slate-900 transition-colors"
               >
                 <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.75} />

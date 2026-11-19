@@ -2,22 +2,18 @@ import { useCallback, useEffect, useRef, useState, type FormEvent } from 'react'
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   ArrowRight,
-  LayoutGrid,
   RotateCcw,
   Search,
   SlidersHorizontal,
   Sparkles,
   Star,
-  Table2,
 } from 'lucide-react';
 import { api, ApiError } from '../../api/client';
 import type { ProvinceItem, ScheduleSearchItem } from '../../api/types';
-import { getTourImage, getTourImageAlt } from '../../constants/tourImages';
 import { formatDateTime, formatVnd } from '../../utils/format';
 import { Button } from '../../components/common/Button';
 import { EmptyState } from '../../components/common/EmptyState';
 import { LoadingSkeleton } from '../../components/common/LoadingSkeleton';
-import { TourCard } from '../../components/user/TourCard';
 
 interface FilterState {
   tuKhoa: string;
@@ -55,7 +51,6 @@ export default function ExplorePage() {
     diemToiThieu: searchParams.get('diem_toi_thieu') || '',
   });
 
-  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const [results, setResults] = useState<ScheduleSearchItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
@@ -63,15 +58,24 @@ export default function ExplorePage() {
   // Instant validation
   const giaTuNum = filters.giaTu.trim() !== '' ? Number(filters.giaTu) : null;
   const giaDenNum = filters.giaDen.trim() !== '' ? Number(filters.giaDen) : null;
-  const priceError =
-    giaTuNum !== null && giaDenNum !== null && !Number.isNaN(giaTuNum) && !Number.isNaN(giaDenNum) && giaDenNum < giaTuNum
-      ? 'Giá tối đa phải lớn hơn hoặc bằng giá tối thiểu.'
+  const minPriceError =
+    giaTuNum !== null && (Number.isNaN(giaTuNum) || giaTuNum < 0 || !Number.isInteger(giaTuNum))
+      ? 'Giá từ phải là số nguyên không âm.'
       : null;
+  const maxPriceError =
+    giaDenNum !== null && (Number.isNaN(giaDenNum) || giaDenNum < 0 || !Number.isInteger(giaDenNum))
+      ? 'Giá đến phải là số nguyên không âm.'
+      : giaTuNum !== null &&
+          giaDenNum !== null &&
+          !minPriceError &&
+          giaDenNum < giaTuNum
+        ? 'Giá đến phải lớn hơn hoặc bằng giá từ.'
+        : null;
   const dateError =
     filters.tuNgay && filters.denNgay && filters.denNgay < filters.tuNgay
       ? 'Ngày kết thúc lọc phải lớn hơn hoặc bằng ngày khởi hành từ.'
       : null;
-  const hasValidationError = Boolean(priceError || dateError);
+  const hasValidationError = Boolean(minPriceError || maxPriceError || dateError);
 
   const runSearch = useCallback(async (activeFilters: FilterState) => {
     setLoading(true);
@@ -107,7 +111,6 @@ export default function ExplorePage() {
     }
   }, []);
 
-  // Load provinces + system default date on mount, then perform initial search
   useEffect(() => {
     let active = true;
     Promise.all([api.getProvinces(), api.getMeta()])
@@ -143,7 +146,6 @@ export default function ExplorePage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Re-sync when navigating to /explore?... from links while already mounted
   const currentQueryString = searchParams.toString();
   useEffect(() => {
     if (!metaReady) return;
@@ -216,16 +218,16 @@ export default function ExplorePage() {
   const isLuxuryActive = filters.giaTu === '10000000' && filters.giaDen === '';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-10">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8">
       {/* Page Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
         <div>
-          <h1 className="font-display text-3xl sm:text-4xl font-bold text-slate-950 tracking-tight">
-            Khám phá lịch trình miền Bắc
+          <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
+            Tra cứu lịch trình tour
           </h1>
-          <p className="mt-2 text-sm sm:text-base text-slate-600 max-w-2xl">
-            Lọc nhanh theo điểm đến, ngân sách, ngày khởi hành và đánh giá thực tế từ khách hàng để
-            chọn chuyến đi phù hợp nhất.
+          <p className="mt-1.5 text-sm text-slate-600 max-w-2xl">
+            Lọc lịch khởi hành theo từ khóa, tỉnh đến, khoảng giá, ngày đi, số chỗ trống và điểm
+            đánh giá.
           </p>
         </div>
 
@@ -233,7 +235,7 @@ export default function ExplorePage() {
           <Button
             variant={isLuxuryActive ? 'primary' : 'secondary'}
             size="sm"
-            shape="pill"
+            shape="rounded"
             leftIcon={<Sparkles className="h-3.5 w-3.5" strokeWidth={1.75} />}
             onClick={handleLuxuryFilter}
           >
@@ -242,7 +244,7 @@ export default function ExplorePage() {
           <Button
             variant="ghost"
             size="sm"
-            shape="pill"
+            shape="rounded"
             leftIcon={<RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} />}
             onClick={handleResetFilters}
           >
@@ -253,12 +255,13 @@ export default function ExplorePage() {
 
       {/* 8-Criteria Filter Form */}
       <form
+        noValidate
         onSubmit={handleSubmit}
-        className="rounded-[24px] border border-slate-200/85 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] mb-8"
+        className="rounded-xl border border-slate-200 bg-white p-5 sm:p-6 shadow-[var(--shadow-card)] mb-7"
       >
         <div className="flex items-center gap-2 text-sm font-bold text-slate-900 mb-4">
           <SlidersHorizontal className="h-4 w-4 text-[#1D63ED]" strokeWidth={1.75} />
-          <span>Bộ lọc lịch trình</span>
+          <span>Điều kiện tìm kiếm</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -278,7 +281,7 @@ export default function ExplorePage() {
                 value={filters.tuKhoa}
                 onChange={(e) => setFilters((prev) => ({ ...prev, tuKhoa: e.target.value }))}
                 placeholder="Hạ Long, Sa Pa, Du thuyền..."
-                className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 pl-9.5 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+                className="w-full h-10 rounded-[10px] border border-slate-200 bg-slate-50/70 pl-9.5 pr-3 text-sm text-slate-900 placeholder:text-slate-400 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-2 focus:ring-[#1D63ED]/15"
               />
             </div>
           </div>
@@ -292,9 +295,9 @@ export default function ExplorePage() {
               id="filter-province"
               value={filters.maTinhDen}
               onChange={(e) => setFilters((prev) => ({ ...prev, maTinhDen: e.target.value }))}
-              className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15 cursor-pointer"
+              className="w-full h-10 rounded-[10px] border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-2 focus:ring-[#1D63ED]/15 cursor-pointer"
             >
-              <option value="">Tất cả 15 tỉnh miền Bắc</option>
+              <option value="">Tất cả tỉnh miền Bắc</option>
               {provinces.map((p) => (
                 <option key={p.ma_tinh} value={p.ma_tinh}>
                   {p.ten_tinh}
@@ -312,12 +315,23 @@ export default function ExplorePage() {
               id="filter-price-min"
               type="number"
               min={0}
-              step={500000}
+              step={1}
               value={filters.giaTu}
               onChange={(e) => setFilters((prev) => ({ ...prev, giaTu: e.target.value }))}
               placeholder="Ví dụ: 2000000"
-              className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums placeholder:text-slate-400 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+              aria-invalid={Boolean(minPriceError)}
+              className={[
+                'w-full h-10 rounded-[10px] border bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2',
+                minPriceError
+                  ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-red-500/15'
+                  : 'border-slate-200 focus:border-[#1D63ED] focus:ring-[#1D63ED]/15',
+              ].join(' ')}
             />
+            {minPriceError && (
+              <p className="mt-1 text-xs font-medium text-[#B91C1C]" role="alert">
+                {minPriceError}
+              </p>
+            )}
           </div>
 
           {/* 4. Max Price */}
@@ -329,21 +343,21 @@ export default function ExplorePage() {
               id="filter-price-max"
               type="number"
               min={0}
-              step={500000}
+              step={1}
               value={filters.giaDen}
               onChange={(e) => setFilters((prev) => ({ ...prev, giaDen: e.target.value }))}
               placeholder="Không giới hạn"
-              aria-invalid={Boolean(priceError)}
+              aria-invalid={Boolean(maxPriceError)}
               className={[
-                'w-full h-10.5 rounded-xl border bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-3',
-                priceError
+                'w-full h-10 rounded-[10px] border bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums placeholder:text-slate-400 focus:bg-white focus:outline-none focus:ring-2',
+                maxPriceError
                   ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-red-500/15'
                   : 'border-slate-200 focus:border-[#1D63ED] focus:ring-[#1D63ED]/15',
               ].join(' ')}
             />
-            {priceError && (
+            {maxPriceError && (
               <p className="mt-1 text-xs font-medium text-[#B91C1C]" role="alert">
-                {priceError}
+                {maxPriceError}
               </p>
             )}
           </div>
@@ -358,7 +372,7 @@ export default function ExplorePage() {
               type="date"
               value={filters.tuNgay}
               onChange={(e) => setFilters((prev) => ({ ...prev, tuNgay: e.target.value }))}
-              className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+              className="w-full h-10 rounded-[10px] border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-2 focus:ring-[#1D63ED]/15"
             />
           </div>
 
@@ -375,7 +389,7 @@ export default function ExplorePage() {
               onChange={(e) => setFilters((prev) => ({ ...prev, denNgay: e.target.value }))}
               aria-invalid={Boolean(dateError)}
               className={[
-                'w-full h-10.5 rounded-xl border bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums focus:bg-white focus:outline-none focus:ring-3',
+                'w-full h-10 rounded-[10px] border bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums focus:bg-white focus:outline-none focus:ring-2',
                 dateError
                   ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-red-500/15'
                   : 'border-slate-200 focus:border-[#1D63ED] focus:ring-[#1D63ED]/15',
@@ -405,7 +419,7 @@ export default function ExplorePage() {
                   soKhach: Math.max(1, Number(e.target.value) || 1),
                 }))
               }
-              className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+              className="w-full h-10 rounded-[10px] border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 tabular-nums focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-2 focus:ring-[#1D63ED]/15"
             />
           </div>
 
@@ -418,7 +432,7 @@ export default function ExplorePage() {
               id="filter-rating"
               value={filters.diemToiThieu}
               onChange={(e) => setFilters((prev) => ({ ...prev, diemToiThieu: e.target.value }))}
-              className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15 cursor-pointer"
+              className="w-full h-10 rounded-[10px] border border-slate-200 bg-slate-50/70 px-3 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-2 focus:ring-[#1D63ED]/15 cursor-pointer"
             >
               {RATING_OPTIONS.map((opt) => (
                 <option key={opt.value} value={opt.value}>
@@ -429,165 +443,131 @@ export default function ExplorePage() {
           </div>
         </div>
 
-        <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-end gap-3">
+        <div className="mt-5 pt-4 border-t border-slate-100 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-medium text-slate-600">
+            {loading ? (
+              'Đang tải danh sách lịch trình...'
+            ) : (
+              <>
+                Tìm thấy{' '}
+                <span className="font-bold text-slate-950 tabular-nums">{results.length}</span> lịch
+                trình phù hợp
+              </>
+            )}
+          </p>
+
           <Button
             type="submit"
             variant="primary"
-            shape="pill"
+            shape="rounded"
             size="md"
             disabled={hasValidationError || !metaReady}
             loading={loading}
             leftIcon={<Search className="h-4 w-4" strokeWidth={1.85} />}
           >
-            Tìm kiếm lịch trình
+            Tìm kiếm
           </Button>
         </div>
       </form>
 
-      {/* Result Toolbar: Count + Card/Table Toggle */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
-        <p className="text-sm font-medium text-slate-600">
-          {loading ? (
-            'Đang tải danh sách lịch trình...'
-          ) : (
-            <>
-              Tìm thấy{' '}
-              <span className="font-bold text-slate-950 tabular-nums">{results.length}</span> lịch
-              trình phù hợp
-            </>
-          )}
-        </p>
-
-        <div
-          className="inline-flex rounded-full border border-slate-200 bg-white p-1 self-start sm:self-auto"
-          role="group"
-          aria-label="Chế độ hiển thị kết quả"
-        >
-          <button
-            type="button"
-            onClick={() => setViewMode('cards')}
-            className={[
-              'inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
-              viewMode === 'cards'
-                ? 'bg-[#1D63ED] text-white'
-                : 'text-slate-600 hover:text-slate-900',
-            ].join(' ')}
-          >
-            <LayoutGrid className="h-3.5 w-3.5" strokeWidth={1.75} />
-            Dạng thẻ
-          </button>
-          <button
-            type="button"
-            onClick={() => setViewMode('table')}
-            className={[
-              'inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
-              viewMode === 'table'
-                ? 'bg-[#1D63ED] text-white'
-                : 'text-slate-600 hover:text-slate-900',
-            ].join(' ')}
-          >
-            <Table2 className="h-3.5 w-3.5" strokeWidth={1.75} />
-            Dạng bảng
-          </button>
-        </div>
-      </div>
-
-      {/* Results Content */}
       {apiError && (
         <div
           role="alert"
-          className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-[#B91C1C]"
+          className="mb-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-[#B91C1C]"
         >
           {apiError}
         </div>
       )}
 
       {loading ? (
-        <LoadingSkeleton variant={viewMode === 'cards' ? 'cards' : 'table'} count={6} />
+        <LoadingSkeleton variant="table" count={6} />
       ) : results.length === 0 ? (
         <EmptyState
           title="Không tìm thấy lịch trình phù hợp"
-          description="Thử nới lỏng khoảng giá, chọn lại ngày khởi hành hoặc đặt lại bộ lọc để xem toàn bộ hành trình đang mở bán."
+          description="Thử nới lỏng khoảng giá, chọn lại ngày khởi hành hoặc đặt lại bộ lọc để xem toàn bộ lịch trình đang mở bán."
           action={
-            <Button variant="primary" shape="pill" onClick={handleResetFilters}>
+            <Button variant="primary" shape="rounded" onClick={handleResetFilters}>
               Xóa bộ lọc
             </Button>
           }
         />
-      ) : viewMode === 'cards' ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((item) => (
-            <TourCard key={item.ma_lich_trinh} item={item} variant="catalog" />
-          ))}
-        </div>
       ) : (
-        <div className="rounded-[20px] border border-slate-200/85 bg-white shadow-[var(--shadow-card)] overflow-hidden">
+        <div className="rounded-xl border border-slate-200 bg-white shadow-[var(--shadow-card)] overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse min-w-[820px]">
+            <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-slate-200 bg-slate-50/80 text-xs font-semibold text-slate-600">
-                  <th className="py-3.5 px-4">Hành trình</th>
-                  <th className="py-3.5 px-4">Tuyến đường</th>
-                  <th className="py-3.5 px-4">Khởi hành</th>
-                  <th className="py-3.5 px-4 text-center">Thời lượng</th>
-                  <th className="py-3.5 px-4 text-center">Chỗ trống</th>
-                  <th className="py-3.5 px-4 text-center">Đánh giá</th>
-                  <th className="py-3.5 px-4 text-right">Giá cơ bản</th>
-                  <th className="py-3.5 px-4 text-right">Thao tác</th>
+                <tr className="border-b border-slate-200 bg-slate-50/85 text-xs font-semibold text-slate-600">
+                  <th className="py-3.5 pl-4 pr-3 whitespace-nowrap">Mã LT</th>
+                  <th className="py-3.5 px-3">Tên tour</th>
+                  <th className="py-3.5 px-3 whitespace-nowrap">Tuyến đường</th>
+                  <th className="py-3.5 px-3 whitespace-nowrap">Khởi hành</th>
+                  <th className="py-3.5 px-3 text-center whitespace-nowrap">Thời lượng</th>
+                  <th className="py-3.5 px-3 text-center whitespace-nowrap">Chỗ trống</th>
+                  <th className="py-3.5 px-3 text-center whitespace-nowrap">Đánh giá</th>
+                  <th className="py-3.5 px-3 text-right whitespace-nowrap">Giá cơ bản</th>
+                  <th className="py-3.5 pl-3 pr-4 text-right whitespace-nowrap">Thao tác</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-sm">
                 {results.map((item) => (
-                  <tr key={item.ma_lich_trinh} className="hover:bg-[#F7FAFF] transition-colors">
-                    <td className="py-3.5 px-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={getTourImage(item.ma_tour)}
-                          alt={getTourImageAlt(item.ma_tour, item.ten_tour)}
-                          loading="lazy"
-                          className="h-11 w-14 rounded-lg object-cover shrink-0 bg-slate-100"
-                        />
-                        <div className="min-w-0">
-                          <p className="font-semibold text-slate-900 line-clamp-1">{item.ten_tour}</p>
-                          <p className="text-xs text-slate-500 tabular-nums">{item.ma_lich_trinh}</p>
-                        </div>
-                      </div>
+                  <tr key={item.ma_lich_trinh} className="hover:bg-[#F8FAFC] transition-colors">
+                    <td className="py-3.5 pl-4 pr-3 font-semibold text-slate-900 tabular-nums whitespace-nowrap">
+                      {item.ma_lich_trinh}
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700 whitespace-nowrap">
+                    <td className="py-3.5 px-3 max-w-[230px]">
+                      <p className="font-semibold text-slate-900 truncate" title={item.ten_tour}>
+                        {item.ten_tour}
+                      </p>
+                      {item.mo_ta && (
+                        <p className="text-xs text-slate-500 truncate mt-0.5" title={item.mo_ta}>
+                          {item.mo_ta}
+                        </p>
+                      )}
+                    </td>
+                    <td className="py-3.5 px-3 text-slate-700 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1">
                         <span>{item.noi_di}</span>
                         <ArrowRight className="h-3.5 w-3.5 text-slate-400 shrink-0" strokeWidth={1.75} />
                         <span>{item.noi_den}</span>
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-slate-700 tabular-nums whitespace-nowrap">
+                    <td className="py-3.5 px-3 text-slate-700 tabular-nums whitespace-nowrap">
                       {formatDateTime(item.ngay_xuat_phat)}
                     </td>
-                    <td className="py-3.5 px-4 text-center text-slate-700 tabular-nums whitespace-nowrap">
+                    <td className="py-3.5 px-3 text-center text-slate-700 tabular-nums whitespace-nowrap">
                       {item.so_ngay} ngày
                     </td>
-                    <td className="py-3.5 px-4 text-center font-semibold text-slate-800 tabular-nums">
+                    <td className="py-3.5 px-3 text-center font-semibold text-slate-800 tabular-nums whitespace-nowrap">
                       {item.so_cho_con_lai}
                     </td>
-                    <td className="py-3.5 px-4 text-center whitespace-nowrap">
+                    <td className="py-3.5 px-3 text-center whitespace-nowrap">
                       <span className="inline-flex items-center gap-1 font-semibold text-slate-800 tabular-nums">
                         <Star
                           className="h-3.5 w-3.5 fill-[#F59E0B] text-[#F59E0B]"
                           strokeWidth={1.75}
                         />
-                        {item.diem_tb !== null ? item.diem_tb.toFixed(1) : 'Mới'}
+                        {item.diem_tb !== null ? (
+                          <span>
+                            {item.diem_tb.toFixed(1)}{' '}
+                            <span className="text-xs font-normal text-slate-500">
+                              ({item.so_luot_danh_gia})
+                            </span>
+                          </span>
+                        ) : (
+                          <span className="text-xs font-medium text-slate-500">Chưa có</span>
+                        )}
                       </span>
                     </td>
-                    <td className="py-3.5 px-4 text-right font-bold text-[#1D63ED] tabular-nums whitespace-nowrap">
+                    <td className="py-3.5 px-3 text-right font-bold text-[#1D63ED] tabular-nums whitespace-nowrap">
                       {formatVnd(item.gia_co_ban)}
                     </td>
-                    <td className="py-3.5 px-4 text-right whitespace-nowrap">
+                    <td className="py-3.5 pl-3 pr-4 text-right whitespace-nowrap">
                       <Link
                         to={`/book?schedule=${encodeURIComponent(item.ma_lich_trinh)}`}
-                        className="inline-flex items-center gap-1 rounded-full bg-[#1D63ED] px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-[#154EC2] transition-colors"
+                        className="inline-flex items-center gap-1 rounded-lg bg-[#1D63ED] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#154EC2] transition-colors"
                       >
-                        <span>Đặt tour này</span>
-                        <ArrowRight className="h-3 w-3" strokeWidth={2} />
+                        <span>Đặt tour</span>
+                        <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
                       </Link>
                     </td>
                   </tr>

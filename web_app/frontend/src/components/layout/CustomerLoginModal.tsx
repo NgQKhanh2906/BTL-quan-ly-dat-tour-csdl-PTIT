@@ -118,7 +118,7 @@ export function CustomerLoginModal() {
         <Button
           type="submit"
           variant="primary"
-          shape="pill"
+          shape="rounded"
           size="md"
           loading={submitting}
           rightIcon={<ArrowRight className="h-4 w-4" strokeWidth={1.75} />}

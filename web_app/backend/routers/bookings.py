@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import unicodedata
 from typing import Any
 
 import mysql.connector
@@ -66,6 +67,22 @@ except ImportError:
 router = APIRouter(prefix="/api", tags=["bookings"])
 
 
+def _normalize_full_name(raw: str | None) -> str:
+    return " ".join(unicodedata.normalize("NFC", raw or "").strip().split())
+
+
+def _validate_full_name(raw: str | None) -> str | None:
+    cleaned = _normalize_full_name(raw)
+    if not cleaned or len(cleaned) > 100:
+        return None
+    if len(cleaned.replace(" ", "")) < 2 or not all(ch.isalpha() or ch == " " for ch in cleaned):
+        return (
+            "Họ và tên chỉ được chứa chữ cái và khoảng trắng "
+            "(tối thiểu 2 ký tự, không chứa số hoặc ký tự đặc biệt)."
+        )
+    return None
+
+
 @router.post("/bookings/estimate", response_model=BookingEstimateResponse)
 def estimate_booking(body: BookingEstimateRequest) -> BookingEstimateResponse:
     if body.so_khach < 0 or body.gia_co_ban < 0 or body.so_phong < 0 or body.gia_phong_moi_dem < 0:
@@ -127,10 +144,12 @@ def create_booking(body: BookingCreateRequest) -> BookingCreateResponse:
         except ValueError:
             errors.append("Thời gian xe về nơi nghỉ không đúng định dạng ngày giờ.")
 
+    normalized_ho_ten = _normalize_full_name(body.ho_ten)
+
     validation_errors = services.kiem_tra_dat_tour(
         la_khach_moi=body.la_khach_moi,
         ma_kh=body.ma_kh,
-        ho_ten=body.ho_ten or "",
+        ho_ten=normalized_ho_ten,
         so_dien_thoai=body.so_dien_thoai or "",
         email=body.email or "",
         dia_chi=body.dia_chi or "",
@@ -151,6 +170,10 @@ def create_booking(body: BookingCreateRequest) -> BookingCreateResponse:
     errors.extend(clean_user_message(msg) for msg in validation_errors)
 
     if body.la_khach_moi:
+        full_name_error = _validate_full_name(normalized_ho_ten)
+        if full_name_error:
+            errors.append(full_name_error)
+
         duplicate = services.kiem_tra_trung_khach_hang(
             body.email or "",
             body.so_dien_thoai or "",
@@ -167,7 +190,7 @@ def create_booking(body: BookingCreateRequest) -> BookingCreateResponse:
     payload = {
         "LaKhachMoi": body.la_khach_moi,
         "MaKH": (body.ma_kh or "").strip() or None,
-        "HoTen": (body.ho_ten or "").strip(),
+        "HoTen": normalized_ho_ten,
         "SoDienThoai": (body.so_dien_thoai or "").strip(),
         "Email": (body.email or "").strip(),
         "DiaChi": (body.dia_chi or "").strip(),
@@ -244,20 +267,66 @@ def get_pending_reviews(
     ]
 
 
+@router.get("/reviews/pending-orders", response_model=list[PendingReviewItem])
+def get_all_pending_reviews(
+    ma_kh: str | None = Query(default=None),
+) -> list[PendingReviewItem]:
+    """Lấy danh sách các đơn hàng hoàn thành chưa đánh giá trên toàn hệ thống hoặc theo khách hàng."""
+    if ma_kh and ma_kh.strip():
+        rows = services.lay_don_cho_danh_gia(ma_kh.strip())
+    else:
+        sql = """
+            SELECT dh.MaDonHang, t.MaTour, t.TenTour,
+                   lt.NgayXuatPhat, lt.NgayKetThuc,
+                   dh.MaNhaNghi, nn.TenNhaNghi,
+                   dh.NgayDat, v.TongTien
+            FROM DonHang dh
+            JOIN LichTrinh lt        ON lt.MaLichTrinh = dh.MaLichTrinh
+            JOIN Tour t              ON t.MaTour = lt.MaTour
+            LEFT JOIN NhaNghi nn     ON nn.MaNhaNghi = dh.MaNhaNghi
+            JOIN v_DonHang_ChiTiet v ON v.MaDonHang = dh.MaDonHang
+            WHERE dh.MaTrangThai = 'HOANTHANH'
+              AND dh.NgayDanhGia IS NULL
+            ORDER BY lt.NgayKetThuc DESC
+        """
+        rows = db.doc(sql)
+    return [
+        PendingReviewItem(
+            ma_don_hang=r["MaDonHang"],
+            ma_tour=r["MaTour"],
+            ten_tour=r["TenTour"],
+            ngay_xuat_phat=to_iso(r["NgayXuatPhat"]),
+            ngay_ket_thuc=to_iso(r["NgayKetThuc"]),
+            ma_nha_nghi=r.get("MaNhaNghi"),
+            ten_nha_nghi=r.get("TenNhaNghi"),
+            ngay_dat=to_iso(r["NgayDat"]),
+            tong_tien=to_int(r["TongTien"]),
+        )
+        for r in rows
+    ]
+
+
 @router.post("/reviews", response_model=ReviewCreateResponse)
 def submit_review(
     body: ReviewCreateRequest,
-    customer: dict[str, Any] = Depends(require_customer),
+    auth: dict[str, dict[str, Any] | None] = Depends(get_optional_auth),
 ) -> ReviewCreateResponse:
+    if auth["admin"] is None and auth["customer"] is None:
+        raise HTTPException(
+            status_code=401,
+            detail="Vui lòng đăng nhập để gửi đánh giá chuyến đi.",
+        )
+
     order = queries.get_order_for_review(body.ma_don_hang.strip())
     if order is None:
         raise HTTPException(status_code=404, detail="Không tìm thấy đơn hàng.")
 
-    if order["MaKH"] != customer["ma_kh"]:
-        raise HTTPException(
-            status_code=403,
-            detail="Bạn chỉ có thể đánh giá các đơn hàng thuộc tài khoản của mình.",
-        )
+    if auth["admin"] is None and auth["customer"] is not None:
+        if order["MaKH"] != auth["customer"]["ma_kh"]:
+            raise HTTPException(
+                status_code=403,
+                detail="Bạn chỉ có thể đánh giá các đơn hàng thuộc tài khoản của mình.",
+            )
 
     if order["MaTrangThai"] != "HOANTHANH":
         raise AppValidationError("Chỉ đơn hàng đã hoàn thành chuyến đi mới có thể đánh giá.")

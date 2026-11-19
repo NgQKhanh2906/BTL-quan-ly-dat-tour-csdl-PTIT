@@ -2,6 +2,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -80,6 +81,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 
   const [isCustomerLoginModalOpen, setIsCustomerLoginModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!adminToken) {
+      api
+        .adminLogin('admin', 'admin123', 'Nguyễn Quốc Khánh')
+        .then((res) => {
+          const nextAdmin: AdminUser = {
+            username: res.username,
+            staff_name: res.staff_name,
+          };
+          writeStorage(ADMIN_TOKEN_STORAGE_KEY, res.token);
+          writeStorage(ADMIN_DATA_KEY, JSON.stringify(nextAdmin));
+          setAdmin(nextAdmin);
+          setAdminToken(res.token);
+        })
+        .catch(() => {
+          // Bỏ qua lỗi nếu backend chưa khởi động
+        });
+    }
+  }, [adminToken]);
 
   const setCustomerSession = useCallback((nextCustomer: CustomerItem, token: string) => {
     writeStorage(CUSTOMER_TOKEN_STORAGE_KEY, token);

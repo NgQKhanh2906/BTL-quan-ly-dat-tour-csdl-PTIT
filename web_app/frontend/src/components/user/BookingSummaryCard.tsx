@@ -1,6 +1,5 @@
 import { ArrowRight, Building2, Calendar, Car, CheckCircle2, MapPin, Users } from 'lucide-react';
 import type { AccommodationItem, BookingEstimateResponse, OpenScheduleItem } from '../../api/types';
-import { getTourImage, getTourImageAlt } from '../../constants/tourImages';
 import { formatDateTime, formatDuration, formatVnd } from '../../utils/format';
 import { Button } from '../common/Button';
 
@@ -30,30 +29,24 @@ export function BookingSummaryCard({
   onSubmitClick,
 }: BookingSummaryCardProps) {
   return (
-    <aside className="lg:sticky lg:top-24 rounded-[24px] border border-slate-200/85 bg-white shadow-[var(--shadow-card)] overflow-hidden">
+    <aside className="lg:sticky lg:top-22 rounded-xl border border-slate-200 bg-white shadow-[var(--shadow-card)] overflow-hidden">
       {schedule ? (
         <>
-          <div className="relative h-44 w-full overflow-hidden bg-slate-100">
-            <img
-              src={getTourImage(schedule.ma_tour)}
-              alt={getTourImageAlt(schedule.ma_tour, schedule.ten_tour)}
-              className="h-full w-full object-cover"
-            />
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-0 bg-gradient-to-t from-slate-950/75 via-slate-950/20 to-transparent"
-            />
-            <div className="absolute bottom-3.5 left-4 right-4 text-white">
-              <p className="text-xs font-medium text-sky-100 inline-flex flex-wrap items-center gap-1">
-                <span>{schedule.noi_di}</span>
-                <ArrowRight className="h-3 w-3 shrink-0" strokeWidth={2} />
-                <span>{schedule.ten_tinh_den}</span>
-                <span>· {formatDuration(schedule.so_dem)}</span>
-              </p>
-              <h2 className="mt-0.5 text-base font-bold leading-snug line-clamp-2">
-                {schedule.ten_tour}
-              </h2>
+          <div className="bg-[#EFF6FF]/75 border-b border-slate-200 px-5 py-4 space-y-2">
+            <div className="flex items-center justify-between gap-2">
+              <span className="inline-flex items-center rounded-md bg-white border border-[#BFDBFE] px-2.5 py-0.5 text-xs font-bold text-[#1D4ED8] tabular-nums">
+                {schedule.ma_lich_trinh}
+              </span>
+              <span className="text-xs font-semibold text-slate-600">
+                {formatDuration(schedule.so_dem)}
+              </span>
             </div>
+            <h2 className="text-base font-bold text-slate-900 leading-snug">{schedule.ten_tour}</h2>
+            <p className="text-xs font-medium text-slate-600 inline-flex flex-wrap items-center gap-1">
+              <span>{schedule.noi_di}</span>
+              <ArrowRight className="h-3 w-3 text-slate-400 shrink-0" strokeWidth={2} />
+              <span>{schedule.ten_tinh_den}</span>
+            </p>
           </div>
 
           <div className="p-5 space-y-4">
@@ -137,7 +130,7 @@ export function BookingSummaryCard({
                 </span>
               </div>
 
-              <div className="pt-3 mt-1 border-t border-slate-200/80 flex items-baseline justify-between gap-3">
+              <div className="pt-3 mt-1 border-t border-slate-200 flex items-baseline justify-between gap-3">
                 <span className="text-base font-bold text-slate-900">Tổng tiền dự kiến</span>
                 <span className="text-2xl font-bold text-[#1D63ED] tabular-nums">
                   {formatVnd(estimate.tong_tien)}
@@ -149,7 +142,7 @@ export function BookingSummaryCard({
               type={onSubmitClick ? 'button' : 'submit'}
               onClick={onSubmitClick}
               variant="primary"
-              shape="pill"
+              shape="rounded"
               size="lg"
               loading={submitting}
               disabled={disabled || !schedule}

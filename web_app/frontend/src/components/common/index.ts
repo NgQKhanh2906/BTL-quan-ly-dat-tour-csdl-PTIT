@@ -1,4 +1,4 @@
-export { BrandLogo, HeroFlightArc } from './BrandLogo';
+export { BrandLogo } from './BrandLogo';
 export { Button } from './Button';
 export type { ButtonProps, ButtonShape, ButtonSize, ButtonVariant } from './Button';
 export { StatusBadge } from './StatusBadge';

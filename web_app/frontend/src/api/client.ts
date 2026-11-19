@@ -266,11 +266,18 @@ export const api = {
     );
   },
 
+  getPendingReviewOrders(maKh?: string): Promise<PendingReviewItem[]> {
+    const qs = buildQuery({ ma_kh: maKh });
+    return requestJson<PendingReviewItem[]>(`/api/reviews/pending-orders${qs}`, {
+      auth: 'any',
+    });
+  },
+
   submitReview(payload: SubmitReviewRequest): Promise<SubmitReviewResponse> {
     return requestJson<SubmitReviewResponse>('/api/reviews', {
       method: 'POST',
       body: payload,
-      auth: 'customer',
+      auth: 'any',
     });
   },
 

@@ -184,10 +184,17 @@ class TestPublicAndSerialization(BaseApiTestCase):
         self.assertEqual(resp_empty_strings.status_code, 200)
         self.assertEqual(len(resp_empty_strings.json()), 9)
 
+        # Arbitrary non-500k integer gia_den >= gia_tu works cleanly
+        resp_arbitrary_price = self.client.get(
+            "/api/schedules/search",
+            params={"gia_tu": 1000000, "gia_den": 99995230},
+        )
+        self.assertEqual(resp_arbitrary_price.status_code, 200)
+
         # Validation errors: gia_den < gia_tu and den_ngay < tu_ngay
         bad_price = self.client.get(
             "/api/schedules/search",
-            params={"gia_tu": 5000000, "gia_den": 2000000},
+            params={"gia_tu": 2000000, "gia_den": 1999999},
         )
         self.assertEqual(bad_price.status_code, 400)
         self.assertIn("detail", bad_price.json())
@@ -524,6 +531,28 @@ class TestBookingFlowsAndReviewEdgeCases(BaseApiTestCase):
                 },
             )
             self.assertEqual(bad_overbook.status_code, 400)
+
+            # Invalid #6: Full name with punctuation, digits, or single letter -> 400 + rollback
+            for invalid_name in (".", "12345", "Nguyễn Văn A1", "A"):
+                with self.subTest(invalid_name=invalid_name):
+                    bad_name_resp = self.client.post(
+                        "/api/bookings",
+                        json={
+                            "la_khach_moi": True,
+                            "ho_ten": invalid_name,
+                            "so_dien_thoai": "0911223344",
+                            "email": "ten.khonghople@gmail.com",
+                            "dia_chi": "10 Nguyễn Trãi, Hà Nội",
+                            "ma_lich_trinh": "LT06",
+                            "so_khach": 2,
+                            "ma_nha_nghi": None,
+                            "so_phong": 0,
+                            "co_xe_don": False,
+                            "co_xe_ve": False,
+                        },
+                    )
+                    self.assertEqual(bad_name_resp.status_code, 400)
+                    self.assertIn("chữ cái", bad_name_resp.json()["detail"].lower())
 
             # Confirm DB row counts completely unchanged
             self.assertEqual(int(db.doc("SELECT COUNT(*) AS c FROM DonHang")[0]["c"]), orders_before)

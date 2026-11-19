@@ -18,7 +18,7 @@ export function EmptyState({
 }: EmptyStateProps) {
   return (
     <div
-      className={`flex flex-col items-center justify-center text-center rounded-[20px] border border-slate-200/80 bg-white px-6 py-12 ${className}`}
+      className={`flex flex-col items-center justify-center text-center rounded-xl border border-slate-200 bg-white px-6 py-10 ${className}`}
     >
       <div className="mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-[#EFF5FF] text-[#1D63ED]">
         {icon ?? <Compass className="h-7 w-7" strokeWidth={1.75} />}
