@@ -72,9 +72,22 @@ def list_customers_alias() -> list[CustomerItem]:
 
 @router.post("/customers/check-duplicate", response_model=CheckDuplicateResponse)
 def check_duplicate_customer(body: CheckDuplicateRequest) -> CheckDuplicateResponse:
+    # 1. Kiểm tra khớp chính xác cả 3 thuộc tính (Họ tên, SĐT, Email)
+    exact_match = queries.find_customer_by_name_phone_email(body.ho_ten, body.so_dien_thoai, body.email)
+    if exact_match is not None:
+        customer = CustomerItem(
+            ma_kh=exact_match["ma_kh"],
+            ho_ten=exact_match["ho_ten"],
+            email=exact_match["email"],
+            dia_chi=exact_match.get("dia_chi") or "",
+            so_dien_thoai=exact_match.get("so_dien_thoai") or "",
+        )
+        return CheckDuplicateResponse(duplicate=True, customer=customer, matched_exact=True, conflict=False)
+
+    # 2. Không khớp cả 3: kiểm tra xem Email hoặc SĐT có bị trùng không
     matched = services.kiem_tra_trung_khach_hang(body.email, body.so_dien_thoai)
     if matched is None:
-        return CheckDuplicateResponse(duplicate=False, customer=None)
+        return CheckDuplicateResponse(duplicate=False, customer=None, matched_exact=False, conflict=False)
 
     customer = CustomerItem(
         ma_kh=matched["MaKH"],
@@ -83,7 +96,8 @@ def check_duplicate_customer(body: CheckDuplicateRequest) -> CheckDuplicateRespo
         dia_chi=matched.get("DiaChi") or "",
         so_dien_thoai=matched.get("CacSDT") or "",
     )
-    return CheckDuplicateResponse(duplicate=True, customer=customer)
+    is_conflict = bool(body.ho_ten.strip())
+    return CheckDuplicateResponse(duplicate=True, customer=customer, matched_exact=False, conflict=is_conflict)
 
 
 @router.post("/auth/customer-login", response_model=CustomerLoginResponse)

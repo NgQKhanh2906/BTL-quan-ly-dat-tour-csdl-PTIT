@@ -78,6 +78,7 @@ class CustomerItem(BaseModel):
 
 
 class CheckDuplicateRequest(BaseModel):
+    ho_ten: str = ""
     email: str = ""
     so_dien_thoai: str = ""
 
@@ -85,6 +86,8 @@ class CheckDuplicateRequest(BaseModel):
 class CheckDuplicateResponse(BaseModel):
     duplicate: bool
     customer: CustomerItem | None = None
+    matched_exact: bool = False
+    conflict: bool = False
 
 
 class CustomerLoginRequest(BaseModel):

@@ -88,6 +88,7 @@ export default function BookingPage() {
   const [email, setEmail] = useState('');
   const [diaChi, setDiaChi] = useState('');
   const [duplicateCustomer, setDuplicateCustomer] = useState<CustomerItem | null>(null);
+  const [duplicateResponse, setDuplicateResponse] = useState<DuplicateCheckResponse | null>(null);
   const [checkingDuplicate, setCheckingDuplicate] = useState(false);
 
   const hoTenError = hoTenTouched ? validateCustomerFullName(hoTen) : null;
@@ -282,16 +283,23 @@ export default function BookingPage() {
     if (customer || guestMode !== 'new') return;
     const cleanEmail = email.trim();
     const cleanPhone = soDienThoai.trim();
+    const cleanName = hoTen.trim();
     if (!cleanEmail && !cleanPhone) {
       setDuplicateCustomer(null);
+      setDuplicateResponse(null);
       return;
     }
     setCheckingDuplicate(true);
     try {
-      const res = await api.checkDuplicateCustomer(cleanEmail, cleanPhone);
+      const res = await api.checkDuplicateCustomer(cleanEmail, cleanPhone, cleanName);
+      setDuplicateResponse(res);
       setDuplicateCustomer(res.duplicate ? res.customer : null);
+      if (res.matched_exact && res.customer?.dia_chi && !pickupEditedByUser) {
+        setDiaChiDon(res.customer.dia_chi);
+      }
     } catch {
       setDuplicateCustomer(null);
+      setDuplicateResponse(null);
     } finally {
       setCheckingDuplicate(false);
     }
@@ -301,6 +309,7 @@ export default function BookingPage() {
     setGuestMode('existing');
     setSelectedExistingMaKh(dup.ma_kh);
     setDuplicateCustomer(null);
+    setDuplicateResponse(null);
     setHoTenTouched(false);
     setPickupEditedByUser(false);
     setFormErrors([]);
@@ -335,6 +344,12 @@ export default function BookingPage() {
         clientErrors.push('Vui lòng nhập địa chỉ email hợp lệ.');
       }
       if (!diaChi.trim()) clientErrors.push('Vui lòng nhập địa chỉ liên hệ.');
+
+      if (duplicateResponse?.conflict) {
+        clientErrors.push(
+          `Email hoặc số điện thoại này đã được đăng ký bởi khách hàng khác (${duplicateCustomer?.ho_ten || ''}). Vui lòng kiểm tra lại họ tên hoặc đổi thông tin liên hệ.`
+        );
+      }
     } else if (!customer && !selectedExistingMaKh) {
       clientErrors.push('Vui lòng chọn khách hàng trong danh sách.');
     }
@@ -353,13 +368,14 @@ export default function BookingPage() {
     const finalAccId = isDayTour ? null : selectedAccId;
     const finalRooms = finalAccId ? Math.max(1, Math.min(soPhong, soKhach)) : 0;
     const finalXeVe = Boolean(!isDayTour && finalAccId && coXeVe);
+    const isMatchedExact = isNewGuest && Boolean(duplicateResponse?.matched_exact && duplicateCustomer);
 
     setSubmitting(true);
     setFormErrors([]);
     try {
       const result = await api.createBooking({
-        la_khach_moi: isNewGuest,
-        ma_kh: customer ? customer.ma_kh : isNewGuest ? null : selectedExistingMaKh,
+        la_khach_moi: isNewGuest && !isMatchedExact,
+        ma_kh: customer ? customer.ma_kh : isMatchedExact ? duplicateCustomer?.ma_kh : isNewGuest ? null : selectedExistingMaKh,
         ho_ten: isNewGuest ? normalizedHoTen : null,
         so_dien_thoai: isNewGuest ? soDienThoai.trim() : null,
         email: isNewGuest ? email.trim() : null,
@@ -785,7 +801,10 @@ export default function BookingPage() {
                             maxLength={100}
                             value={hoTen}
                             onChange={(e) => setHoTen(e.target.value)}
-                            onBlur={() => setHoTenTouched(true)}
+                            onBlur={() => {
+                              setHoTenTouched(true);
+                              handleCheckDuplicate();
+                            }}
                             placeholder="Nguyễn Minh Anh"
                             aria-invalid={Boolean(hoTenError)}
                             className={[
@@ -851,17 +870,35 @@ export default function BookingPage() {
                       </div>
 
                       {checkingDuplicate && (
-                        <p className="text-xs text-slate-500">Đang kiểm tra thông tin khách hàng...</p>
+                        <p className="text-xs text-slate-500">Đang đối chiếu thông tin khách hàng...</p>
                       )}
 
-                      {duplicateCustomer && (
-                        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="text-xs text-amber-950">
-                            <p className="font-bold">
-                              Email hoặc số điện thoại này đã thuộc về khách hàng {duplicateCustomer.ho_ten}
+                      {duplicateCustomer && duplicateResponse?.matched_exact && (
+                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="text-xs text-emerald-950">
+                            <p className="font-bold flex items-center gap-1.5 text-emerald-800">
+                              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+                              Khách hàng cũ đã có thông tin trong hệ thống: {duplicateCustomer.ma_kh} - {duplicateCustomer.ho_ten}
                             </p>
-                            <p className="mt-0.5 text-amber-800">
+                            <p className="mt-1 text-emerald-700">
                               {duplicateCustomer.email} · {duplicateCustomer.so_dien_thoai}
+                            </p>
+                            <p className="mt-0.5 text-slate-600">
+                              Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có.
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {duplicateCustomer && duplicateResponse?.conflict && (
+                        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                          <div className="text-xs text-red-950">
+                            <p className="font-bold flex items-center gap-1.5 text-red-800">
+                              <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
+                              Email hoặc số điện thoại này đã được đăng ký bởi khách hàng {duplicateCustomer.ho_ten}
+                            </p>
+                            <p className="mt-1 text-red-700">
+                              Vui lòng kiểm tra lại họ tên hoặc nhập email / số điện thoại khác.
                             </p>
                           </div>
                           <Button
@@ -873,6 +910,13 @@ export default function BookingPage() {
                           >
                             Dùng khách hàng này
                           </Button>
+                        </div>
+                      )}
+
+                      {!checkingDuplicate && !duplicateCustomer && hoTen.trim() && soDienThoai.trim() && email.trim() && (
+                        <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-3 text-xs text-blue-900 flex items-center gap-2">
+                          <Info className="h-4 w-4 text-blue-600 shrink-0" />
+                          <span>Khách hàng mới: Thông tin sẽ được tự động lưu vào hệ thống khi xác nhận đặt tour.</span>
                         </div>
                       )}
                     </div>

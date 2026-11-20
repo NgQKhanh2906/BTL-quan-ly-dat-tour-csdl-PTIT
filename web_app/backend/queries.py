@@ -219,6 +219,7 @@ def get_customer_by_id(ma_kh: str) -> dict | None:
     }
 
 
+
 def find_customer_by_identifier(identifier: str) -> dict | None:
     """Tra cứu khách hàng theo Email (không phân biệt hoa thường) hoặc Số điện thoại."""
     clean = (identifier or "").strip()
@@ -248,6 +249,41 @@ def find_customer_by_identifier(identifier: str) -> dict | None:
         LIMIT 1
         """,
         {"Identifier": clean},
+    )
+    if not rows:
+        return None
+    r = rows[0]
+    return {
+        "ma_kh": r["MaKH"],
+        "ho_ten": r["HoTen"],
+        "email": r["Email"],
+        "dia_chi": r["DiaChi"] or "",
+        "so_dien_thoai": r["SoDienThoai"] or "",
+    }
+
+
+def find_customer_by_name_phone_email(ho_ten: str | None, so_dien_thoai: str | None, email: str | None) -> dict | None:
+    """Tìm khách hàng khớp cả 3 thông tin: Họ tên, Số điện thoại và Email."""
+    ten_sach = (ho_ten or "").strip()
+    sdt_sach = (so_dien_thoai or "").strip()
+    email_sach = (email or "").strip()
+    if not (ten_sach and sdt_sach and email_sach):
+        return None
+    rows = db.doc(
+        """
+        SELECT kh.MaKH,
+               kh.HoTen,
+               kh.Email,
+               COALESCE(kh.DiaChi, '') AS DiaChi,
+               sdt.SoDienThoai
+        FROM KhachHang kh
+        JOIN SDT_KhachHang sdt ON sdt.MaKH = kh.MaKH
+        WHERE LOWER(TRIM(kh.HoTen)) = LOWER(%(HoTen)s)
+          AND sdt.SoDienThoai = %(SoDienThoai)s
+          AND LOWER(TRIM(kh.Email)) = LOWER(%(Email)s)
+        LIMIT 1
+        """,
+        {"HoTen": ten_sach, "SoDienThoai": sdt_sach, "Email": email_sach},
     )
     if not rows:
         return None

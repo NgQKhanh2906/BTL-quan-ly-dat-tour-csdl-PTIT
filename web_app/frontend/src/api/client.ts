@@ -214,10 +214,10 @@ export const api = {
     return requestJson<CustomerItem[]>('/api/customers');
   },
 
-  checkDuplicateCustomer(email: string, sdt: string): Promise<DuplicateCheckResponse> {
+  checkDuplicateCustomer(email: string, sdt: string, hoTen?: string): Promise<DuplicateCheckResponse> {
     return requestJson<DuplicateCheckResponse>('/api/customers/check-duplicate', {
       method: 'POST',
-      body: { email, so_dien_thoai: sdt },
+      body: { email, so_dien_thoai: sdt, ho_ten: hoTen || '' },
     });
   },
 
