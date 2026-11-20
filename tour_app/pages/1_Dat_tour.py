@@ -45,15 +45,14 @@ SELECT CONCAT('KH', LPAD(COALESCE(MAX(CAST(SUBSTRING(MaKH, 3) AS UNSIGNED)), 0) 
 FROM KhachHang
 """
 
-# Kiểm tra khớp đầy đủ 4 thông tin khách hàng (trừ mã khách hàng)
+# Kiểm tra khớp thông tin khách hàng cũ theo Họ tên, Số điện thoại và Email
 SQL_KHOP_THONG_TIN_KH = """
 SELECT kh.MaKH, kh.HoTen, kh.Email, kh.DiaChi, sdt.SoDienThoai
 FROM KhachHang kh
 JOIN SDT_KhachHang sdt ON sdt.MaKH = kh.MaKH
-WHERE LOWER(kh.HoTen) = LOWER(%(HoTen)s)
-  AND sdt.SoDienThoai = %(SoDienThoai)s
-  AND LOWER(kh.Email) = LOWER(%(Email)s)
-  AND LOWER(COALESCE(kh.DiaChi, '')) = LOWER(%(DiaChi)s)
+WHERE LOWER(TRIM(kh.HoTen)) = LOWER(TRIM(%(HoTen)s))
+  AND sdt.SoDienThoai = TRIM(%(SoDienThoai)s)
+  AND LOWER(TRIM(kh.Email)) = LOWER(TRIM(%(Email)s))
 LIMIT 1;
 """
 
@@ -176,11 +175,11 @@ if loi_sdt_inline:
 if loi_email_inline:
     st.error(f"⚠️ {loi_email_inline}")
 
-# Kiểm tra: Chỉ khi người dùng đã nhập đủ cả 4 thông tin và không có lỗi định dạng thì mới đối chiếu CSDL
-da_nhap_du_4_thong_tin = bool(ho_ten_chot and sdt_chot and email_chot and dia_chi_chot and not loi_sdt_inline and not loi_email_inline)
+# Kiểm tra: Đối chiếu CSDL khi đã nhập đủ Họ tên, Số điện thoại và Email hợp lệ
+da_nhap_thong_tin_dinh_danh = bool(ho_ten_chot and sdt_chot and email_chot and not loi_sdt_inline and not loi_email_inline)
 
-if da_nhap_du_4_thong_tin:
-    # 1. Kiểm tra khớp tất cả 4 thuộc tính (trừ mã khách hàng)
+if da_nhap_thong_tin_dinh_danh:
+    # 1. Kiểm tra khớp cả 3 thông tin định danh: Họ tên, Số điện thoại và Email
     try:
         kq_khop = doc(
             SQL_KHOP_THONG_TIN_KH,
@@ -188,30 +187,29 @@ if da_nhap_du_4_thong_tin:
                 "HoTen": ho_ten_chot,
                 "SoDienThoai": sdt_chot,
                 "Email": email_chot,
-                "DiaChi": dia_chi_chot,
             },
         )
     except Exception:
         kq_khop = []
 
     if kq_khop:
-        # Khớp toàn bộ 4 thuộc tính -> Nhận diện chính xác 100% khách hàng cũ, không sợ trùng tên
+        # Trùng Họ tên, Số điện thoại và Email -> Gắn với khách hàng cũ
         kh_info = kq_khop[0]
         ma_kh = kh_info["MaKH"]
         la_khach_moi = False
 
-        st.success("Khách hàng đã có thông tin trong hệ thống:")
+        st.success(f"Khách hàng cũ đã có thông tin trong hệ thống: **{kh_info['MaKH']} - {kh_info['HoTen']}**")
         st.markdown(
             f"""
+            - **Mã khách hàng:** `{kh_info['MaKH']}`
             - **Họ và tên:** {kh_info['HoTen']}
             - **Số điện thoại:** {kh_info['SoDienThoai']}
             - **Email:** {kh_info['Email']}
-            - **Địa chỉ:** {kh_info['DiaChi']}
             """
         )
         st.info("Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có.")
     else:
-        # 2. Nếu không khớp cả 4, kiểm tra xem Email hoặc SĐT đã có trong DB chưa
+        # 2. Không khớp cả 3: kiểm tra xem Email hoặc SĐT đã có trong DB chưa
         try:
             kq_trung = doc(
                 SQL_KIEM_TRA_TRUNG_EMAIL_SDT,
@@ -227,24 +225,24 @@ if da_nhap_du_4_thong_tin:
             trung_sdt = False
 
         if trung_email and trung_sdt:
-            thong_bao_trung = "Cả Email và số điện thoại này đều đã được sử dụng trong hệ thống. Vui lòng kiểm tra và nhập lại!"
+            thong_bao_trung = "Cả Email và số điện thoại này đã được sử dụng trong hệ thống (Họ tên không khớp). Vui lòng kiểm tra lại!"
             st.error(f"Cảnh báo: {thong_bao_trung}")
             cac_loi_form.append(thong_bao_trung)
         elif trung_email:
-            thong_bao_trung = "Email này đã được sử dụng bởi khách hàng khác trong hệ thống. Vui lòng nhập lại email khác!"
+            thong_bao_trung = "Email này đã được sử dụng bởi khách hàng khác trong hệ thống. Vui lòng kiểm tra lại họ tên hoặc nhập email khác!"
             st.error(f"Cảnh báo: {thong_bao_trung}")
             cac_loi_form.append(thong_bao_trung)
         elif trung_sdt:
-            thong_bao_trung = "Số điện thoại này đã được sử dụng bởi khách hàng khác trong hệ thống. Vui lòng nhập lại số điện thoại khác!"
+            thong_bao_trung = "Số điện thoại này đã được sử dụng bởi khách hàng khác trong hệ thống. Vui lòng kiểm tra lại họ tên hoặc nhập số điện thoại khác!"
             st.error(f"Cảnh báo: {thong_bao_trung}")
             cac_loi_form.append(thong_bao_trung)
         else:
-            # Hoàn toàn mới
+            # Hoàn toàn không trùng -> Khách hàng mới
             la_khach_moi = True
             st.info("Khách hàng mới: Thông tin sẽ được tự động lưu vào hệ thống khi xác nhận đặt tour.")
 else:
     if not (loi_sdt_inline or loi_email_inline):
-        st.caption("Vui lòng điền đủ 4 thông tin (Họ tên, Số điện thoại, Email, Địa chỉ) để hệ thống kiểm tra và xác nhận hồ sơ.")
+        st.caption("Vui lòng điền đủ Họ tên, Số điện thoại, Email và Địa chỉ để hệ thống kiểm tra và xác nhận hồ sơ.")
 
 # ----------------- 2. THÔNG TIN CHUYẾN ĐI -----------------
 st.markdown("---")
@@ -460,12 +458,11 @@ if st.button("Xác nhận đặt tour", type="primary", use_container_width=True
             "HoTen": ho_ten_chot,
             "SoDienThoai": sdt_chot,
             "Email": email_chot,
-            "DiaChi": dia_chi_chot,
         },
     )
 
     if kq_khop_submit:
-        # Khớp toàn bộ 4 thông tin -> khách hàng cũ, tái sử dụng MaKH
+        # Khớp 3 thông tin (Họ tên, SĐT, Email) -> khách hàng cũ, tái sử dụng MaKH
         ma_kh_luu = kq_khop_submit[0]["MaKH"]
         la_khach_moi_luu = False
     else:

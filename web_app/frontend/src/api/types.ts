@@ -86,6 +86,8 @@ export interface CustomerItem {
 export interface DuplicateCheckResponse {
   duplicate: boolean;
   customer: CustomerItem | null;
+  matched_exact?: boolean;
+  conflict?: boolean;
 }
 
 export interface CustomerLoginResponse {

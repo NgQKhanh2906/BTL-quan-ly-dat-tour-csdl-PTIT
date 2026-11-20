@@ -169,27 +169,40 @@ def create_booking(body: BookingCreateRequest) -> BookingCreateResponse:
     )
     errors.extend(clean_user_message(msg) for msg in validation_errors)
 
-    if body.la_khach_moi:
+    target_la_khach_moi = body.la_khach_moi
+    target_ma_kh = (body.ma_kh or "").strip() or None
+
+    if target_la_khach_moi:
         full_name_error = _validate_full_name(normalized_ho_ten)
         if full_name_error:
             errors.append(full_name_error)
 
-        duplicate = services.kiem_tra_trung_khach_hang(
-            body.email or "",
+        # Kiểm tra nếu trùng cả 3 thông tin (Họ tên, SĐT, Email) -> tự động chuyển sang gắn khách cũ
+        exact_customer = queries.find_customer_by_name_phone_email(
+            normalized_ho_ten,
             body.so_dien_thoai or "",
+            body.email or "",
         )
-        if duplicate is not None:
-            errors.append(
-                f"Email hoặc số điện thoại đã thuộc về khách hàng {duplicate['HoTen']} "
-                f"({duplicate['MaKH']}). Vui lòng chọn khách hàng có sẵn hoặc đăng nhập."
+        if exact_customer is not None:
+            target_la_khach_moi = False
+            target_ma_kh = exact_customer["ma_kh"]
+        else:
+            duplicate = services.kiem_tra_trung_khach_hang(
+                body.email or "",
+                body.so_dien_thoai or "",
             )
+            if duplicate is not None:
+                errors.append(
+                    f"Email hoặc số điện thoại đã thuộc về khách hàng {duplicate['HoTen']} "
+                    f"({duplicate['MaKH']}). Vui lòng kiểm tra lại họ tên hoặc thông tin liên hệ."
+                )
 
     if errors:
         raise AppValidationError(detail=errors[0], errors=errors, status_code=400)
 
     payload = {
-        "LaKhachMoi": body.la_khach_moi,
-        "MaKH": (body.ma_kh or "").strip() or None,
+        "LaKhachMoi": target_la_khach_moi,
+        "MaKH": target_ma_kh,
         "HoTen": normalized_ho_ten,
         "SoDienThoai": (body.so_dien_thoai or "").strip(),
         "Email": (body.email or "").strip(),
