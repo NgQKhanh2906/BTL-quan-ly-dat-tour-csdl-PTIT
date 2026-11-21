@@ -193,8 +193,9 @@ def create_booking(body: BookingCreateRequest) -> BookingCreateResponse:
             )
             if duplicate is not None:
                 errors.append(
-                    f"Email hoặc số điện thoại đã thuộc về khách hàng {duplicate['HoTen']} "
-                    f"({duplicate['MaKH']}). Vui lòng kiểm tra lại họ tên hoặc thông tin liên hệ."
+                    "Email hoặc số điện thoại này đã được đăng ký trong hệ thống. "
+                    "Nếu bạn là khách hàng cũ, vui lòng nhập đúng ít nhất 2 thông tin đã đăng ký "
+                    "và chọn dùng tiếp tài khoản cũ, hoặc sử dụng email và số điện thoại khác."
                 )
 
     if errors:

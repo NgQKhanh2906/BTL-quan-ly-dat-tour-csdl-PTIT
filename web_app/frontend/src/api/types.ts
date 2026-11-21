@@ -83,11 +83,24 @@ export interface CustomerItem {
   so_dien_thoai: string;
 }
 
+export type CustomerMatchField = 'ho_ten' | 'so_dien_thoai' | 'email' | 'dia_chi';
+
+export interface CustomerSuggestion {
+  ma_kh: string;
+  ho_ten_hien_thi: string;
+  email_hien_thi: string;
+  so_dien_thoai_hien_thi: string;
+  dia_chi_hien_thi: string;
+  matched_fields: CustomerMatchField[];
+  matched_count: number;
+}
+
 export interface DuplicateCheckResponse {
   duplicate: boolean;
-  customer: CustomerItem | null;
-  matched_exact?: boolean;
-  conflict?: boolean;
+  suggested: boolean;
+  matched_count: number;
+  matched_fields: CustomerMatchField[];
+  suggestion: CustomerSuggestion | null;
 }
 
 export interface CustomerLoginResponse {

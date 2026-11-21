@@ -215,30 +215,101 @@ class TestAuthAndOwnershipBoundary(BaseApiTestCase):
         self.assertEqual(len(customers), 8)
         self.assertEqual(customers[0]["ma_kh"], "KH001")
 
-        # Duplicate check: email (case-insensitive), phone, and clean
-        dup_email = self.client.post(
-            "/api/customers/check-duplicate",
-            json={"email": "AN.NGUYEN@GMAIL.COM", "so_dien_thoai": "0999888777"},
-        )
-        self.assertEqual(dup_email.status_code, 200)
-        self.assertTrue(dup_email.json()["duplicate"])
-        self.assertEqual(dup_email.json()["customer"]["ma_kh"], "KH001")
+        # Check duplicate: chỉ 1 trường không gợi ý và không lộ thông tin
+        for single_payload in (
+            {"email": "AN.NGUYEN@GMAIL.COM"},
+            {"so_dien_thoai": "0398765432"},
+            {"ho_ten": "Nguyễn Văn An"},
+            {"dia_chi": "12 Cầu Giấy, Hà Nội"},
+        ):
+            with self.subTest(single_payload=single_payload):
+                resp_single = self.client.post("/api/customers/check-duplicate", json=single_payload)
+                self.assertEqual(resp_single.status_code, 200)
+                data_single = resp_single.json()
+                self.assertFalse(data_single["duplicate"])
+                self.assertFalse(data_single["suggested"])
+                self.assertEqual(data_single["matched_count"], 0)
+                self.assertEqual(data_single["matched_fields"], [])
+                self.assertIsNone(data_single["suggestion"])
 
-        dup_phone = self.client.post(
+        # 2 trường nhưng thuộc 2 khách hàng khác nhau -> không gợi ý
+        mismatch_resp = self.client.post(
             "/api/customers/check-duplicate",
-            json={"email": "chua.co@gmail.com", "so_dien_thoai": "0398765432"},
+            json={"ho_ten": "Nguyễn Văn An", "email": "binh.tran@gmail.com"},
         )
-        self.assertEqual(dup_phone.status_code, 200)
-        self.assertTrue(dup_phone.json()["duplicate"])
-        self.assertEqual(dup_phone.json()["customer"]["ma_kh"], "KH006")
+        self.assertEqual(mismatch_resp.status_code, 200)
+        self.assertFalse(mismatch_resp.json()["suggested"])
+        self.assertIsNone(mismatch_resp.json()["suggestion"])
 
+        # 2 trường khớp cùng KH001 (Họ tên thừa khoảng trắng + SĐT thứ 2) -> gợi ý & che email, địa chỉ, SĐT còn lại
+        kh001_name_phone = self.client.post(
+            "/api/customers/check-duplicate",
+            json={"ho_ten": "  nguyễn   văn an ", "so_dien_thoai": "0987654321"},
+        )
+        self.assertEqual(kh001_name_phone.status_code, 200)
+        d1 = kh001_name_phone.json()
+        self.assertTrue(d1["duplicate"])
+        self.assertTrue(d1["suggested"])
+        self.assertEqual(d1["matched_count"], 2)
+        self.assertEqual(d1["matched_fields"], ["ho_ten", "so_dien_thoai"])
+        s1 = d1["suggestion"]
+        self.assertEqual(s1["ma_kh"], "KH001")
+        self.assertEqual(s1["ho_ten_hien_thi"], "Nguyễn Văn An")
+        self.assertEqual(s1["so_dien_thoai_hien_thi"], "0987654321")
+        self.assertNotIn("0912345678", s1["so_dien_thoai_hien_thi"])
+        self.assertEqual(s1["email_hien_thi"], "an***@gmail.com")
+        self.assertNotIn("an.nguyen", s1["email_hien_thi"])
+        self.assertEqual(s1["dia_chi_hien_thi"], "***, Hà Nội")
+        self.assertNotIn("12 Cầu Giấy", s1["dia_chi_hien_thi"])
+
+        # 2 trường khớp cùng KH002 (SĐT + Email) -> gợi ý & che họ tên
+        kh002_phone_email = self.client.post(
+            "/api/customers/check-duplicate",
+            json={"so_dien_thoai": "0901234567", "email": "BINH.TRAN@GMAIL.COM"},
+        )
+        self.assertEqual(kh002_phone_email.status_code, 200)
+        d2 = kh002_phone_email.json()
+        self.assertTrue(d2["suggested"])
+        self.assertEqual(d2["matched_count"], 2)
+        self.assertEqual(d2["matched_fields"], ["so_dien_thoai", "email"])
+        self.assertEqual(d2["suggestion"]["ma_kh"], "KH002")
+        self.assertEqual(d2["suggestion"]["ho_ten_hien_thi"], "Trần *** Bình")
+
+        # 2 trường khớp cùng KH001 (Họ tên + Địa chỉ) -> gợi ý & che email, SĐT
+        kh001_name_addr = self.client.post(
+            "/api/customers/check-duplicate",
+            json={"ho_ten": "Nguyễn Văn An", "dia_chi": "12 cầu giấy, hà nội"},
+        )
+        self.assertEqual(kh001_name_addr.status_code, 200)
+        d3 = kh001_name_addr.json()
+        self.assertTrue(d3["suggested"])
+        self.assertEqual(d3["matched_fields"], ["ho_ten", "dia_chi"])
+        self.assertEqual(d3["suggestion"]["ma_kh"], "KH001")
+        self.assertEqual(d3["suggestion"]["email_hien_thi"], "an***@gmail.com")
+        self.assertEqual(d3["suggestion"]["so_dien_thoai_hien_thi"], "091****678")
+
+        # 3 trường khớp cùng KH001 -> matched_count == 3
+        kh001_three = self.client.post(
+            "/api/customers/check-duplicate",
+            json={
+                "ho_ten": "Nguyễn Văn An",
+                "so_dien_thoai": "0912345678",
+                "email": "an.nguyen@gmail.com",
+            },
+        )
+        self.assertEqual(kh001_three.status_code, 200)
+        self.assertTrue(kh001_three.json()["suggested"])
+        self.assertEqual(kh001_three.json()["matched_count"], 3)
+
+        # Khách mới hoàn toàn -> suggested=False
         not_dup = self.client.post(
             "/api/customers/check-duplicate",
             json={"email": "khach.moi@gmail.com", "so_dien_thoai": "0911223344"},
         )
         self.assertEqual(not_dup.status_code, 200)
         self.assertFalse(not_dup.json()["duplicate"])
-        self.assertIsNone(not_dup.json()["customer"])
+        self.assertFalse(not_dup.json()["suggested"])
+        self.assertIsNone(not_dup.json()["suggestion"])
 
         # Customer login by email and by phone
         token_email, cust_email = self.login_customer("AN.NGUYEN@GMAIL.COM")
@@ -463,6 +534,8 @@ class TestBookingFlowsAndReviewEdgeCases(BaseApiTestCase):
             )
             self.assertEqual(bad_dup.status_code, 400)
             self.assertIn("errors", bad_dup.json())
+            self.assertNotIn("Nguyễn Văn An", bad_dup.json()["detail"])
+            self.assertNotIn("KH001", bad_dup.json()["detail"])
 
             # Invalid #2: SoPhong > SoLuongKhach -> 400
             bad_rooms = self.client.post(
