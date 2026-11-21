@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import unicodedata
 from datetime import datetime
 
 try:
@@ -219,7 +220,6 @@ def get_customer_by_id(ma_kh: str) -> dict | None:
     }
 
 
-
 def find_customer_by_identifier(identifier: str) -> dict | None:
     """Tra cứu khách hàng theo Email (không phân biệt hoa thường) hoặc Số điện thoại."""
     clean = (identifier or "").strip()
@@ -294,6 +294,153 @@ def find_customer_by_name_phone_email(ho_ten: str | None, so_dien_thoai: str | N
         "email": r["Email"],
         "dia_chi": r["DiaChi"] or "",
         "so_dien_thoai": r["SoDienThoai"] or "",
+    }
+
+
+def _collapse_whitespace(raw: str | None) -> str:
+    return " ".join(unicodedata.normalize("NFC", raw or "").strip().split())
+
+
+def _normalize_text_for_match(raw: str | None) -> str:
+    return _collapse_whitespace(raw).casefold()
+
+
+def _mask_name(name: str) -> str:
+    cleaned = _collapse_whitespace(name)
+    if not cleaned:
+        return "***"
+    parts = cleaned.split(" ")
+    if len(parts) == 1:
+        return f"{parts[0][0]}***"
+    if len(parts) == 2:
+        return f"{parts[0]} ***"
+    return f"{parts[0]} *** {parts[-1]}"
+
+
+def _mask_email(email: str) -> str:
+    clean = (email or "").strip()
+    if "@" not in clean:
+        return "***"
+    local, domain = clean.split("@", 1)
+    if len(local) <= 1:
+        prefix = "*"
+    elif len(local) <= 2:
+        prefix = local[0]
+    else:
+        prefix = local[:2]
+    return f"{prefix}***@{domain}"
+
+
+def _mask_phone(phone: str) -> str:
+    clean = (phone or "").strip()
+    if len(clean) < 6:
+        return "***"
+    return f"{clean[:3]}****{clean[-3:]}"
+
+
+def _mask_address(address: str) -> str:
+    cleaned = _collapse_whitespace(address)
+    if not cleaned:
+        return ""
+    segments = [seg.strip() for seg in cleaned.split(",") if seg.strip()]
+    if len(segments) >= 2:
+        return f"***, {segments[-1]}"
+    return "***"
+
+
+def find_existing_customer_suggestion(
+    ho_ten: str = "",
+    so_dien_thoai: str = "",
+    email: str = "",
+    dia_chi: str = "",
+) -> dict | None:
+    """Tìm khách hàng cũ khi khớp >= 2 trường thông tin và che các trường chưa nhập."""
+    ten_clean = _collapse_whitespace(ho_ten)
+    ten_norm = ten_clean.casefold()
+    sdt_clean = (so_dien_thoai or "").strip()
+    email_clean = (email or "").strip()
+    email_norm = email_clean.lower()
+    dia_chi_clean = _collapse_whitespace(dia_chi)
+    dia_chi_norm = dia_chi_clean.casefold()
+
+    filled_count = sum(bool(v) for v in (ten_norm, sdt_clean, email_norm, dia_chi_norm))
+    if filled_count < 2:
+        return None
+
+    rows = db.doc(
+        """
+        SELECT kh.MaKH,
+               kh.HoTen,
+               kh.Email,
+               COALESCE(kh.DiaChi, '') AS DiaChi,
+               COALESCE(
+                   GROUP_CONCAT(DISTINCT sdt.SoDienThoai ORDER BY sdt.SoDienThoai SEPARATOR ','),
+                   ''
+               ) AS CacSDT
+        FROM KhachHang kh
+        LEFT JOIN SDT_KhachHang sdt ON sdt.MaKH = kh.MaKH
+        WHERE (%(Email)s <> '' AND LOWER(TRIM(kh.Email)) = LOWER(%(Email)s))
+           OR (%(HoTen)s <> '' AND LOWER(TRIM(kh.HoTen)) = LOWER(%(HoTen)s))
+           OR (%(DiaChi)s <> '' AND LOWER(TRIM(kh.DiaChi)) = LOWER(%(DiaChi)s))
+           OR (
+               %(SoDienThoai)s <> ''
+               AND EXISTS (
+                   SELECT 1
+                   FROM SDT_KhachHang sdt2
+                   WHERE sdt2.MaKH = kh.MaKH
+                     AND sdt2.SoDienThoai = %(SoDienThoai)s
+               )
+           )
+        GROUP BY kh.MaKH, kh.HoTen, kh.Email, kh.DiaChi
+        ORDER BY kh.MaKH
+        """,
+        {
+            "HoTen": ten_clean,
+            "SoDienThoai": sdt_clean,
+            "Email": email_clean,
+            "DiaChi": dia_chi_clean,
+        },
+    )
+
+    candidates: list[tuple[int, int, dict, list[str], list[str], str | None]] = []
+    for r in rows:
+        phones = [p.strip() for p in (r.get("CacSDT") or "").split(",") if p.strip()]
+        matched_fields: list[str] = []
+        matched_phone: str | None = None
+
+        if ten_norm and _normalize_text_for_match(r.get("HoTen")) == ten_norm:
+            matched_fields.append("ho_ten")
+        if sdt_clean and sdt_clean in phones:
+            matched_fields.append("so_dien_thoai")
+            matched_phone = sdt_clean
+        if email_norm and (r.get("Email") or "").strip().lower() == email_norm:
+            matched_fields.append("email")
+        if dia_chi_norm and _normalize_text_for_match(r.get("DiaChi")) == dia_chi_norm:
+            matched_fields.append("dia_chi")
+
+        if len(matched_fields) >= 2:
+            unique_hits = sum(1 for f in matched_fields if f in ("email", "so_dien_thoai"))
+            candidates.append((len(matched_fields), unique_hits, r, matched_fields, phones, matched_phone))
+
+    if not candidates:
+        return None
+
+    candidates.sort(key=lambda item: (item[0], item[1]), reverse=True)
+    best_count, best_unique, best_row, best_fields, phones, best_phone = candidates[0]
+    if len(candidates) > 1 and (candidates[1][0], candidates[1][1]) == (best_count, best_unique):
+        return None
+
+    primary_phone = phones[0] if phones else ""
+    return {
+        "ma_kh": best_row["MaKH"],
+        "ho_ten_hien_thi": best_row["HoTen"] if "ho_ten" in best_fields else _mask_name(best_row["HoTen"]),
+        "email_hien_thi": best_row["Email"] if "email" in best_fields else _mask_email(best_row["Email"]),
+        "so_dien_thoai_hien_thi": (
+            best_phone if ("so_dien_thoai" in best_fields and best_phone) else _mask_phone(primary_phone)
+        ),
+        "dia_chi_hien_thi": best_row["DiaChi"] if "dia_chi" in best_fields else _mask_address(best_row["DiaChi"]),
+        "matched_fields": best_fields,
+        "matched_count": best_count,
     }
 
 

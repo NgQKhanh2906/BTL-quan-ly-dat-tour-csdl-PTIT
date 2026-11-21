@@ -9,12 +9,11 @@ import {
   CheckCircle2,
   Download,
   Info,
-  LogOut,
   MapPin,
   Minus,
   Plus,
+  RotateCcw,
   UserCheck,
-  UserPlus,
   Users,
 } from 'lucide-react';
 import { api, ApiError } from '../../api/client';
@@ -22,7 +21,8 @@ import type {
   AccommodationItem,
   BookingEstimateResponse,
   CreateBookingResponse,
-  CustomerItem,
+  CustomerMatchField,
+  CustomerSuggestion,
   OpenScheduleItem,
 } from '../../api/types';
 import { useAuth } from '../../context/AuthContext';
@@ -63,14 +63,20 @@ function validateCustomerFullName(raw: string): string | null {
   return null;
 }
 
+const MATCHED_FIELD_LABELS: Record<CustomerMatchField, string> = {
+  ho_ten: 'Họ và tên',
+  so_dien_thoai: 'Số điện thoại',
+  email: 'Email',
+  dia_chi: 'Địa chỉ',
+};
+
 export default function BookingPage() {
   const [searchParams] = useSearchParams();
   const initialScheduleParam = searchParams.get('schedule') || '';
-  const { customer, setCustomerSession, logoutCustomer } = useAuth();
+  const { setCustomerSession } = useAuth();
 
   // Master data
   const [schedules, setSchedules] = useState<OpenScheduleItem[]>([]);
-  const [customers, setCustomers] = useState<CustomerItem[]>([]);
   const [accommodations, setAccommodations] = useState<AccommodationItem[]>([]);
   const [loadingSchedules, setLoadingSchedules] = useState(true);
   const [loadingAccommodations, setLoadingAccommodations] = useState(false);
@@ -79,19 +85,18 @@ export default function BookingPage() {
   const [selectedScheduleId, setSelectedScheduleId] = useState(initialScheduleParam);
   const [soKhach, setSoKhach] = useState(2);
 
-  // Guest mode (only when not logged in)
-  const [guestMode, setGuestMode] = useState<'new' | 'existing'>('new');
-  const [selectedExistingMaKh, setSelectedExistingMaKh] = useState('');
+  // Customer info & suggestion
   const [hoTen, setHoTen] = useState('');
   const [hoTenTouched, setHoTenTouched] = useState(false);
   const [soDienThoai, setSoDienThoai] = useState('');
   const [email, setEmail] = useState('');
   const [diaChi, setDiaChi] = useState('');
-  const [duplicateCustomer, setDuplicateCustomer] = useState<CustomerItem | null>(null);
-  const [duplicateResponse, setDuplicateResponse] = useState<DuplicateCheckResponse | null>(null);
-  const [checkingDuplicate, setCheckingDuplicate] = useState(false);
+  const [suggestedCustomer, setSuggestedCustomer] = useState<CustomerSuggestion | null>(null);
+  const [selectedExistingCustomer, setSelectedExistingCustomer] = useState<CustomerSuggestion | null>(null);
+  const [dismissedSignature, setDismissedSignature] = useState('');
+  const [checkingSuggestion, setCheckingSuggestion] = useState(false);
 
-  const hoTenError = hoTenTouched ? validateCustomerFullName(hoTen) : null;
+  const hoTenError = hoTenTouched && !selectedExistingCustomer ? validateCustomerFullName(hoTen) : null;
 
   // Accommodation
   const [selectedAccId, setSelectedAccId] = useState<string | null>(null);
@@ -123,16 +128,8 @@ export default function BookingPage() {
   const loadInitialData = useCallback(async (preferredScheduleId?: string) => {
     setLoadingSchedules(true);
     try {
-      const [openList, customerList] = await Promise.all([
-        api.getOpenSchedules(),
-        api.getCustomers().catch(() => [] as CustomerItem[]),
-      ]);
+      const openList = await api.getOpenSchedules();
       setSchedules(openList);
-      setCustomers(customerList);
-
-      if (customerList.length > 0 && !selectedExistingMaKh) {
-        setSelectedExistingMaKh(customerList[0].ma_kh);
-      }
 
       if (openList.length > 0) {
         const match =
@@ -146,7 +143,6 @@ export default function BookingPage() {
     } finally {
       setLoadingSchedules(false);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -163,20 +159,12 @@ export default function BookingPage() {
     [accommodations, selectedAccId]
   );
 
-  const activeCustomerAddress = useMemo(() => {
-    if (customer) return customer.dia_chi;
-    if (guestMode === 'existing') {
-      return customers.find((c) => c.ma_kh === selectedExistingMaKh)?.dia_chi ?? '';
-    }
-    return diaChi;
-  }, [customer, guestMode, customers, selectedExistingMaKh, diaChi]);
-
   // Sync pickup address automatically unless user manually edited it
   useEffect(() => {
     if (!pickupEditedByUser) {
-      setDiaChiDon(activeCustomerAddress);
+      setDiaChiDon(diaChi);
     }
-  }, [activeCustomerAddress, pickupEditedByUser]);
+  }, [diaChi, pickupEditedByUser]);
 
   // Update accommodations & default shuttle times whenever schedule changes
   useEffect(() => {
@@ -279,39 +267,65 @@ export default function BookingPage() {
     };
   }, [selectedSchedule, selectedAccommodation, soKhach, soPhong]);
 
-  const handleCheckDuplicate = async () => {
-    if (customer || guestMode !== 'new') return;
-    const cleanEmail = email.trim();
-    const cleanPhone = soDienThoai.trim();
-    const cleanName = hoTen.trim();
-    if (!cleanEmail && !cleanPhone) {
-      setDuplicateCustomer(null);
-      setDuplicateResponse(null);
+  const inputSignature = `${hoTen.trim()}|${soDienThoai.trim()}|${email.trim()}|${diaChi.trim()}`;
+  const filledFieldCount = [hoTen, soDienThoai, email, diaChi].filter(
+    (value) => value.trim().length > 0
+  ).length;
+
+  useEffect(() => {
+    if (selectedExistingCustomer !== null || filledFieldCount < 2) {
+      setSuggestedCustomer(null);
+      setCheckingSuggestion(false);
       return;
     }
-    setCheckingDuplicate(true);
-    try {
-      const res = await api.checkDuplicateCustomer(cleanEmail, cleanPhone, cleanName);
-      setDuplicateResponse(res);
-      setDuplicateCustomer(res.duplicate ? res.customer : null);
-      if (res.matched_exact && res.customer?.dia_chi && !pickupEditedByUser) {
-        setDiaChiDon(res.customer.dia_chi);
-      }
-    } catch {
-      setDuplicateCustomer(null);
-      setDuplicateResponse(null);
-    } finally {
-      setCheckingDuplicate(false);
-    }
+
+    let active = true;
+    setCheckingSuggestion(true);
+    const timerId = window.setTimeout(() => {
+      api
+        .checkDuplicateCustomer({
+          ho_ten: hoTen.trim(),
+          so_dien_thoai: soDienThoai.trim(),
+          email: email.trim(),
+          dia_chi: diaChi.trim(),
+        })
+        .then((res) => {
+          if (!active) return;
+          setSuggestedCustomer(res.suggested ? res.suggestion : null);
+        })
+        .catch(() => {
+          if (!active) return;
+          setSuggestedCustomer(null);
+        })
+        .finally(() => {
+          if (active) {
+            setCheckingSuggestion(false);
+          }
+        });
+    }, 300);
+
+    return () => {
+      active = false;
+      window.clearTimeout(timerId);
+    };
+  }, [hoTen, soDienThoai, email, diaChi, filledFieldCount, selectedExistingCustomer]);
+
+  const handleAcceptSuggestedCustomer = (item: CustomerSuggestion) => {
+    setSelectedExistingCustomer(item);
+    setSuggestedCustomer(null);
+    setDismissedSignature('');
+    setHoTenTouched(false);
+    setFormErrors([]);
   };
 
-  const handleUseDuplicateCustomer = (dup: CustomerItem) => {
-    setGuestMode('existing');
-    setSelectedExistingMaKh(dup.ma_kh);
-    setDuplicateCustomer(null);
-    setDuplicateResponse(null);
-    setHoTenTouched(false);
-    setPickupEditedByUser(false);
+  const handleDismissSuggestion = () => {
+    setDismissedSignature(inputSignature);
+  };
+
+  const handleResetSelectedCustomer = () => {
+    setSelectedExistingCustomer(null);
+    setSuggestedCustomer(null);
+    setDismissedSignature('');
     setFormErrors([]);
   };
 
@@ -330,10 +344,10 @@ export default function BookingPage() {
     if (!selectedSchedule) return;
 
     const clientErrors: string[] = [];
-    const isNewGuest = !customer && guestMode === 'new';
+    const isUsingExisting = selectedExistingCustomer !== null;
     const normalizedHoTen = hoTen.normalize('NFC').trim().replace(/\s+/g, ' ');
 
-    if (isNewGuest) {
+    if (!isUsingExisting) {
       setHoTenTouched(true);
       const nameError = validateCustomerFullName(hoTen);
       if (nameError) clientErrors.push(nameError);
@@ -344,14 +358,6 @@ export default function BookingPage() {
         clientErrors.push('Vui lòng nhập địa chỉ email hợp lệ.');
       }
       if (!diaChi.trim()) clientErrors.push('Vui lòng nhập địa chỉ liên hệ.');
-
-      if (duplicateResponse?.conflict) {
-        clientErrors.push(
-          `Email hoặc số điện thoại này đã được đăng ký bởi khách hàng khác (${duplicateCustomer?.ho_ten || ''}). Vui lòng kiểm tra lại họ tên hoặc đổi thông tin liên hệ.`
-        );
-      }
-    } else if (!customer && !selectedExistingMaKh) {
-      clientErrors.push('Vui lòng chọn khách hàng trong danh sách.');
     }
 
     if (coXeDon && !diaChiDon.trim()) {
@@ -368,18 +374,17 @@ export default function BookingPage() {
     const finalAccId = isDayTour ? null : selectedAccId;
     const finalRooms = finalAccId ? Math.max(1, Math.min(soPhong, soKhach)) : 0;
     const finalXeVe = Boolean(!isDayTour && finalAccId && coXeVe);
-    const isMatchedExact = isNewGuest && Boolean(duplicateResponse?.matched_exact && duplicateCustomer);
 
     setSubmitting(true);
     setFormErrors([]);
     try {
       const result = await api.createBooking({
-        la_khach_moi: isNewGuest && !isMatchedExact,
-        ma_kh: customer ? customer.ma_kh : isMatchedExact ? duplicateCustomer?.ma_kh : isNewGuest ? null : selectedExistingMaKh,
-        ho_ten: isNewGuest ? normalizedHoTen : null,
-        so_dien_thoai: isNewGuest ? soDienThoai.trim() : null,
-        email: isNewGuest ? email.trim() : null,
-        dia_chi: isNewGuest ? diaChi.trim() : null,
+        la_khach_moi: !isUsingExisting,
+        ma_kh: isUsingExisting ? selectedExistingCustomer.ma_kh : null,
+        ho_ten: isUsingExisting ? null : normalizedHoTen,
+        so_dien_thoai: isUsingExisting ? null : soDienThoai.trim(),
+        email: isUsingExisting ? null : email.trim(),
+        dia_chi: isUsingExisting ? null : diaChi.trim(),
         ma_lich_trinh: selectedSchedule.ma_lich_trinh,
         so_khach: soKhach,
         ma_nha_nghi: finalAccId,
@@ -438,6 +443,15 @@ export default function BookingPage() {
     setConfirmed(null);
     setFormErrors([]);
     setPdfError(null);
+    setHoTen('');
+    setHoTenTouched(false);
+    setSoDienThoai('');
+    setEmail('');
+    setDiaChi('');
+    setSuggestedCustomer(null);
+    setSelectedExistingCustomer(null);
+    setDismissedSignature('');
+    setCheckingSuggestion(false);
     setSelectedAccId(null);
     setSoPhong(0);
     setCoXeDon(false);
@@ -713,252 +727,169 @@ export default function BookingPage() {
                   <h2 className="text-base font-bold text-slate-900">Thông tin khách hàng</h2>
                 </div>
 
-                {customer && (
+                {selectedExistingCustomer && (
                   <button
                     type="button"
-                    onClick={() => {
-                      logoutCustomer();
-                      setPickupEditedByUser(false);
-                    }}
-                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-[#1D63ED] transition-colors cursor-pointer"
+                    onClick={handleResetSelectedCustomer}
+                    className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-600 hover:text-[#1D63ED] transition-colors cursor-pointer"
                   >
-                    <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
-                    Đăng xuất để đặt cho khách khác
+                    <RotateCcw className="h-3.5 w-3.5" strokeWidth={1.75} />
+                    Nhập thông tin khách khác
                   </button>
                 )}
               </div>
 
-              {customer ? (
+              {selectedExistingCustomer ? (
                 <div className="rounded-2xl border border-[#BFDBFE] bg-[#F7FAFF] p-4 flex items-start gap-3.5">
                   <span className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#1D63ED] text-sm font-bold text-white">
-                    {getInitials(customer.ho_ten)}
+                    {getInitials(selectedExistingCustomer.ho_ten_hien_thi)}
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                      <p className="text-base font-bold text-slate-900">{customer.ho_ten}</p>
+                      <p className="text-base font-bold text-slate-900">
+                        {selectedExistingCustomer.ho_ten_hien_thi}
+                      </p>
                       <span className="rounded-full bg-[#DBEAFE] px-2.5 py-0.5 text-[11px] font-semibold text-[#1D4ED8]">
-                        Tài khoản đang đăng nhập
+                        Dùng tiếp tài khoản cũ ({selectedExistingCustomer.ma_kh})
                       </span>
                     </div>
                     <div className="mt-1.5 grid grid-cols-1 sm:grid-cols-2 gap-1.5 text-xs text-slate-600">
-                      <span>Email: {customer.email}</span>
+                      <span>Email: {selectedExistingCustomer.email_hien_thi}</span>
                       <span className="tabular-nums">
-                        Điện thoại: {customer.so_dien_thoai || 'Chưa cập nhật'}
+                        Điện thoại: {selectedExistingCustomer.so_dien_thoai_hien_thi}
                       </span>
-                      <span className="sm:col-span-2">Địa chỉ: {customer.dia_chi}</span>
+                      <span className="sm:col-span-2">
+                        Địa chỉ: {selectedExistingCustomer.dia_chi_hien_thi || 'Theo hồ sơ đã lưu'}
+                      </span>
                     </div>
                   </div>
                 </div>
               ) : (
-                <>
-                  <div className="inline-flex rounded-[10px] border border-slate-200 bg-slate-50 p-1">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setGuestMode('new');
-                        setPickupEditedByUser(false);
-                      }}
-                      className={[
-                        'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
-                        guestMode === 'new'
-                          ? 'bg-[#1D63ED] text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900',
-                      ].join(' ')}
-                    >
-                      <UserPlus className="h-3.5 w-3.5" strokeWidth={1.8} />
-                      Khách hàng mới
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setGuestMode('existing');
-                        setDuplicateCustomer(null);
-                        setHoTenTouched(false);
-                        setPickupEditedByUser(false);
-                      }}
-                      className={[
-                        'inline-flex items-center gap-1.5 rounded-lg px-3.5 py-1.5 text-xs font-semibold transition-colors cursor-pointer',
-                        guestMode === 'existing'
-                          ? 'bg-[#1D63ED] text-white shadow-xs'
-                          : 'text-slate-600 hover:text-slate-900',
-                      ].join(' ')}
-                    >
-                      <UserCheck className="h-3.5 w-3.5" strokeWidth={1.8} />
-                      Khách hàng có sẵn
-                    </button>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="guest-name" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Họ và tên *
+                      </label>
+                      <input
+                        id="guest-name"
+                        type="text"
+                        maxLength={100}
+                        value={hoTen}
+                        onChange={(e) => setHoTen(e.target.value)}
+                        onBlur={() => setHoTenTouched(true)}
+                        placeholder="Nguyễn Minh Anh"
+                        aria-invalid={Boolean(hoTenError)}
+                        className={[
+                          'w-full h-10.5 rounded-xl border bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-3',
+                          hoTenError
+                            ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-red-500/15'
+                            : 'border-slate-200 focus:border-[#1D63ED] focus:ring-[#1D63ED]/15',
+                        ].join(' ')}
+                      />
+                      {hoTenError && (
+                        <p className="mt-1 text-xs font-medium text-[#B91C1C]" role="alert">
+                          {hoTenError}
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      <label htmlFor="guest-phone" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Số điện thoại (10 chữ số) *
+                      </label>
+                      <input
+                        id="guest-phone"
+                        type="tel"
+                        maxLength={10}
+                        value={soDienThoai}
+                        onChange={(e) => setSoDienThoai(e.target.value)}
+                        placeholder="0912345678"
+                        className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 tabular-nums focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="guest-email" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Email *
+                      </label>
+                      <input
+                        id="guest-email"
+                        type="email"
+                        maxLength={100}
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="minhanh@gmail.com"
+                        className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="guest-address" className="block text-xs font-semibold text-slate-700 mb-1.5">
+                        Địa chỉ liên hệ *
+                      </label>
+                      <input
+                        id="guest-address"
+                        type="text"
+                        maxLength={255}
+                        value={diaChi}
+                        onChange={(e) => setDiaChi(e.target.value)}
+                        placeholder="Số 25 Láng Hạ, Đống Đa, Hà Nội"
+                        className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
+                      />
+                    </div>
                   </div>
 
-                  {guestMode === 'new' ? (
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                          <label htmlFor="guest-name" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Họ và tên *
-                          </label>
-                          <input
-                            id="guest-name"
-                            type="text"
-                            maxLength={100}
-                            value={hoTen}
-                            onChange={(e) => setHoTen(e.target.value)}
-                            onBlur={() => {
-                              setHoTenTouched(true);
-                              handleCheckDuplicate();
-                            }}
-                            placeholder="Nguyễn Minh Anh"
-                            aria-invalid={Boolean(hoTenError)}
-                            className={[
-                              'w-full h-10.5 rounded-xl border bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-3',
-                              hoTenError
-                                ? 'border-[#DC2626] focus:border-[#DC2626] focus:ring-red-500/15'
-                                : 'border-slate-200 focus:border-[#1D63ED] focus:ring-[#1D63ED]/15',
-                            ].join(' ')}
-                          />
-                          {hoTenError && (
-                            <p className="mt-1 text-xs font-medium text-[#B91C1C]" role="alert">
-                              {hoTenError}
-                            </p>
-                          )}
-                        </div>
+                  {checkingSuggestion && (
+                    <p className="text-xs text-slate-500">Đang kiểm tra thông tin khách hàng...</p>
+                  )}
 
-                        <div>
-                          <label htmlFor="guest-phone" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Số điện thoại (10 chữ số) *
-                          </label>
-                          <input
-                            id="guest-phone"
-                            type="tel"
-                            maxLength={10}
-                            value={soDienThoai}
-                            onChange={(e) => setSoDienThoai(e.target.value)}
-                            onBlur={handleCheckDuplicate}
-                            placeholder="0912345678"
-                            className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 tabular-nums focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="guest-email" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Email *
-                          </label>
-                          <input
-                            id="guest-email"
-                            type="email"
-                            maxLength={100}
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            onBlur={handleCheckDuplicate}
-                            placeholder="minhanh@gmail.com"
-                            className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
-                          />
-                        </div>
-
-                        <div>
-                          <label htmlFor="guest-address" className="block text-xs font-semibold text-slate-700 mb-1.5">
-                            Địa chỉ liên hệ *
-                          </label>
-                          <input
-                            id="guest-address"
-                            type="text"
-                            maxLength={255}
-                            value={diaChi}
-                            onChange={(e) => setDiaChi(e.target.value)}
-                            placeholder="Số 25 Láng Hạ, Đống Đa, Hà Nội"
-                            className="w-full h-10.5 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15"
-                          />
-                        </div>
+                  {suggestedCustomer && dismissedSignature !== inputSignature && (
+                    <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                      <div className="text-xs text-emerald-950 space-y-1">
+                        <p className="font-bold flex items-center gap-1.5 text-emerald-800">
+                          <UserCheck className="h-4 w-4 text-emerald-600 shrink-0" />
+                          Tìm thấy tài khoản khách hàng cũ khớp thông tin
+                        </p>
+                        <p className="text-emerald-800">
+                          Khớp {suggestedCustomer.matched_count} thông tin (
+                          {suggestedCustomer.matched_fields
+                            .map((field) => MATCHED_FIELD_LABELS[field])
+                            .join(', ')}
+                          )
+                        </p>
+                        <p className="text-slate-700">
+                          {[
+                            suggestedCustomer.ho_ten_hien_thi,
+                            suggestedCustomer.email_hien_thi,
+                            suggestedCustomer.so_dien_thoai_hien_thi,
+                            suggestedCustomer.dia_chi_hien_thi,
+                          ]
+                            .filter(Boolean)
+                            .join(' · ')}
+                        </p>
                       </div>
-
-                      {checkingDuplicate && (
-                        <p className="text-xs text-slate-500">Đang đối chiếu thông tin khách hàng...</p>
-                      )}
-
-                      {duplicateCustomer && duplicateResponse?.matched_exact && (
-                        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="text-xs text-emerald-950">
-                            <p className="font-bold flex items-center gap-1.5 text-emerald-800">
-                              <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
-                              Khách hàng cũ đã có thông tin trong hệ thống: {duplicateCustomer.ma_kh} - {duplicateCustomer.ho_ten}
-                            </p>
-                            <p className="mt-1 text-emerald-700">
-                              {duplicateCustomer.email} · {duplicateCustomer.so_dien_thoai}
-                            </p>
-                            <p className="mt-0.5 text-slate-600">
-                              Hệ thống sẽ tự động liên kết đơn đặt tour với hồ sơ khách hàng hiện có.
-                            </p>
-                          </div>
-                        </div>
-                      )}
-
-                      {duplicateCustomer && duplicateResponse?.conflict && (
-                        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                          <div className="text-xs text-red-950">
-                            <p className="font-bold flex items-center gap-1.5 text-red-800">
-                              <AlertTriangle className="h-4 w-4 text-red-600 shrink-0" />
-                              Email hoặc số điện thoại này đã được đăng ký bởi khách hàng {duplicateCustomer.ho_ten}
-                            </p>
-                            <p className="mt-1 text-red-700">
-                              Vui lòng kiểm tra lại họ tên hoặc nhập email / số điện thoại khác.
-                            </p>
-                          </div>
-                          <Button
-                            variant="secondary"
-                            size="sm"
-                            shape="rounded"
-                            onClick={() => handleUseDuplicateCustomer(duplicateCustomer)}
-                            className="shrink-0"
-                          >
-                            Dùng khách hàng này
-                          </Button>
-                        </div>
-                      )}
-
-                      {!checkingDuplicate && !duplicateCustomer && hoTen.trim() && soDienThoai.trim() && email.trim() && (
-                        <div className="rounded-2xl border border-blue-200 bg-blue-50/70 p-3 text-xs text-blue-900 flex items-center gap-2">
-                          <Info className="h-4 w-4 text-blue-600 shrink-0" />
-                          <span>Khách hàng mới: Thông tin sẽ được tự động lưu vào hệ thống khi xác nhận đặt tour.</span>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <div className="space-y-3">
-                      <label htmlFor="existing-customer-select" className="block text-xs font-semibold text-slate-700">
-                        Chọn khách hàng đã đăng ký
-                      </label>
-                      <select
-                        id="existing-customer-select"
-                        value={selectedExistingMaKh}
-                        onChange={(e) => {
-                          setSelectedExistingMaKh(e.target.value);
-                          setPickupEditedByUser(false);
-                        }}
-                        className="w-full h-11 rounded-xl border border-slate-200 bg-slate-50/70 px-3.5 text-sm font-medium text-slate-900 focus:bg-white focus:border-[#1D63ED] focus:outline-none focus:ring-3 focus:ring-[#1D63ED]/15 cursor-pointer"
-                      >
-                        {customers.map((c) => (
-                          <option key={c.ma_kh} value={c.ma_kh}>
-                            {c.ho_ten} — {c.email} ({c.so_dien_thoai})
-                          </option>
-                        ))}
-                      </select>
-
-                      {(() => {
-                        const picked = customers.find((c) => c.ma_kh === selectedExistingMaKh);
-                        if (!picked) return null;
-                        return (
-                          <div className="rounded-xl bg-slate-50 border border-slate-200/70 px-4 py-3 text-xs text-slate-600 space-y-1">
-                            <p>
-                              <span className="font-semibold text-slate-800">Địa chỉ:</span> {picked.dia_chi}
-                            </p>
-                            <p className="tabular-nums">
-                              <span className="font-semibold text-slate-800">Số điện thoại:</span>{' '}
-                              {picked.so_dien_thoai}
-                            </p>
-                          </div>
-                        );
-                      })()}
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button
+                          variant="primary"
+                          size="sm"
+                          shape="rounded"
+                          onClick={() => handleAcceptSuggestedCustomer(suggestedCustomer)}
+                        >
+                          Dùng tiếp tài khoản cũ
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          shape="rounded"
+                          onClick={handleDismissSuggestion}
+                        >
+                          Bỏ qua
+                        </Button>
+                      </div>
                     </div>
                   )}
-                </>
+                </div>
               )}
             </section>
 

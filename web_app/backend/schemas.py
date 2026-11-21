@@ -81,13 +81,25 @@ class CheckDuplicateRequest(BaseModel):
     ho_ten: str = ""
     email: str = ""
     so_dien_thoai: str = ""
+    dia_chi: str = ""
+
+
+class CustomerSuggestion(BaseModel):
+    ma_kh: str
+    ho_ten_hien_thi: str
+    email_hien_thi: str
+    so_dien_thoai_hien_thi: str
+    dia_chi_hien_thi: str
+    matched_fields: list[str]
+    matched_count: int
 
 
 class CheckDuplicateResponse(BaseModel):
     duplicate: bool
-    customer: CustomerItem | None = None
-    matched_exact: bool = False
-    conflict: bool = False
+    suggested: bool = False
+    matched_count: int = 0
+    matched_fields: list[str] = Field(default_factory=list)
+    suggestion: CustomerSuggestion | None = None
 
 
 class CustomerLoginRequest(BaseModel):

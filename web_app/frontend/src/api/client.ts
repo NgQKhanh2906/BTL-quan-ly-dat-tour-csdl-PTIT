@@ -214,10 +214,20 @@ export const api = {
     return requestJson<CustomerItem[]>('/api/customers');
   },
 
-  checkDuplicateCustomer(email: string, sdt: string, hoTen?: string): Promise<DuplicateCheckResponse> {
+  checkDuplicateCustomer(payload: {
+    ho_ten?: string;
+    so_dien_thoai?: string;
+    email?: string;
+    dia_chi?: string;
+  }): Promise<DuplicateCheckResponse> {
     return requestJson<DuplicateCheckResponse>('/api/customers/check-duplicate', {
       method: 'POST',
-      body: { email, so_dien_thoai: sdt, ho_ten: hoTen || '' },
+      body: {
+        ho_ten: payload.ho_ten || '',
+        so_dien_thoai: payload.so_dien_thoai || '',
+        email: payload.email || '',
+        dia_chi: payload.dia_chi || '',
+      },
     });
   },
 
