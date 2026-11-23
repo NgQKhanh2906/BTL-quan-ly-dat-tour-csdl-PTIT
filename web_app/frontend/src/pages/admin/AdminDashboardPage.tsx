@@ -187,9 +187,6 @@ export function AdminDashboardPage() {
         <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
           Báo cáo doanh thu và xếp hạng dịch vụ
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Tổng hợp doanh thu theo tuyến tour, xếp hạng chất lượng nơi nghỉ và xuất báo cáo PDF khổ A4 ngang.
-        </p>
       </div>
 
       {/* Filter & Export Controls */}

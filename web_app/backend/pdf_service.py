@@ -24,6 +24,70 @@ CONFIRMATION_BRAND_REPLACEMENTS: tuple[tuple[str, str], ...] = (
         "Km10, Đường Nguyễn Trãi, Quận Hà Đông, Hà Nội",
         "Số 10 Nguyễn Trãi, Hà Đông, Hà Nội",
     ),
+    (
+        """        .header-table td {
+            vertical-align: top;
+            font-size: 9.8pt;
+        }""",
+        """        .header-table td {
+            vertical-align: top;
+            font-size: 9.6pt;
+        }
+        .header-quoc-hieu-cell {
+            text-align: center;
+        }
+        .quoc-hieu {
+            font-size: 12pt;
+            font-weight: bold;
+            line-height: 1.25;
+            letter-spacing: 0.15px;
+        }
+        .tieu-ngu {
+            font-size: 11.5pt;
+            font-weight: bold;
+            line-height: 1.25;
+            margin-top: 1px;
+        }
+        .tieu-ngu span {
+            display: inline-block;
+            border-bottom: 1px solid #111;
+            padding-bottom: 2px;
+        }
+        .ngay-in-phieu {
+            font-size: 9.5pt;
+            margin-top: 3px;
+        }""",
+    ),
+    (
+        """            <td style="width: 52%;">
+                <strong>CÔNG TY DU LỊCH &amp; LỮ HÀNH BẮC VIỆT TRAVEL</strong><br>
+                Địa chỉ: Số 10 Nguyễn Trãi, Hà Đông, Hà Nội<br>
+                Hotline: 1900 1234 | Email: lienhe@bacviettravel.vn
+            </td>
+            <td style="width: 48%; text-align: right;">
+                <strong>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</strong><br>
+                <span>Độc lập - Tự do - Hạnh phúc</span><br>
+                <em>Ngày in phiếu:""",
+        """            <td style="width: 46%;">
+                <strong>CÔNG TY DU LỊCH &amp; LỮ HÀNH BẮC VIỆT TRAVEL</strong><br>
+                Địa chỉ: Số 10 Nguyễn Trãi, Hà Đông, Hà Nội<br>
+                Hotline: 1900 1234 | Email: lienhe@bacviettravel.vn
+            </td>
+            <td class="header-quoc-hieu-cell" style="width: 54%;">
+                <div class="quoc-hieu">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM</div>
+                <div class="tieu-ngu"><span>Độc lập - Tự do - Hạnh phúc</span></div>
+                <div class="ngay-in-phieu"><em>Ngày in phiếu:""",
+    ),
+    (
+        """</em>
+            </td>
+        </tr>
+    </table>""",
+        """</em></div>
+            </td>
+        </tr>
+    </table>""",
+    ),
 )
 
 

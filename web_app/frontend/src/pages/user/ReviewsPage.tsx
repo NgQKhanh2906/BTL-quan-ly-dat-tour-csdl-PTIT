@@ -154,9 +154,6 @@ export default function ReviewsPage() {
         <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
           Đánh giá chất lượng tour và nơi nghỉ sau chuyến đi
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Ghi nhận mức độ hài lòng và nhận xét của khách hàng đối với chương trình tour và nơi lưu trú.
-        </p>
       </div>
 
       {successMessage && (

@@ -111,9 +111,6 @@ export function AdminOrdersPage() {
         <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
           Quản lý và Hủy đơn đặt tour
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Theo dõi danh sách toàn bộ đơn hàng, cập nhật trạng thái và xử lý hủy tour tính phạt tự động.
-        </p>
       </div>
 
       {bannerMessage && (
