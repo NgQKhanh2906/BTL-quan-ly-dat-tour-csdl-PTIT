@@ -220,15 +220,11 @@ export default function ExplorePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 sm:py-8">
       {/* Page Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
             Tra cứu lịch trình tour
           </h1>
-          <p className="mt-1.5 text-sm text-slate-600 max-w-2xl">
-            Lọc lịch khởi hành theo từ khóa, tỉnh đến, khoảng giá, ngày đi, số chỗ trống và điểm
-            đánh giá.
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5">

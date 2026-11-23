@@ -571,10 +571,6 @@ export default function BookingPage() {
         <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
           Đặt tour trực tuyến
         </h1>
-        <p className="mt-1.5 text-sm text-slate-600 max-w-2xl">
-          Điền thông tin khách hàng, chọn lịch trình khởi hành, cơ sở lưu trú và xe trung chuyển đi
-          kèm.
-        </p>
       </div>
 
       {formErrors.length > 0 && (

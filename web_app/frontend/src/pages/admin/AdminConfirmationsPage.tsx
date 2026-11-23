@@ -206,9 +206,6 @@ export function AdminConfirmationsPage() {
         <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
           Phiếu xác nhận đặt tour
         </h1>
-        <p className="mt-1 text-sm text-slate-600">
-          Xem trước biểu mẫu xác nhận dịch vụ theo từng đơn hàng, in trực tiếp hoặc xuất file PDF khổ A4 dọc.
-        </p>
       </div>
 
       {/* Compact Full-Width Horizontal Control Bar */}

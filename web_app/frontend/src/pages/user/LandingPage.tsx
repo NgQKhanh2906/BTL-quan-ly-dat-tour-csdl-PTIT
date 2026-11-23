@@ -107,9 +107,6 @@ export default function LandingPage() {
           <h1 className="text-2xl sm:text-[28px] font-bold text-slate-900 tracking-tight">
             Hệ thống quản lý đặt tour du lịch miền Bắc
           </h1>
-          <p className="mt-1 text-sm text-slate-600">
-            Truy cập nhanh các biểu mẫu nghiệp vụ và theo dõi số liệu vận hành tour trực tuyến.
-          </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 shrink-0">
